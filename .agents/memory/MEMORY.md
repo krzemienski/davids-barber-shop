@@ -1,2 +1,3 @@
 - [Browser verification](browser-verification.md) — agent-browser quirks here: chain in one shell call, --exact names, scroll dialogs, Clerk test sign-in code.
+- [Hero loop export](hero-loop-export.md) — site hero.mp4 is an agent-browser capture of the hero-loop film; cut at matching towel frames for a seamless loop.
 - [Content truth rules](content-truth.md) — no invented facts; $30 vs Booksy $35 conflict; roster mismatch (Booksy lists only Michael).
