@@ -1,0 +1,9 @@
+uploads = []
+generated = []
+
+[[outputs]]
+id = "LUQV0saHf3d5g5Q0sZzNu"
+uri = "file://artifacts/hero-loop/public/audio/bg_music.mp3"
+type = "audio"
+title = "barbershop jazz bed"
+description = "Generated music: Smoky late-night jazz instrumental for an old New York barbershop: brushed drums, upright bass walking line, warm muted trumpet and Rhodes, 90 BPM, intimate and confident, steady eve…"

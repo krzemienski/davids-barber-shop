@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 96" width="360" height="96" role="img" aria-label="David's Barber Shop, est. 1972">
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E2C688"/>
+      <stop offset="0.55" stop-color="#C8A464"/>
+      <stop offset="1" stop-color="#A9852F"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(48 48)">
+    <circle r="44" fill="#0E0C0A" stroke="url(#g)" stroke-width="2.5"/>
+    <circle r="37" fill="none" stroke="url(#g)" stroke-width="1" opacity="0.7"/>
+    <path d="M-12 -22 h14 c14 0 22 9 22 22 s-8 22 -22 22 h-14 z M-4 -15 v30 h6 c9 0 14 -6 14 -15 s-5 -15 -14 -15 z" fill="url(#g)" fill-rule="evenodd"/>
+    <path d="M-30 30 L30 -30" stroke="#0E0C0A" stroke-width="5"/>
+    <path d="M-30 30 L30 -30" stroke="url(#g)" stroke-width="1.4"/>
+    <circle cx="-26" cy="0" r="1.6" fill="url(#g)"/>
+    <circle cx="26" cy="0" r="1.6" fill="url(#g)"/>
+  </g>
+  <text x="108" y="50" font-family="'Playfair Display', Didot, 'Bodoni 72', Georgia, serif" font-size="38" font-weight="700" fill="url(#g)" letter-spacing="1">David&#8217;s</text>
+  <text x="110" y="76" font-family="'Poppins', 'Helvetica Neue', sans-serif" font-size="12.5" font-weight="600" fill="#E8DCC4" letter-spacing="5.2">BARBER SHOP · 1972</text>
+</svg>

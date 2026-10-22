@@ -1,0 +1,29 @@
+kind = "video"
+videoAspectRatio = "16:9"
+previewPath = "/hero-loop/"
+title = "Hero Background Loop"
+description = "A short, seamlessly looping animated film for David's Barber Shop (233 E 84th St, since 1972), made to be exported as the muted background video behind the home page hero, which drifts with a scroll parallax."
+version = "1.0.0"
+id = "artifacts/hero-loop"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/hero-loop/" ]
+localPort = 22061
+
+[services.development]
+run = "pnpm --filter @workspace/hero-loop run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/hero-loop", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/hero-loop/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "22061"
+BASE_PATH = "/hero-loop/"
