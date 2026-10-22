@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "David's Barbershop"
+description = "Website for David's Barber Shop, a father-and-son barbershop on Manhattan's Upper East Side since 1972. Shows barbers, services and prices, the shop story, and hours, sends visitors to Booksy to book, includes paid-ad landing pages with call/book click tracking, and an admin area for owners to manage barbers, services, and site settings."
+version = "1.0.0"
+id = "artifacts/davids-barbershop"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 21005
+
+[services.development]
+run = "pnpm --filter @workspace/davids-barbershop run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/davids-barbershop", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/davids-barbershop/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "21005"
+BASE_PATH = "/"

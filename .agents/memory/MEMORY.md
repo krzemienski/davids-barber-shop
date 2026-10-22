@@ -1,0 +1,2 @@
+- [Browser verification](browser-verification.md) — agent-browser quirks here: chain in one shell call, --exact names, scroll dialogs, Clerk test sign-in code.
+- [Content truth rules](content-truth.md) — no invented facts; $30 vs Booksy $35 conflict; roster mismatch (Booksy lists only Michael).

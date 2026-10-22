@@ -3,20 +3,27 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: David's Barber Shop API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: public
+    description: Public site content
+  - name: tracking
+    description: Conversion event tracking
+  - name: admin
+    description: Owner/admin management (requires sign-in and an admin role)
+  - name: Storage
+    description: Object storage upload and serving endpoints.
 paths:
   /healthz:
     get:
       operationId: healthCheck
       tags: [health]
       summary: Health check
-      description: Returns server health status
       responses:
         "200":
           description: Healthy
@@ -24,7 +31,596 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+
+  # ---------- Public ----------
+  /site:
+    get:
+      operationId: getSiteSettings
+      tags: [public]
+      summary: Shop-wide settings (hours, phone, address, offer price, banner)
+      responses:
+        "200":
+          description: Settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+  /barbers:
+    get:
+      operationId: listBarbers
+      tags: [public]
+      summary: Active barbers in display order (notable clients filtered to consented only)
+      responses:
+        "200":
+          description: Barbers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Barber"
+  /barbers/{slug}:
+    get:
+      operationId: getBarber
+      tags: [public]
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Barber
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Barber"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /services:
+    get:
+      operationId: listServices
+      tags: [public]
+      summary: Active services in display order
+      responses:
+        "200":
+          description: Services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+  /testimonials:
+    get:
+      operationId: listTestimonials
+      tags: [public]
+      responses:
+        "200":
+          description: Testimonials
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Testimonial"
+  /landing-pages/{slug}:
+    get:
+      operationId: getLandingPage
+      tags: [public]
+      summary: An active ad landing page, with its barber when it is a barber page
+      parameters:
+        - name: slug
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        "200":
+          description: Landing page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LandingPageDetail"
+        "404":
+          description: Not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
+  # ---------- Tracking ----------
+  /events:
+    post:
+      operationId: trackEvent
+      tags: [tracking]
+      summary: Record a first-party conversion event (call_click, book_click, landing_view)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/TrackEventInput"
+      responses:
+        "202":
+          description: Accepted
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/OkResponse"
+
+  # ---------- Admin ----------
+  /admin/me:
+    get:
+      operationId: getAdminMe
+      tags: [admin]
+      summary: The signed-in admin's profile and role. 401 if signed out, 403 if not an admin.
+      responses:
+        "200":
+          description: Admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "401":
+          description: Signed out
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "403":
+          description: Not an admin
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /admin/site:
+    put:
+      operationId: updateSiteSettings
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SiteSettingsInput"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SiteSettings"
+  /admin/barbers:
+    get:
+      operationId: adminListBarbers
+      tags: [admin]
+      summary: All barbers including inactive, with every notable client and consent flag
+      responses:
+        "200":
+          description: Barbers
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Barber"
+    post:
+      operationId: adminCreateBarber
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BarberInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Barber"
+  /admin/barbers/{id}:
+    patch:
+      operationId: adminUpdateBarber
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BarberUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Barber"
+    delete:
+      operationId: adminDeleteBarber
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "204":
+          description: Deleted
+  /admin/services:
+    get:
+      operationId: adminListServices
+      tags: [admin]
+      responses:
+        "200":
+          description: Services
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Service"
+    post:
+      operationId: adminCreateService
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+  /admin/services/{id}:
+    patch:
+      operationId: adminUpdateService
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ServiceUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Service"
+    delete:
+      operationId: adminDeleteService
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "204":
+          description: Deleted
+  /admin/landing-pages:
+    get:
+      operationId: adminListLandingPages
+      tags: [admin]
+      responses:
+        "200":
+          description: Landing pages
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/LandingPage"
+    post:
+      operationId: adminCreateLandingPage
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LandingPageInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LandingPage"
+  /admin/landing-pages/{id}:
+    patch:
+      operationId: adminUpdateLandingPage
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LandingPageUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/LandingPage"
+    delete:
+      operationId: adminDeleteLandingPage
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "204":
+          description: Deleted
+  /admin/bookings:
+    get:
+      operationId: adminListBookings
+      tags: [admin]
+      summary: Confirmed Booksy bookings logged by staff (offline conversion source)
+      responses:
+        "200":
+          description: Bookings
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Booking"
+    post:
+      operationId: adminCreateBooking
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookingInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Booking"
+  /admin/bookings/{id}:
+    delete:
+      operationId: adminDeleteBooking
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "204":
+          description: Deleted
+  /admin/campaigns:
+    get:
+      operationId: adminListCampaigns
+      tags: [admin]
+      responses:
+        "200":
+          description: Campaigns
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Campaign"
+    post:
+      operationId: adminCreateCampaign
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CampaignInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+  /admin/campaigns/{id}:
+    patch:
+      operationId: adminUpdateCampaign
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CampaignUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Campaign"
+    delete:
+      operationId: adminDeleteCampaign
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "204":
+          description: Deleted
+  /admin/reports/performance:
+    get:
+      operationId: adminGetPerformance
+      tags: [admin]
+      summary: Cost per booking per barber vs. target, clicks, and landing page A/B results
+      parameters:
+        - name: days
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 365, default: 30 }
+      responses:
+        "200":
+          description: Report
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/PerformanceReport"
+  /admin/events/recent:
+    get:
+      operationId: adminListRecentEvents
+      tags: [admin]
+      parameters:
+        - name: limit
+          in: query
+          required: false
+          schema: { type: integer, minimum: 1, maximum: 200, default: 50 }
+      responses:
+        "200":
+          description: Recent tracked events
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/TrackedEvent"
+  /admin/users:
+    get:
+      operationId: adminListUsers
+      tags: [admin]
+      summary: Admin accounts (owner only)
+      responses:
+        "200":
+          description: Admin users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AdminUser"
+    post:
+      operationId: adminCreateUser
+      tags: [admin]
+      summary: Grant admin access to an email (owner only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AdminUserInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+  /admin/users/{id}:
+    delete:
+      operationId: adminDeleteUser
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "204":
+          description: Deleted
+
+  # ---------- Storage ----------
+  /storage/uploads/request-url:
+    post:
+      tags: [Storage]
+      operationId: requestUploadUrl
+      summary: Request a presigned URL for file upload (admins only)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UploadUrlRequest"
+      responses:
+        "200":
+          description: Presigned upload URL generated.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/UploadUrlResponse"
+        "400":
+          description: Missing or invalid required fields.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+        "500":
+          description: Failed to generate upload URL.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /storage/public-objects/{filePath}:
+    get:
+      tags: [Storage]
+      operationId: getPublicObject
+      parameters:
+        - name: filePath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Object content
+          content:
+            "*/*":
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: File not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+  /storage/objects/{objectPath}:
+    get:
+      tags: [Storage]
+      operationId: getStorageObject
+      parameters:
+        - name: objectPath
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Object content
+          content:
+            "*/*":
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Object not found.
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
 components:
+  parameters:
+    IdParam:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +629,429 @@ components:
           type: string
       required:
         - status
+    ErrorEnvelope:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+    OkResponse:
+      type: object
+      required: [ok]
+      properties:
+        ok: { type: boolean }
 
+    HoursEntry:
+      type: object
+      required: [day, open, close, closed]
+      properties:
+        day: { type: string, description: "Monday..Sunday" }
+        open: { type: ["string", "null"], description: "24h HH:MM" }
+        close: { type: ["string", "null"], description: "24h HH:MM" }
+        closed: { type: boolean }
+    SiteSettings:
+      type: object
+      required:
+        [shopName, foundedYear, phone, email, streetAddress, city, region, postalCode, hours,
+         offerPriceCents, comparisonPriceCents, comparisonSourceNote, announcementBanner,
+         booksyBusinessUrl, instagramUrl, googleMapsUrl, updatedAt]
+      properties:
+        shopName: { type: string }
+        foundedYear: { type: integer }
+        phone: { type: string, description: "E.164, e.g. +12128619179" }
+        email: { type: string }
+        streetAddress: { type: string }
+        city: { type: string }
+        region: { type: string }
+        postalCode: { type: string }
+        hours:
+          type: array
+          items: { $ref: "#/components/schemas/HoursEntry" }
+        offerPriceCents: { type: integer, description: "The headline haircut price used in hero and ads" }
+        comparisonPriceCents: { type: ["integer", "null"], description: "Typical Manhattan price used in comparison copy; null hides the comparison" }
+        comparisonSourceNote: { type: ["string", "null"], description: "Where the comparison number comes from (substantiation)" }
+        announcementBanner: { type: ["string", "null"] }
+        booksyBusinessUrl: { type: ["string", "null"] }
+        instagramUrl: { type: ["string", "null"] }
+        googleMapsUrl: { type: ["string", "null"] }
+        updatedAt: { type: string, format: date-time }
+    SiteSettingsInput:
+      type: object
+      properties:
+        shopName: { type: string, minLength: 1 }
+        foundedYear: { type: integer }
+        phone: { type: string, minLength: 7 }
+        email: { type: string }
+        streetAddress: { type: string }
+        city: { type: string }
+        region: { type: string }
+        postalCode: { type: string }
+        hours:
+          type: array
+          items: { $ref: "#/components/schemas/HoursEntry" }
+        offerPriceCents: { type: integer, minimum: 0 }
+        comparisonPriceCents: { type: ["integer", "null"], minimum: 0 }
+        comparisonSourceNote: { type: ["string", "null"] }
+        announcementBanner: { type: ["string", "null"] }
+        booksyBusinessUrl: { type: ["string", "null"] }
+        instagramUrl: { type: ["string", "null"] }
+        googleMapsUrl: { type: ["string", "null"] }
+
+    NotableClient:
+      type: object
+      required: [name, consent]
+      properties:
+        name: { type: string }
+        consent: { type: boolean, description: "Written consent on file. Only consented clients are returned publicly." }
+        note: { type: ["string", "null"] }
+    Barber:
+      type: object
+      required:
+        [id, slug, name, title, photoUrl, bio, yearsCutting, specialties, galleryImages,
+         instagramUrl, tiktokUrl, otherSocialUrl, booksyUrl, displayOrder, active, notableClients,
+         createdAt, updatedAt]
+      properties:
+        id: { type: integer }
+        slug: { type: string }
+        name: { type: string }
+        title: { type: string, description: "e.g. Master Barber" }
+        photoUrl: { type: ["string", "null"], description: "Absolute URL or /api/storage/... path" }
+        bio: { type: string }
+        yearsCutting: { type: ["integer", "null"] }
+        specialties: { type: array, items: { type: string } }
+        galleryImages: { type: array, items: { type: string } }
+        instagramUrl: { type: ["string", "null"] }
+        tiktokUrl: { type: ["string", "null"] }
+        otherSocialUrl: { type: ["string", "null"] }
+        booksyUrl: { type: ["string", "null"], description: "Barber-specific Booksy link; falls back to the business link when null" }
+        displayOrder: { type: integer }
+        active: { type: boolean }
+        notableClients: { type: array, items: { $ref: "#/components/schemas/NotableClient" } }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    BarberInput:
+      type: object
+      required: [name, bio]
+      properties:
+        slug: { type: string, description: "Generated from name when omitted" }
+        name: { type: string, minLength: 1 }
+        title: { type: string }
+        photoUrl: { type: ["string", "null"] }
+        bio: { type: string }
+        yearsCutting: { type: ["integer", "null"] }
+        specialties: { type: array, items: { type: string } }
+        galleryImages: { type: array, items: { type: string } }
+        instagramUrl: { type: ["string", "null"] }
+        tiktokUrl: { type: ["string", "null"] }
+        otherSocialUrl: { type: ["string", "null"] }
+        booksyUrl: { type: ["string", "null"] }
+        displayOrder: { type: integer }
+        active: { type: boolean }
+        notableClients: { type: array, items: { $ref: "#/components/schemas/NotableClient" } }
+    BarberUpdate:
+      type: object
+      properties:
+        slug: { type: string, minLength: 1 }
+        name: { type: string, minLength: 1 }
+        title: { type: string }
+        photoUrl: { type: ["string", "null"] }
+        bio: { type: string }
+        yearsCutting: { type: ["integer", "null"] }
+        specialties: { type: array, items: { type: string } }
+        galleryImages: { type: array, items: { type: string } }
+        instagramUrl: { type: ["string", "null"] }
+        tiktokUrl: { type: ["string", "null"] }
+        otherSocialUrl: { type: ["string", "null"] }
+        booksyUrl: { type: ["string", "null"] }
+        displayOrder: { type: integer }
+        active: { type: boolean }
+        notableClients: { type: array, items: { $ref: "#/components/schemas/NotableClient" } }
+
+    Service:
+      type: object
+      required: [id, name, description, priceCents, durationMinutes, category, displayOrder, active, updatedAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        description: { type: string }
+        priceCents: { type: integer }
+        durationMinutes: { type: ["integer", "null"] }
+        category: { type: string, description: "e.g. Haircuts, Shaves & Beards" }
+        displayOrder: { type: integer }
+        active: { type: boolean }
+        updatedAt: { type: string, format: date-time }
+    ServiceInput:
+      type: object
+      required: [name, priceCents, category]
+      properties:
+        name: { type: string, minLength: 1 }
+        description: { type: string }
+        priceCents: { type: integer, minimum: 0 }
+        durationMinutes: { type: ["integer", "null"] }
+        category: { type: string, minLength: 1 }
+        displayOrder: { type: integer }
+        active: { type: boolean }
+    ServiceUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        description: { type: string }
+        priceCents: { type: integer, minimum: 0 }
+        durationMinutes: { type: ["integer", "null"] }
+        category: { type: string, minLength: 1 }
+        displayOrder: { type: integer }
+        active: { type: boolean }
+
+    Testimonial:
+      type: object
+      required: [id, author, quote, barberName, source]
+      properties:
+        id: { type: integer }
+        author: { type: string }
+        quote: { type: string }
+        barberName: { type: ["string", "null"] }
+        source: { type: ["string", "null"], description: "e.g. Google, Yelp" }
+
+    LandingPage:
+      type: object
+      required:
+        [id, slug, kind, barberId, headline, subheadline, variantBHeadline, variantBSubheadline,
+         active, createdAt, updatedAt]
+      properties:
+        id: { type: integer }
+        slug: { type: string }
+        kind: { type: string, enum: [barber, offer] }
+        barberId: { type: ["integer", "null"] }
+        headline: { type: string, description: "Variant A headline" }
+        subheadline: { type: string, description: "Variant A supporting copy" }
+        variantBHeadline: { type: ["string", "null"], description: "When set, visitors are split 50/50 between A and B" }
+        variantBSubheadline: { type: ["string", "null"] }
+        active: { type: boolean }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    LandingPageDetail:
+      allOf:
+        - $ref: "#/components/schemas/LandingPage"
+        - type: object
+          required: [barber]
+          properties:
+            barber:
+              oneOf:
+                - $ref: "#/components/schemas/Barber"
+                - type: "null"
+    LandingPageInput:
+      type: object
+      required: [slug, kind, headline, subheadline]
+      properties:
+        slug: { type: string, minLength: 1 }
+        kind: { type: string, enum: [barber, offer] }
+        barberId: { type: ["integer", "null"] }
+        headline: { type: string, minLength: 1 }
+        subheadline: { type: string }
+        variantBHeadline: { type: ["string", "null"] }
+        variantBSubheadline: { type: ["string", "null"] }
+        active: { type: boolean }
+    LandingPageUpdate:
+      type: object
+      properties:
+        slug: { type: string, minLength: 1 }
+        kind: { type: string, enum: [barber, offer] }
+        barberId: { type: ["integer", "null"] }
+        headline: { type: string, minLength: 1 }
+        subheadline: { type: string }
+        variantBHeadline: { type: ["string", "null"] }
+        variantBSubheadline: { type: ["string", "null"] }
+        active: { type: boolean }
+
+    TrackEventInput:
+      type: object
+      required: [type, sessionId, path]
+      properties:
+        type: { type: string, enum: [call_click, book_click, landing_view] }
+        sessionId: { type: string, minLength: 1, maxLength: 100, description: "Anonymous first-party visitor id" }
+        path: { type: string, maxLength: 500 }
+        barberId: { type: ["integer", "null"] }
+        landingPageSlug: { type: ["string", "null"] }
+        variant: { type: ["string", "null"], enum: [A, B, null] }
+        utmSource: { type: ["string", "null"] }
+        utmMedium: { type: ["string", "null"] }
+        utmCampaign: { type: ["string", "null"] }
+        utmContent: { type: ["string", "null"] }
+        utmTerm: { type: ["string", "null"] }
+        gclid: { type: ["string", "null"] }
+        fbclid: { type: ["string", "null"] }
+    TrackedEvent:
+      type: object
+      required:
+        [id, type, sessionId, path, barberId, barberName, landingPageSlug, variant, utmSource,
+         utmCampaign, gclid, fbclid, createdAt]
+      properties:
+        id: { type: integer }
+        type: { type: string }
+        sessionId: { type: string }
+        path: { type: string }
+        barberId: { type: ["integer", "null"] }
+        barberName: { type: ["string", "null"] }
+        landingPageSlug: { type: ["string", "null"] }
+        variant: { type: ["string", "null"] }
+        utmSource: { type: ["string", "null"] }
+        utmCampaign: { type: ["string", "null"] }
+        gclid: { type: ["string", "null"] }
+        fbclid: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+
+    Booking:
+      type: object
+      required:
+        [id, barberId, barberName, bookedAt, valueCents, source, utmCampaign, gclid, fbclid,
+         isRepeatClient, notes, createdAt]
+      properties:
+        id: { type: integer }
+        barberId: { type: ["integer", "null"] }
+        barberName: { type: ["string", "null"] }
+        bookedAt: { type: string, format: date-time, description: "When the Booksy booking was made" }
+        valueCents: { type: integer }
+        source: { type: string, enum: [google_ads, meta_ads, organic, walk_in, other] }
+        utmCampaign: { type: ["string", "null"] }
+        gclid: { type: ["string", "null"] }
+        fbclid: { type: ["string", "null"] }
+        isRepeatClient: { type: boolean }
+        notes: { type: ["string", "null"] }
+        createdAt: { type: string, format: date-time }
+    BookingInput:
+      type: object
+      required: [bookedAt, source]
+      properties:
+        barberId: { type: ["integer", "null"] }
+        bookedAt: { type: string, format: date-time }
+        valueCents: { type: integer, minimum: 0 }
+        source: { type: string, enum: [google_ads, meta_ads, organic, walk_in, other] }
+        utmCampaign: { type: ["string", "null"] }
+        gclid: { type: ["string", "null"] }
+        fbclid: { type: ["string", "null"] }
+        isRepeatClient: { type: boolean }
+        notes: { type: ["string", "null"] }
+
+    Campaign:
+      type: object
+      required:
+        [id, name, platform, barberId, barberName, landingPageSlug, budgetCents, spendCents,
+         startDate, endDate, active, createdAt]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        platform: { type: string, enum: [google_ads, meta_ads] }
+        barberId: { type: ["integer", "null"] }
+        barberName: { type: ["string", "null"] }
+        landingPageSlug: { type: ["string", "null"] }
+        budgetCents: { type: integer }
+        spendCents: { type: integer, description: "Spend to date, entered from the ad platform" }
+        startDate: { type: ["string", "null"], format: date }
+        endDate: { type: ["string", "null"], format: date }
+        active: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    CampaignInput:
+      type: object
+      required: [name, platform]
+      properties:
+        name: { type: string, minLength: 1 }
+        platform: { type: string, enum: [google_ads, meta_ads] }
+        barberId: { type: ["integer", "null"] }
+        landingPageSlug: { type: ["string", "null"] }
+        budgetCents: { type: integer, minimum: 0 }
+        spendCents: { type: integer, minimum: 0 }
+        startDate: { type: ["string", "null"], format: date }
+        endDate: { type: ["string", "null"], format: date }
+        active: { type: boolean }
+    CampaignUpdate:
+      type: object
+      properties:
+        name: { type: string, minLength: 1 }
+        platform: { type: string, enum: [google_ads, meta_ads] }
+        barberId: { type: ["integer", "null"] }
+        landingPageSlug: { type: ["string", "null"] }
+        budgetCents: { type: integer, minimum: 0 }
+        spendCents: { type: integer, minimum: 0 }
+        startDate: { type: ["string", "null"], format: date }
+        endDate: { type: ["string", "null"], format: date }
+        active: { type: boolean }
+
+    BarberPerformance:
+      type: object
+      required:
+        [barberId, barberName, bookClicks, callClicks, landingViews, bookings, repeatBookings,
+         spendCents, costPerBookingCents, status]
+      properties:
+        barberId: { type: ["integer", "null"], description: "null = shop-wide / unattributed" }
+        barberName: { type: string }
+        bookClicks: { type: integer }
+        callClicks: { type: integer }
+        landingViews: { type: integer }
+        bookings: { type: integer }
+        repeatBookings: { type: integer }
+        spendCents: { type: integer }
+        costPerBookingCents: { type: ["integer", "null"] }
+        status: { type: string, enum: [on_target, over_target, no_bookings, no_spend] }
+    VariantPerformance:
+      type: object
+      required: [landingPageSlug, variant, views, bookClicks, callClicks, clickRate]
+      properties:
+        landingPageSlug: { type: string }
+        variant: { type: string }
+        views: { type: integer }
+        bookClicks: { type: integer }
+        callClicks: { type: integer }
+        clickRate: { type: number, description: "(bookClicks + callClicks) / views, 0 when no views" }
+    PerformanceReport:
+      type: object
+      required:
+        [days, targetCostPerBookingCents, totals, barbers, variants]
+      properties:
+        days: { type: integer }
+        targetCostPerBookingCents: { type: integer }
+        totals:
+          type: object
+          required: [bookClicks, callClicks, landingViews, bookings, spendCents, costPerBookingCents]
+          properties:
+            bookClicks: { type: integer }
+            callClicks: { type: integer }
+            landingViews: { type: integer }
+            bookings: { type: integer }
+            spendCents: { type: integer }
+            costPerBookingCents: { type: ["integer", "null"] }
+        barbers:
+          type: array
+          items: { $ref: "#/components/schemas/BarberPerformance" }
+        variants:
+          type: array
+          items: { $ref: "#/components/schemas/VariantPerformance" }
+
+    AdminUser:
+      type: object
+      required: [id, email, role, createdAt]
+      properties:
+        id: { type: integer }
+        email: { type: string }
+        role: { type: string, enum: [owner, editor] }
+        createdAt: { type: string, format: date-time }
+    AdminUserInput:
+      type: object
+      required: [email, role]
+      properties:
+        email: { type: string, format: email }
+        role: { type: string, enum: [owner, editor] }
+
+    UploadUrlRequest:
+      type: object
+      required: [name, size, contentType]
+      properties:
+        name: { type: string, minLength: 1 }
+        size: { type: integer, minimum: 1 }
+        contentType: { type: string, minLength: 1 }
+    UploadUrlResponse:
+      type: object
+      required: [uploadURL, objectPath]
+      properties:
+        uploadURL: { type: string, format: uri }
+        objectPath: { type: string }
+        metadata:
+          $ref: "#/components/schemas/UploadUrlRequest"

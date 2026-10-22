@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /sign-in
+Disallow: /sign-up
+Disallow: /l/
+
+Sitemap: https://davidsbarbershop84.com/sitemap.xml
