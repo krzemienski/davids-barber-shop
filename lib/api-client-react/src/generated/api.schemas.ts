@@ -58,8 +58,16 @@ export interface SiteSettings {
   comparisonSourceNote: string | null;
   /** @nullable */
   announcementBanner: string | null;
-  /** @nullable */
+  /**
+     * Booksy profile link; opened directly when the widget cannot be used
+     * @nullable
+     */
   booksyBusinessUrl: string | null;
+  /**
+     * Booksy business ID; when set, Book buttons open the Booksy widget inside the site
+     * @nullable
+     */
+  booksyBusinessId: number | null;
   /** @nullable */
   instagramUrl: string | null;
   /** @nullable */
@@ -92,6 +100,11 @@ export interface SiteSettingsInput {
   announcementBanner?: string | null;
   /** @nullable */
   booksyBusinessUrl?: string | null;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyBusinessId?: number | null;
   /** @nullable */
   instagramUrl?: string | null;
   /** @nullable */
@@ -133,6 +146,11 @@ export interface Barber {
      * @nullable
      */
   booksyUrl: string | null;
+  /**
+     * Booksy staffer ID; opens the widget on this barber
+     * @nullable
+     */
+  booksyStafferId: number | null;
   displayOrder: number;
   active: boolean;
   notableClients: NotableClient[];
@@ -161,6 +179,11 @@ export interface BarberInput {
   otherSocialUrl?: string | null;
   /** @nullable */
   booksyUrl?: string | null;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyStafferId?: number | null;
   displayOrder?: number;
   active?: boolean;
   notableClients?: NotableClient[];
@@ -187,6 +210,11 @@ export interface BarberUpdate {
   otherSocialUrl?: string | null;
   /** @nullable */
   booksyUrl?: string | null;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyStafferId?: number | null;
   displayOrder?: number;
   active?: boolean;
   notableClients?: NotableClient[];
@@ -201,6 +229,11 @@ export interface Service {
   durationMinutes: number | null;
   /** e.g. Haircuts, Shaves & Beards */
   category: string;
+  /**
+     * Booksy service variant ID; adds a Book link that opens the widget on this service
+     * @nullable
+     */
+  booksyVariantId: number | null;
   displayOrder: number;
   active: boolean;
   updatedAt: string;
@@ -216,6 +249,11 @@ export interface ServiceInput {
   durationMinutes?: number | null;
   /** @minLength 1 */
   category: string;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyVariantId?: number | null;
   displayOrder?: number;
   active?: boolean;
 }
@@ -230,6 +268,11 @@ export interface ServiceUpdate {
   durationMinutes?: number | null;
   /** @minLength 1 */
   category?: string;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyVariantId?: number | null;
   displayOrder?: number;
   active?: boolean;
 }
@@ -335,6 +378,7 @@ export type TrackEventInputType = typeof TrackEventInputType[keyof typeof TrackE
 export const TrackEventInputType = {
   call_click: 'call_click',
   book_click: 'book_click',
+  booking_completed: 'booking_completed',
   landing_view: 'landing_view',
 } as const;
 
@@ -570,6 +614,8 @@ export interface BarberPerformance {
   bookClicks: number;
   callClicks: number;
   landingViews: number;
+  /** Bookings the Booksy widget reported as made on this site (booking_completed events) */
+  siteBookings: number;
   bookings: number;
   repeatBookings: number;
   spendCents: number;
@@ -592,6 +638,7 @@ export type PerformanceReportTotals = {
   bookClicks: number;
   callClicks: number;
   landingViews: number;
+  siteBookings: number;
   bookings: number;
   spendCents: number;
   /** @nullable */

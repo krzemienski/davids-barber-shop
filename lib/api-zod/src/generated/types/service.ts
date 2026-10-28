@@ -15,6 +15,11 @@ export interface Service {
   durationMinutes: number | null;
   /** e.g. Haircuts, Shaves & Beards */
   category: string;
+  /**
+     * Booksy service variant ID; adds a Book link that opens the widget on this service
+     * @nullable
+     */
+  booksyVariantId: number | null;
   displayOrder: number;
   active: boolean;
   updatedAt: Date;

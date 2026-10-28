@@ -24,6 +24,7 @@ export const siteSettingsTable = pgTable("site_settings", {
   comparisonSourceNote: text("comparison_source_note"),
   announcementBanner: text("announcement_banner"),
   booksyBusinessUrl: text("booksy_business_url"),
+  booksyBusinessId: integer("booksy_business_id"),
   instagramUrl: text("instagram_url"),
   googleMapsUrl: text("google_maps_url"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

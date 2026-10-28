@@ -32,8 +32,16 @@ export interface SiteSettings {
   comparisonSourceNote: string | null;
   /** @nullable */
   announcementBanner: string | null;
-  /** @nullable */
+  /**
+     * Booksy profile link; opened directly when the widget cannot be used
+     * @nullable
+     */
   booksyBusinessUrl: string | null;
+  /**
+     * Booksy business ID; when set, Book buttons open the Booksy widget inside the site
+     * @nullable
+     */
+  booksyBusinessId: number | null;
   /** @nullable */
   instagramUrl: string | null;
   /** @nullable */

@@ -65,7 +65,7 @@ export default function AdminBarbersPage() {
                         <span className="text-xs text-muted-foreground">{b.title}</span>
                         {!b.active && <Pill>Hidden</Pill>}
                         {!b.photoUrl && <Pill tone="gold">No photo</Pill>}
-                        {!b.booksyUrl && <Pill>Shop Booksy link</Pill>}
+                        {b.booksyStafferId == null && !b.booksyUrl && <Pill>No Booksy staff ID</Pill>}
                         {hidden > 0 && <Pill tone="red">{hidden} unconsented client{hidden > 1 ? 's' : ''} hidden</Pill>}
                       </div>
                       <div className="mt-0.5 font-mono text-[11px] text-muted-foreground truncate">/barbers/{b.slug} · order {b.displayOrder}</div>
@@ -88,7 +88,7 @@ export default function AdminBarbersPage() {
 
 type Form = {
   name: string; slug: string; title: string; photoUrl: string | null; bio: string; yearsCutting: string; specialties: string;
-  galleryImages: string[]; instagramUrl: string; tiktokUrl: string; otherSocialUrl: string; booksyUrl: string; displayOrder: string; active: boolean; notableClients: NotableClient[];
+  galleryImages: string[]; instagramUrl: string; tiktokUrl: string; otherSocialUrl: string; booksyUrl: string; booksyStafferId: string; displayOrder: string; active: boolean; notableClients: NotableClient[];
 };
 
 function BarberForm({ barber, nextOrder, onClose, onSaved }: { barber: Barber | null; nextOrder: number; onClose: () => void; onSaved: () => void }) {
@@ -101,7 +101,7 @@ function BarberForm({ barber, nextOrder, onClose, onSaved }: { barber: Barber | 
     name: barber?.name ?? '', slug: barber?.slug ?? '', title: barber?.title ?? 'Barber', photoUrl: barber?.photoUrl ?? null, bio: barber?.bio ?? '',
     yearsCutting: barber?.yearsCutting != null ? String(barber.yearsCutting) : '', specialties: barber?.specialties.join(', ') ?? '',
     galleryImages: barber?.galleryImages ?? [], instagramUrl: barber?.instagramUrl ?? '', tiktokUrl: barber?.tiktokUrl ?? '', otherSocialUrl: barber?.otherSocialUrl ?? '',
-    booksyUrl: barber?.booksyUrl ?? '', displayOrder: String(barber?.displayOrder ?? nextOrder), active: barber?.active ?? true, notableClients: barber?.notableClients ?? [],
+    booksyUrl: barber?.booksyUrl ?? '', booksyStafferId: barber?.booksyStafferId != null ? String(barber.booksyStafferId) : '', displayOrder: String(barber?.displayOrder ?? nextOrder), active: barber?.active ?? true, notableClients: barber?.notableClients ?? [],
   }));
   const set = <K extends keyof Form>(k: K, v: Form[K]) => setF((p) => ({ ...p, [k]: v }));
 
@@ -136,6 +136,7 @@ function BarberForm({ barber, nextOrder, onClose, onSaved }: { barber: Barber | 
       yearsCutting: f.yearsCutting.trim() ? Number(f.yearsCutting) : null,
       specialties: f.specialties.split(',').map((s) => s.trim()).filter(Boolean),
       galleryImages: f.galleryImages, instagramUrl: nz(f.instagramUrl), tiktokUrl: nz(f.tiktokUrl), otherSocialUrl: nz(f.otherSocialUrl), booksyUrl: nz(f.booksyUrl),
+      booksyStafferId: f.booksyStafferId.trim() ? Number(f.booksyStafferId) : null,
       displayOrder: Number(f.displayOrder) || 0, active: f.active,
       notableClients: f.notableClients.filter((c) => c.name.trim()).map((c) => ({ ...c, name: c.name.trim(), note: c.note?.trim() || null })),
       ...(f.slug.trim() ? { slug: f.slug.trim() } : {}),
@@ -167,7 +168,8 @@ function BarberForm({ barber, nextOrder, onClose, onSaved }: { barber: Barber | 
         </div>
         <Field label="Bio"><textarea required rows={4} className="field" value={f.bio} onChange={(e) => set('bio', e.target.value)} data-testid="input-bio" /></Field>
         <div className="grid gap-4 sm:grid-cols-2">
-          <Field label="Booksy link" hint="Blank = shop-wide Booksy link"><input type="url" className="field" value={f.booksyUrl} onChange={(e) => set('booksyUrl', e.target.value)} data-testid="input-booksy" /></Field>
+          <Field label="Booksy staff ID" hint="Opens Booksy booking on this barber. Blank = visitor picks the barber in Booksy"><input inputMode="numeric" pattern="[0-9]*" className="field font-mono" value={f.booksyStafferId} onChange={(e) => set('booksyStafferId', e.target.value.replace(/\D/g, ''))} data-testid="input-booksy-staffer" /></Field>
+          <Field label="Booksy link" hint="Only used when there is no staff ID. Blank = shop-wide Booksy"><input type="url" className="field" value={f.booksyUrl} onChange={(e) => set('booksyUrl', e.target.value)} data-testid="input-booksy" /></Field>
           <Field label="Instagram"><input type="url" className="field" value={f.instagramUrl} onChange={(e) => set('instagramUrl', e.target.value)} data-testid="input-instagram" /></Field>
           <Field label="TikTok"><input type="url" className="field" value={f.tiktokUrl} onChange={(e) => set('tiktokUrl', e.target.value)} data-testid="input-tiktok" /></Field>
           <Field label="Other social"><input type="url" className="field" value={f.otherSocialUrl} onChange={(e) => set('otherSocialUrl', e.target.value)} data-testid="input-other-social" /></Field>

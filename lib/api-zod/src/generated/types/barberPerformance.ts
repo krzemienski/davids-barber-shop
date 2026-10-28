@@ -17,6 +17,8 @@ export interface BarberPerformance {
   bookClicks: number;
   callClicks: number;
   landingViews: number;
+  /** Bookings the Booksy widget reported as made on this site (booking_completed events) */
+  siteBookings: number;
   bookings: number;
   repeatBookings: number;
   spendCents: number;

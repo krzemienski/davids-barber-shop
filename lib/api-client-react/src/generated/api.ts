@@ -615,7 +615,7 @@ export const getTrackEventUrl = () => {
 }
 
 /**
- * @summary Record a first-party conversion event (call_click, book_click, landing_view)
+ * @summary Record a first-party conversion event (call_click, book_click, booking_completed, landing_view)
  */
 export const trackEvent = async (trackEventInput: TrackEventInput, options?: Parameters<typeof customFetch>[1]): Promise<OkResponse> => {
 
@@ -681,7 +681,7 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
     export type TrackEventMutationVariables = {data: BodyType<TrackEventInput>}
 
     /**
- * @summary Record a first-party conversion event (call_click, book_click, landing_view)
+ * @summary Record a first-party conversion event (call_click, book_click, booking_completed, landing_view)
  */
 export const useTrackEvent = <TError = ErrorType<unknown>,
     TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof trackEvent>>, TError,TrackEventMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}

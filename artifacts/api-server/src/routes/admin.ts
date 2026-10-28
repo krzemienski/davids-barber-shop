@@ -292,6 +292,7 @@ type Bucket = {
   bookClicks: number;
   callClicks: number;
   landingViews: number;
+  siteBookings: number;
   bookings: number;
   repeatBookings: number;
   spendCents: number;
@@ -300,6 +301,7 @@ const emptyBucket = (): Bucket => ({
   bookClicks: 0,
   callClicks: 0,
   landingViews: 0,
+  siteBookings: 0,
   bookings: 0,
   repeatBookings: 0,
   spendCents: 0,
@@ -371,6 +373,7 @@ router.get("/admin/reports/performance", async (req, res) => {
     const b = bucket(e.barberId);
     if (e.type === "book_click") b.bookClicks += e.n;
     else if (e.type === "call_click") b.callClicks += e.n;
+    else if (e.type === "booking_completed") b.siteBookings += e.n;
     else b.landingViews += e.n;
   }
   for (const r of bookingCounts) {
@@ -395,6 +398,7 @@ router.get("/admin/reports/performance", async (req, res) => {
     acc.bookClicks += r.bookClicks;
     acc.callClicks += r.callClicks;
     acc.landingViews += r.landingViews;
+    acc.siteBookings += r.siteBookings;
     acc.bookings += r.bookings;
     acc.repeatBookings += r.repeatBookings;
     acc.spendCents += r.spendCents;
@@ -408,7 +412,7 @@ router.get("/admin/reports/performance", async (req, res) => {
     const entry = variantMap.get(key) ?? { landingPageSlug: v.slug, variant: v.variant, views: 0, bookClicks: 0, callClicks: 0 };
     if (v.type === "landing_view") entry.views += v.n;
     else if (v.type === "book_click") entry.bookClicks += v.n;
-    else entry.callClicks += v.n;
+    else if (v.type === "call_click") entry.callClicks += v.n;
     variantMap.set(key, entry);
   }
   const variants = [...variantMap.values()]
@@ -422,6 +426,7 @@ router.get("/admin/reports/performance", async (req, res) => {
       bookClicks: totals.bookClicks,
       callClicks: totals.callClicks,
       landingViews: totals.landingViews,
+      siteBookings: totals.siteBookings,
       bookings: totals.bookings,
       spendCents: totals.spendCents,
       costPerBookingCents: totals.bookings > 0 ? Math.round(totals.spendCents / totals.bookings) : null,

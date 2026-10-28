@@ -28,6 +28,7 @@ Website for David's Barber Shop (233 E 84th St, Upper East Side, since 1972) bui
 ## Architecture decisions
 
 - Booksy is the booking system; bookings are logged manually in admin (`booking_confirmed`) because Booksy offers no webhook or click-ID pass-through.
+- Book buttons open Booksy's widget in an on-site panel when Settings has a Booksy business ID (staff/service IDs optional per barber/service); `booking_completed` comes from the widget's close message and is a lower bound. Details: `docs/research/booksy-integration.md` §5.
 - Admin access = Clerk sign-in + DB allowlist with owner/editor roles.
 - Money in cents. Unconsented notable clients are filtered out in the public API.
 - See `docs/DECISIONS.md` for the full list and reasons.

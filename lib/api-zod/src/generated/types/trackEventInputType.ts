@@ -12,5 +12,6 @@ export type TrackEventInputType = typeof TrackEventInputType[keyof typeof TrackE
 export const TrackEventInputType = {
   call_click: 'call_click',
   book_click: 'book_click',
+  booking_completed: 'booking_completed',
   landing_view: 'landing_view',
 } as const;

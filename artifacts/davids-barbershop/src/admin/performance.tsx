@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useAdminGetPerformance, getAdminGetPerformanceQueryKey, useAdminListRecentEvents, getAdminListRecentEventsQueryKey } from '@workspace/api-client-react';
 import type { BarberPerformance } from '@workspace/api-client-react';
-import { Phone, CalendarCheck, Eye, RotateCw } from 'lucide-react';
+import { Phone, CalendarCheck, CircleCheck, Eye, RotateCw } from 'lucide-react';
 import { PageTitle, Panel, Pill, TableWrap, th, td, AdminEmpty, Btn } from './shell';
 import { SkeletonBlock } from '@/components/site';
 import { money } from '@/lib/format';
@@ -54,11 +54,12 @@ export default function PerformancePage() {
         <Panel><AdminEmpty title="Could not load performance" action={<Btn variant="outline" onClick={() => perf.refetch()}><RotateCw className="h-3.5 w-3.5" /> Retry</Btn>} /></Panel>
       ) : (
         <div className="space-y-6">
-          <div className="grid gap-px bg-card-border border border-card-border grid-cols-2 lg:grid-cols-6">
+          <div className="grid gap-px bg-card-border border border-card-border grid-cols-2 lg:grid-cols-7">
             {[
               ['Cost / booking', r.totals.costPerBookingCents != null ? money(r.totals.costPerBookingCents, { cents: true }) : '—', r.totals.costPerBookingCents != null ? (r.totals.costPerBookingCents <= target ? 'text-[hsl(140_35%_65%)]' : 'text-[hsl(354_70%_68%)]') : ''],
               ['Spend', money(r.totals.spendCents, { cents: true }), ''],
               ['Bookings', String(r.totals.bookings), 'text-gold'],
+              ['Booked on site', String(r.totals.siteBookings), ''],
               ['Book clicks', String(r.totals.bookClicks), ''],
               ['Call clicks', String(r.totals.callClicks), ''],
               ['Landing views', String(r.totals.landingViews), ''],
@@ -73,7 +74,7 @@ export default function PerformancePage() {
           <Panel title="By barber">
             {r.barbers.length === 0 ? <AdminEmpty title="No activity in this window" /> : (
               <TableWrap>
-                <thead><tr><th className={th}>Barber</th><th className={th}>Cost / booking</th><th className={cn(th, 'text-right')}>Spend</th><th className={cn(th, 'text-right')}>Bookings</th><th className={cn(th, 'text-right')}>Repeat</th><th className={cn(th, 'text-right')}>Book</th><th className={cn(th, 'text-right')}>Call</th><th className={cn(th, 'text-right')}>Views</th><th className={th}>Status</th></tr></thead>
+                <thead><tr><th className={th}>Barber</th><th className={th}>Cost / booking</th><th className={cn(th, 'text-right')}>Spend</th><th className={cn(th, 'text-right')}>Bookings</th><th className={cn(th, 'text-right')}>Repeat</th><th className={cn(th, 'text-right')} title="Bookings the Booksy widget reported on this site">On site</th><th className={cn(th, 'text-right')}>Book</th><th className={cn(th, 'text-right')}>Call</th><th className={cn(th, 'text-right')}>Views</th><th className={th}>Status</th></tr></thead>
                 <tbody>
                   {r.barbers.map((b) => {
                     const pct = b.costPerBookingCents != null ? Math.min(100, (b.costPerBookingCents / maxCpb) * 100) : 0;
@@ -93,6 +94,7 @@ export default function PerformancePage() {
                         <td className={cn(td, 'text-right font-mono')}>{money(b.spendCents)}</td>
                         <td className={cn(td, 'text-right font-mono text-gold')}>{b.bookings}</td>
                         <td className={cn(td, 'text-right font-mono')}>{b.repeatBookings}</td>
+                        <td className={cn(td, 'text-right font-mono')}>{b.siteBookings}</td>
                         <td className={cn(td, 'text-right font-mono')}>{b.bookClicks}</td>
                         <td className={cn(td, 'text-right font-mono')}>{b.callClicks}</td>
                         <td className={cn(td, 'text-right font-mono')}>{b.landingViews}</td>
@@ -135,7 +137,7 @@ export default function PerformancePage() {
                 : (
                   <ul className="max-h-[440px] overflow-y-auto divide-y divide-card-border">
                     {events.data.map((e) => {
-                      const Icon = e.type === 'call_click' ? Phone : e.type === 'book_click' ? CalendarCheck : Eye;
+                      const Icon = e.type === 'call_click' ? Phone : e.type === 'book_click' ? CalendarCheck : e.type === 'booking_completed' ? CircleCheck : Eye;
                       return (
                         <li key={e.id} className="flex items-start gap-3 px-5 py-2.5 text-[13px]" data-testid={`row-event-${e.id}`}>
                           <Icon className={cn('mt-0.5 h-3.5 w-3.5 shrink-0', e.type === 'landing_view' ? 'text-muted-foreground' : 'text-gold')} />

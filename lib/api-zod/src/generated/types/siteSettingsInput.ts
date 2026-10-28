@@ -32,6 +32,11 @@ export interface SiteSettingsInput {
   announcementBanner?: string | null;
   /** @nullable */
   booksyBusinessUrl?: string | null;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyBusinessId?: number | null;
   /** @nullable */
   instagramUrl?: string | null;
   /** @nullable */

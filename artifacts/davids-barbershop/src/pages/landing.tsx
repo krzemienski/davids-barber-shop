@@ -100,7 +100,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
         {!barber && topServices.length > 0 && (
           <section className="mx-auto max-w-3xl px-5 py-16">
             <Eyebrow>Posted prices</Eyebrow>
-            <ul className="mt-4 divide-y divide-border/60">{topServices.map((x) => <ServiceRow key={x.id} s={x} />)}</ul>
+            <ul className="mt-4 divide-y divide-border/60">{topServices.map((x) => <ServiceRow key={x.id} s={x} barber={barber} />)}</ul>
           </section>
         )}
         {testimonials.isLoading ? <div className="mx-auto max-w-5xl px-5 pb-16"><SkeletonBlock className="h-40" /></div> : reviews.length > 0 && (

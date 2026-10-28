@@ -5,7 +5,7 @@ export const eventsTable = pgTable(
   "events",
   {
     id: serial("id").primaryKey(),
-    type: text("type", { enum: ["call_click", "book_click", "landing_view"] }).notNull(),
+    type: text("type", { enum: ["call_click", "book_click", "booking_completed", "landing_view"] }).notNull(),
     sessionId: text("session_id").notNull(),
     path: text("path").notNull(),
     barberId: integer("barber_id").references(() => barbersTable.id, { onDelete: "set null" }),

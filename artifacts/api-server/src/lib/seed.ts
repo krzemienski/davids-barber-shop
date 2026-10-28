@@ -69,6 +69,7 @@ export async function seedDatabase(): Promise<void> {
       comparisonSourceNote: null,
       announcementBanner: null,
       booksyBusinessUrl: "https://booksy.com/en-us/1663005_davids-barbershop_barber-shop_30067_new-york-city",
+      booksyBusinessId: 1663005,
       instagramUrl: null,
       googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=233+E+84th+St,+New+York,+NY+10028",
     });

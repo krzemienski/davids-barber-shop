@@ -16,6 +16,7 @@ export const barbersTable = pgTable("barbers", {
   tiktokUrl: text("tiktok_url"),
   otherSocialUrl: text("other_social_url"),
   booksyUrl: text("booksy_url"),
+  booksyStafferId: integer("booksy_staffer_id"),
   displayOrder: integer("display_order").notNull().default(0),
   active: boolean("active").notNull().default(true),
   notableClients: jsonb("notable_clients").$type<NotableClient[]>().notNull().default([]),

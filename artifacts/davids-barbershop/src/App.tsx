@@ -14,6 +14,7 @@ import { AdminGate } from '@/admin/shell';
 import PerformancePage from '@/admin/performance';
 import AdminBarbersPage from '@/admin/barbers';
 import { AdminServicesPage, AdminLandingPagesPage, AdminBookingsPage, AdminCampaignsPage, AdminSettingsPage, AdminUsersPage } from '@/admin/crud';
+import { BookingProvider } from '@/components/booking-sheet';
 import { captureAttribution } from '@/lib/tracking';
 import { usePageMeta } from '@/lib/meta';
 
@@ -223,7 +224,9 @@ function ClerkProviderWithRoutes() {
       <QueryClientProvider client={queryClient}>
         <ClerkQueryClientCacheInvalidator />
         <TooltipProvider>
-          <Router />
+          <BookingProvider>
+            <Router />
+          </BookingProvider>
           <Toaster />
         </TooltipProvider>
       </QueryClientProvider>

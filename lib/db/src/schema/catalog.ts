@@ -8,6 +8,7 @@ export const servicesTable = pgTable("services", {
   priceCents: integer("price_cents").notNull(),
   durationMinutes: integer("duration_minutes"),
   category: text("category").notNull(),
+  booksyVariantId: integer("booksy_variant_id"),
   displayOrder: integer("display_order").notNull().default(0),
   active: boolean("active").notNull().default(true),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),

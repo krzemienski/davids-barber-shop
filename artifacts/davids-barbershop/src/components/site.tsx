@@ -4,6 +4,7 @@ import { Phone, CalendarCheck, Menu, X, Instagram, MapPin, Clock, ArrowUpRight, 
 import { useGetSiteSettings } from '@workspace/api-client-react';
 import type { Barber, SiteSettings, Service, Testimonial } from '@workspace/api-client-react';
 import { getAttribution, useTracker } from '@/lib/tracking';
+import { booksyProfileUrl, canUseWidget, useBooking } from '@/lib/booking';
 import { assetUrl, basePath, formatPhone, fullAddress, hoursLabel, initials, money, telHref, todayName } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -73,15 +74,20 @@ export function bookUrlFor(barber: Pick<Barber, 'booksyUrl'> | null | undefined,
   }
 }
 
-/** Booksy has no verified way to preselect a barber, so say so when a barber button opens the shop page. */
+/** When Booksy can't open on this barber (no staff ID), tell the visitor to pick them. */
 export function BooksyBarberNote({ settings, barber, className }: { settings: SiteSettings | undefined; barber: Barber | null | undefined; className?: string }) {
-  if (!barber || barber.booksyUrl || !settings?.booksyBusinessUrl) return null;
-  return (
-    <p data-testid="text-booksy-barber-note" className={cn('text-xs text-bone/55', className)}>
-      Opens the shop&rsquo;s Booksy page. Choose {barber.name.split(' ')[0]} when you pick your time.
-    </p>
-  );
+  if (!barber || !settings || barber.booksyStafferId != null) return null;
+  const first = barber.name.split(' ')[0];
+  const text = canUseWidget(barber, settings)
+    ? <>Booking opens Booksy on this page. Choose {first} when you pick your time.</>
+    : !barber.booksyUrl && settings.booksyBusinessUrl
+      ? <>Opens the shop&rsquo;s Booksy page. Choose {first} when you pick your time.</>
+      : null;
+  if (!text) return null;
+  return <p data-testid="text-booksy-barber-note" className={cn('text-xs text-bone/55', className)}>{text}</p>;
 }
+
+const plainClick = (e: MouseEvent) => e.button === 0 && !e.metaKey && !e.ctrlKey && !e.shiftKey && !e.altKey;
 
 type BtnVariant = 'gold' | 'outline' | 'ghost' | 'bare';
 const btnBase = 'group inline-flex shrink-0 whitespace-nowrap items-center justify-center gap-2 font-semibold tracking-wide transition-[transform,background-color,color,border-color] duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background';
@@ -114,9 +120,12 @@ export function BookButton({ settings, barber, className, label, variant = 'gold
   settings: SiteSettings | undefined; barber?: Barber | null; className?: string; label?: string; variant?: BtnVariant; size?: keyof typeof btnSizes; testId?: string;
 }) {
   const track = useTracker();
+  const booking = useBooking();
   if (!settings) return <span className={cn(btnBase, btnSizes[size], 'bg-gold/30 text-ink/60 animate-pulse', className)}>Book</span>;
-  const url = bookUrlFor(barber, settings);
+  const inSite = !!booking && canUseWidget(barber, settings);
+  const url = bookUrlFor(barber, settings) ?? (settings.booksyBusinessId != null ? booksyProfileUrl(settings.booksyBusinessId) : null);
   const text = label ?? (barber ? `Book with ${barber.name.split(' ')[0]}` : 'Book now');
+  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null };
   if (!url) {
     return (
       <CallLink settings={settings} variant={variant} size={size} className={className} testId={testId} barber={barber}>
@@ -130,12 +139,18 @@ export function BookButton({ settings, barber, className, label, variant = 'gold
       target="_blank"
       rel="noopener noreferrer"
       data-testid={testId}
-      onClick={() => track('book_click', { barberId: barber?.id ?? null, barberName: barber?.name ?? null })}
+      onClick={(e) => {
+        track('book_click', who);
+        if (inSite && booking && plainClick(e.nativeEvent)) {
+          e.preventDefault();
+          booking.open({ barber, onCompleted: () => track('booking_completed', who) });
+        }
+      }}
       className={cn(btnBase, btnSizes[size], btnVariants[variant], className)}
     >
       <CalendarCheck className="h-4 w-4" />
       {text}
-      <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />
+      {!inSite && <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />}
     </a>
   );
 }
@@ -398,7 +413,12 @@ export function groupServices(services: Service[]): [string, Service[]][] {
   return [...map.entries()];
 }
 
-export function ServiceRow({ s }: { s: Service }) {
+export function ServiceRow({ s, barber }: { s: Service; barber?: Barber | null }) {
+  const booking = useBooking();
+  const { data: settings } = useSettings();
+  const track = useTracker();
+  const bookable = !!booking && s.booksyVariantId != null && canUseWidget(barber, settings);
+  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null };
   return (
     <li className="group py-5" data-testid={`row-service-${s.id}`}>
       <div className="flex items-baseline gap-3">
@@ -409,6 +429,20 @@ export function ServiceRow({ s }: { s: Service }) {
       <div className="mt-1 flex gap-4 text-sm text-muted-foreground">
         {s.description && <p className="flex-1">{s.description}</p>}
         {s.durationMinutes != null && <span className="font-mono text-xs shrink-0 pt-0.5">{s.durationMinutes} min</span>}
+        {bookable && booking && (
+          <button
+            type="button"
+            data-testid={`button-book-service-${s.id}`}
+            aria-label={`Book ${s.name}`}
+            onClick={() => {
+              track('book_click', who);
+              booking.open({ service: s, barber, onCompleted: () => track('booking_completed', who) });
+            }}
+            className="shrink-0 -my-1 px-1 py-1 text-[11px] font-semibold uppercase tracking-[0.22em] text-gold underline-offset-4 transition-colors hover:text-bone hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold"
+          >
+            Book
+          </button>
+        )}
       </div>
     </li>
   );

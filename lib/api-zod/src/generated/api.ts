@@ -38,7 +38,8 @@ export const GetSiteSettingsResponse = zod.object({
   "comparisonPriceCents": zod.number().int().nullable().describe('Typical Manhattan price used in comparison copy; null hides the comparison'),
   "comparisonSourceNote": zod.string().nullable().describe('Where the comparison number comes from (substantiation)'),
   "announcementBanner": zod.string().nullable(),
-  "booksyBusinessUrl": zod.string().nullable(),
+  "booksyBusinessUrl": zod.string().nullable().describe('Booksy profile link; opened directly when the widget cannot be used'),
+  "booksyBusinessId": zod.number().int().nullable().describe('Booksy business ID; when set, Book buttons open the Booksy widget inside the site'),
   "instagramUrl": zod.string().nullable(),
   "googleMapsUrl": zod.string().nullable(),
   "updatedAt": zod.coerce.date()
@@ -62,6 +63,7 @@ export const ListBarbersResponseItem = zod.object({
   "tiktokUrl": zod.string().nullable(),
   "otherSocialUrl": zod.string().nullable(),
   "booksyUrl": zod.string().nullable().describe('Barber-specific Booksy link; falls back to the business link when null'),
+  "booksyStafferId": zod.number().int().nullable().describe('Booksy staffer ID; opens the widget on this barber'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "notableClients": zod.array(zod.object({
@@ -93,6 +95,7 @@ export const GetBarberResponse = zod.object({
   "tiktokUrl": zod.string().nullable(),
   "otherSocialUrl": zod.string().nullable(),
   "booksyUrl": zod.string().nullable().describe('Barber-specific Booksy link; falls back to the business link when null'),
+  "booksyStafferId": zod.number().int().nullable().describe('Booksy staffer ID; opens the widget on this barber'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "notableClients": zod.array(zod.object({
@@ -115,6 +118,7 @@ export const ListServicesResponseItem = zod.object({
   "priceCents": zod.number().int(),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
+  "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "updatedAt": zod.coerce.date()
@@ -166,6 +170,7 @@ export const GetLandingPageResponse = zod.object({
   "tiktokUrl": zod.string().nullable(),
   "otherSocialUrl": zod.string().nullable(),
   "booksyUrl": zod.string().nullable().describe('Barber-specific Booksy link; falls back to the business link when null'),
+  "booksyStafferId": zod.number().int().nullable().describe('Booksy staffer ID; opens the widget on this barber'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "notableClients": zod.array(zod.object({
@@ -180,7 +185,7 @@ export const GetLandingPageResponse = zod.object({
 
 
 /**
- * @summary Record a first-party conversion event (call_click, book_click, landing_view)
+ * @summary Record a first-party conversion event (call_click, book_click, booking_completed, landing_view)
  */
 export const trackEventBodySessionIdMax = 100;
 
@@ -189,7 +194,7 @@ export const trackEventBodyPathMax = 500;
 
 
 export const TrackEventBody = zod.object({
-  "type": zod.enum(['call_click', 'book_click', 'landing_view']),
+  "type": zod.enum(['call_click', 'book_click', 'booking_completed', 'landing_view']),
   "sessionId": zod.string().min(1).max(trackEventBodySessionIdMax).describe('Anonymous first-party visitor id'),
   "path": zod.string().max(trackEventBodyPathMax),
   "barberId": zod.number().int().nullish(),
@@ -229,6 +234,7 @@ export const updateSiteSettingsBodyComparisonPriceCentsMin = 0;
 
 
 
+
 export const UpdateSiteSettingsBody = zod.object({
   "shopName": zod.string().min(1).optional(),
   "foundedYear": zod.number().int().optional(),
@@ -249,6 +255,7 @@ export const UpdateSiteSettingsBody = zod.object({
   "comparisonSourceNote": zod.string().nullish(),
   "announcementBanner": zod.string().nullish(),
   "booksyBusinessUrl": zod.string().nullish(),
+  "booksyBusinessId": zod.number().int().min(1).nullish(),
   "instagramUrl": zod.string().nullish(),
   "googleMapsUrl": zod.string().nullish()
 })
@@ -272,7 +279,8 @@ export const UpdateSiteSettingsResponse = zod.object({
   "comparisonPriceCents": zod.number().int().nullable().describe('Typical Manhattan price used in comparison copy; null hides the comparison'),
   "comparisonSourceNote": zod.string().nullable().describe('Where the comparison number comes from (substantiation)'),
   "announcementBanner": zod.string().nullable(),
-  "booksyBusinessUrl": zod.string().nullable(),
+  "booksyBusinessUrl": zod.string().nullable().describe('Booksy profile link; opened directly when the widget cannot be used'),
+  "booksyBusinessId": zod.number().int().nullable().describe('Booksy business ID; when set, Book buttons open the Booksy widget inside the site'),
   "instagramUrl": zod.string().nullable(),
   "googleMapsUrl": zod.string().nullable(),
   "updatedAt": zod.coerce.date()
@@ -296,6 +304,7 @@ export const AdminListBarbersResponseItem = zod.object({
   "tiktokUrl": zod.string().nullable(),
   "otherSocialUrl": zod.string().nullable(),
   "booksyUrl": zod.string().nullable().describe('Barber-specific Booksy link; falls back to the business link when null'),
+  "booksyStafferId": zod.number().int().nullable().describe('Booksy staffer ID; opens the widget on this barber'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "notableClients": zod.array(zod.object({
@@ -307,6 +316,7 @@ export const AdminListBarbersResponseItem = zod.object({
   "updatedAt": zod.coerce.date()
 })
 export const AdminListBarbersResponse = zod.array(AdminListBarbersResponseItem)
+
 
 
 
@@ -325,6 +335,7 @@ export const AdminCreateBarberBody = zod.object({
   "tiktokUrl": zod.string().nullish(),
   "otherSocialUrl": zod.string().nullish(),
   "booksyUrl": zod.string().nullish(),
+  "booksyStafferId": zod.number().int().min(1).nullish(),
   "displayOrder": zod.number().int().optional(),
   "active": zod.boolean().optional(),
   "notableClients": zod.array(zod.object({
@@ -348,6 +359,7 @@ export const AdminCreateBarberResponse = zod.object({
   "tiktokUrl": zod.string().nullable(),
   "otherSocialUrl": zod.string().nullable(),
   "booksyUrl": zod.string().nullable().describe('Barber-specific Booksy link; falls back to the business link when null'),
+  "booksyStafferId": zod.number().int().nullable().describe('Booksy staffer ID; opens the widget on this barber'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "notableClients": zod.array(zod.object({
@@ -368,6 +380,7 @@ export const AdminUpdateBarberParams = zod.object({
 
 
 
+
 export const AdminUpdateBarberBody = zod.object({
   "slug": zod.string().min(1).optional(),
   "name": zod.string().min(1).optional(),
@@ -381,6 +394,7 @@ export const AdminUpdateBarberBody = zod.object({
   "tiktokUrl": zod.string().nullish(),
   "otherSocialUrl": zod.string().nullish(),
   "booksyUrl": zod.string().nullish(),
+  "booksyStafferId": zod.number().int().min(1).nullish(),
   "displayOrder": zod.number().int().optional(),
   "active": zod.boolean().optional(),
   "notableClients": zod.array(zod.object({
@@ -404,6 +418,7 @@ export const AdminUpdateBarberResponse = zod.object({
   "tiktokUrl": zod.string().nullable(),
   "otherSocialUrl": zod.string().nullable(),
   "booksyUrl": zod.string().nullable().describe('Barber-specific Booksy link; falls back to the business link when null'),
+  "booksyStafferId": zod.number().int().nullable().describe('Booksy staffer ID; opens the widget on this barber'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "notableClients": zod.array(zod.object({
@@ -430,6 +445,7 @@ export const AdminListServicesResponseItem = zod.object({
   "priceCents": zod.number().int(),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
+  "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "updatedAt": zod.coerce.date()
@@ -443,12 +459,14 @@ export const adminCreateServiceBodyPriceCentsMin = 0;
 
 
 
+
 export const AdminCreateServiceBody = zod.object({
   "name": zod.string().min(1),
   "description": zod.string().optional(),
   "priceCents": zod.number().int().min(adminCreateServiceBodyPriceCentsMin),
   "durationMinutes": zod.number().int().nullish(),
   "category": zod.string().min(1),
+  "booksyVariantId": zod.number().int().min(1).nullish(),
   "displayOrder": zod.number().int().optional(),
   "active": zod.boolean().optional()
 })
@@ -460,6 +478,7 @@ export const AdminCreateServiceResponse = zod.object({
   "priceCents": zod.number().int(),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
+  "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "updatedAt": zod.coerce.date()
@@ -476,12 +495,14 @@ export const adminUpdateServiceBodyPriceCentsMin = 0;
 
 
 
+
 export const AdminUpdateServiceBody = zod.object({
   "name": zod.string().min(1).optional(),
   "description": zod.string().optional(),
   "priceCents": zod.number().int().min(adminUpdateServiceBodyPriceCentsMin).optional(),
   "durationMinutes": zod.number().int().nullish(),
   "category": zod.string().min(1).optional(),
+  "booksyVariantId": zod.number().int().min(1).nullish(),
   "displayOrder": zod.number().int().optional(),
   "active": zod.boolean().optional()
 })
@@ -493,6 +514,7 @@ export const AdminUpdateServiceResponse = zod.object({
   "priceCents": zod.number().int(),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
+  "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
   "displayOrder": zod.number().int(),
   "active": zod.boolean(),
   "updatedAt": zod.coerce.date()
@@ -769,6 +791,7 @@ export const AdminGetPerformanceResponse = zod.object({
   "bookClicks": zod.number().int(),
   "callClicks": zod.number().int(),
   "landingViews": zod.number().int(),
+  "siteBookings": zod.number().int(),
   "bookings": zod.number().int(),
   "spendCents": zod.number().int(),
   "costPerBookingCents": zod.number().int().nullable()
@@ -779,6 +802,7 @@ export const AdminGetPerformanceResponse = zod.object({
   "bookClicks": zod.number().int(),
   "callClicks": zod.number().int(),
   "landingViews": zod.number().int(),
+  "siteBookings": zod.number().int().describe('Bookings the Booksy widget reported as made on this site (booking_completed events)'),
   "bookings": zod.number().int(),
   "repeatBookings": zod.number().int(),
   "spendCents": zod.number().int(),

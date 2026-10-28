@@ -16,6 +16,11 @@ export interface ServiceUpdate {
   durationMinutes?: number | null;
   /** @minLength 1 */
   category?: string;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyVariantId?: number | null;
   displayOrder?: number;
   active?: boolean;
 }

@@ -34,6 +34,11 @@ export interface Barber {
      * @nullable
      */
   booksyUrl: string | null;
+  /**
+     * Booksy staffer ID; opens the widget on this barber
+     * @nullable
+     */
+  booksyStafferId: number | null;
   displayOrder: number;
   active: boolean;
   notableClients: NotableClient[];

@@ -82,10 +82,11 @@ function ServiceForm({ service, categories, onClose, onSaved }: { service: Servi
   const [f, setF] = useState({
     name: service?.name ?? '', description: service?.description ?? '', price: centsToDollarsInput(service?.priceCents ?? null), duration: service?.durationMinutes != null ? String(service.durationMinutes) : '',
     category: service?.category ?? categories[0] ?? 'Haircuts', order: String(service?.displayOrder ?? 0), active: service?.active ?? true,
+    booksyVariantId: service?.booksyVariantId != null ? String(service.booksyVariantId) : '',
   });
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    const data = { name: f.name.trim(), description: f.description, priceCents: dollarsToCents(f.price) ?? 0, durationMinutes: f.duration ? Number(f.duration) : null, category: f.category.trim(), displayOrder: Number(f.order) || 0, active: f.active };
+    const data = { name: f.name.trim(), description: f.description, priceCents: dollarsToCents(f.price) ?? 0, durationMinutes: f.duration ? Number(f.duration) : null, category: f.category.trim(), booksyVariantId: f.booksyVariantId ? Number(f.booksyVariantId) : null, displayOrder: Number(f.order) || 0, active: f.active };
     const opts = { onSuccess: () => { onSaved(); onClose(); }, onError: errT('Save failed') };
     if (service) update.mutate({ id: service.id, data }, opts); else create.mutate({ data }, opts);
   };
@@ -98,6 +99,7 @@ function ServiceForm({ service, categories, onClose, onSaved }: { service: Servi
         <Field label="Duration (minutes)"><input type="number" min={0} className="field" value={f.duration} onChange={(e) => setF({ ...f, duration: e.target.value })} data-testid="input-service-duration" /></Field>
         <Field label="Category"><input required list="cats" className="field" value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} data-testid="input-service-category" /><datalist id="cats">{categories.map((c) => <option key={c} value={c} />)}</datalist></Field>
         <Field label="Display order"><input type="number" className="field" value={f.order} onChange={(e) => setF({ ...f, order: e.target.value })} data-testid="input-service-order" /></Field>
+        <Field label="Booksy service ID" hint="Adds a Book link on this service. Only fill in when the Booksy service has the same price." className="sm:col-span-2"><input inputMode="numeric" pattern="[0-9]*" className="field font-mono" value={f.booksyVariantId} onChange={(e) => setF({ ...f, booksyVariantId: e.target.value.replace(/\D/g, '') })} data-testid="input-service-booksy" /></Field>
         <div className="sm:col-span-2"><Toggle checked={f.active} onChange={(v) => setF({ ...f, active: v })} label="Active" testId="switch-service-active" /></div>
         <div className="sm:col-span-2 flex justify-end gap-2 border-t border-border pt-4"><Btn type="button" variant="ghost" onClick={onClose}>Cancel</Btn><SaveBtn pending={create.isPending || update.isPending} data-testid="button-save-service" /></div>
       </form>
@@ -428,7 +430,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
   const [f, setF] = useState({
     shopName: s.shopName, foundedYear: String(s.foundedYear), phone: s.phone, email: s.email, streetAddress: s.streetAddress, city: s.city, region: s.region, postalCode: s.postalCode,
     offer: centsToDollarsInput(s.offerPriceCents), comparison: centsToDollarsInput(s.comparisonPriceCents), comparisonSourceNote: s.comparisonSourceNote ?? '',
-    announcementBanner: s.announcementBanner ?? '', booksyBusinessUrl: s.booksyBusinessUrl ?? '', instagramUrl: s.instagramUrl ?? '', googleMapsUrl: s.googleMapsUrl ?? '',
+    announcementBanner: s.announcementBanner ?? '', booksyBusinessUrl: s.booksyBusinessUrl ?? '', booksyBusinessId: s.booksyBusinessId != null ? String(s.booksyBusinessId) : '', instagramUrl: s.instagramUrl ?? '', googleMapsUrl: s.googleMapsUrl ?? '',
   });
   const [hours, setHours] = useState<HoursEntry[]>(() => DAYS.map((d) => s.hours.find((h) => h.day === d) ?? { day: d, open: '09:00', close: '19:00', closed: false }));
   const setH = (i: number, patch: Partial<HoursEntry>) => setHours((p) => p.map((h, j) => (j === i ? { ...h, ...patch } : h)));
@@ -442,7 +444,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
       shopName: f.shopName.trim(), foundedYear: Number(f.foundedYear), phone: f.phone.trim(), email: f.email.trim(), streetAddress: f.streetAddress.trim(), city: f.city.trim(), region: f.region.trim(), postalCode: f.postalCode.trim(),
       hours: hours.map((h) => (h.closed ? { ...h, open: null, close: null } : h)),
       offerPriceCents: dollarsToCents(f.offer) ?? 0, comparisonPriceCents: dollarsToCents(f.comparison), comparisonSourceNote: nz(f.comparisonSourceNote),
-      announcementBanner: nz(f.announcementBanner), booksyBusinessUrl: nz(f.booksyBusinessUrl), instagramUrl: nz(f.instagramUrl), googleMapsUrl: nz(f.googleMapsUrl),
+      announcementBanner: nz(f.announcementBanner), booksyBusinessUrl: nz(f.booksyBusinessUrl), booksyBusinessId: f.booksyBusinessId ? Number(f.booksyBusinessId) : null, instagramUrl: nz(f.instagramUrl), googleMapsUrl: nz(f.googleMapsUrl),
     } }, {
       onSuccess: (data) => { qc.setQueryData(getGetSiteSettingsQueryKey(), data); toast({ title: 'Settings saved', description: 'The public site is updated.' }); },
       onError: (err) => toast({ title: 'Save failed', description: errorMessage(err), variant: 'destructive' }),
@@ -493,7 +495,8 @@ function SettingsForm({ s }: { s: SiteSettings }) {
       </Panel>
       <Panel title="Links">
         <div className="grid gap-4 p-5 sm:grid-cols-2">
-          <Field label="Booksy business URL" hint="Default Book link. Blank = Book buttons call instead." className="sm:col-span-2"><input type="url" className="field" value={f.booksyBusinessUrl} onChange={up('booksyBusinessUrl')} data-testid="input-booksy-url" /></Field>
+          <Field label="Booksy business ID" hint="Opens Booksy booking inside the site. Blank = Book buttons go to the Booksy URL below."><input inputMode="numeric" pattern="[0-9]*" className="field font-mono" value={f.booksyBusinessId} onChange={(e) => setF({ ...f, booksyBusinessId: e.target.value.replace(/\D/g, '') })} data-testid="input-booksy-id" /></Field>
+          <Field label="Booksy business URL" hint="Backup link if booking can't open on the site. Blank, with no ID, = Book buttons call instead."><input type="url" className="field" value={f.booksyBusinessUrl} onChange={up('booksyBusinessUrl')} data-testid="input-booksy-url" /></Field>
           <Field label="Instagram URL"><input type="url" className="field" value={f.instagramUrl} onChange={up('instagramUrl')} data-testid="input-instagram-url" /></Field>
           <Field label="Google Maps URL"><input type="url" className="field" value={f.googleMapsUrl} onChange={up('googleMapsUrl')} data-testid="input-maps-url" /></Field>
         </div>

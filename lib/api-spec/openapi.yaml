@@ -137,7 +137,7 @@ paths:
     post:
       operationId: trackEvent
       tags: [tracking]
-      summary: Record a first-party conversion event (call_click, book_click, landing_view)
+      summary: Record a first-party conversion event (call_click, book_click, booking_completed, landing_view)
       requestBody:
         required: true
         content:
@@ -653,7 +653,7 @@ components:
       required:
         [shopName, foundedYear, phone, email, streetAddress, city, region, postalCode, hours,
          offerPriceCents, comparisonPriceCents, comparisonSourceNote, announcementBanner,
-         booksyBusinessUrl, instagramUrl, googleMapsUrl, updatedAt]
+         booksyBusinessUrl, booksyBusinessId, instagramUrl, googleMapsUrl, updatedAt]
       properties:
         shopName: { type: string }
         foundedYear: { type: integer }
@@ -670,7 +670,8 @@ components:
         comparisonPriceCents: { type: ["integer", "null"], description: "Typical Manhattan price used in comparison copy; null hides the comparison" }
         comparisonSourceNote: { type: ["string", "null"], description: "Where the comparison number comes from (substantiation)" }
         announcementBanner: { type: ["string", "null"] }
-        booksyBusinessUrl: { type: ["string", "null"] }
+        booksyBusinessUrl: { type: ["string", "null"], description: "Booksy profile link; opened directly when the widget cannot be used" }
+        booksyBusinessId: { type: ["integer", "null"], description: "Booksy business ID; when set, Book buttons open the Booksy widget inside the site" }
         instagramUrl: { type: ["string", "null"] }
         googleMapsUrl: { type: ["string", "null"] }
         updatedAt: { type: string, format: date-time }
@@ -693,6 +694,7 @@ components:
         comparisonSourceNote: { type: ["string", "null"] }
         announcementBanner: { type: ["string", "null"] }
         booksyBusinessUrl: { type: ["string", "null"] }
+        booksyBusinessId: { type: ["integer", "null"], minimum: 1 }
         instagramUrl: { type: ["string", "null"] }
         googleMapsUrl: { type: ["string", "null"] }
 
@@ -707,7 +709,7 @@ components:
       type: object
       required:
         [id, slug, name, title, photoUrl, bio, yearsCutting, specialties, galleryImages,
-         instagramUrl, tiktokUrl, otherSocialUrl, booksyUrl, displayOrder, active, notableClients,
+         instagramUrl, tiktokUrl, otherSocialUrl, booksyUrl, booksyStafferId, displayOrder, active, notableClients,
          createdAt, updatedAt]
       properties:
         id: { type: integer }
@@ -723,6 +725,7 @@ components:
         tiktokUrl: { type: ["string", "null"] }
         otherSocialUrl: { type: ["string", "null"] }
         booksyUrl: { type: ["string", "null"], description: "Barber-specific Booksy link; falls back to the business link when null" }
+        booksyStafferId: { type: ["integer", "null"], description: "Booksy staffer ID; opens the widget on this barber" }
         displayOrder: { type: integer }
         active: { type: boolean }
         notableClients: { type: array, items: { $ref: "#/components/schemas/NotableClient" } }
@@ -744,6 +747,7 @@ components:
         tiktokUrl: { type: ["string", "null"] }
         otherSocialUrl: { type: ["string", "null"] }
         booksyUrl: { type: ["string", "null"] }
+        booksyStafferId: { type: ["integer", "null"], minimum: 1 }
         displayOrder: { type: integer }
         active: { type: boolean }
         notableClients: { type: array, items: { $ref: "#/components/schemas/NotableClient" } }
@@ -762,13 +766,14 @@ components:
         tiktokUrl: { type: ["string", "null"] }
         otherSocialUrl: { type: ["string", "null"] }
         booksyUrl: { type: ["string", "null"] }
+        booksyStafferId: { type: ["integer", "null"], minimum: 1 }
         displayOrder: { type: integer }
         active: { type: boolean }
         notableClients: { type: array, items: { $ref: "#/components/schemas/NotableClient" } }
 
     Service:
       type: object
-      required: [id, name, description, priceCents, durationMinutes, category, displayOrder, active, updatedAt]
+      required: [id, name, description, priceCents, durationMinutes, category, booksyVariantId, displayOrder, active, updatedAt]
       properties:
         id: { type: integer }
         name: { type: string }
@@ -776,6 +781,7 @@ components:
         priceCents: { type: integer }
         durationMinutes: { type: ["integer", "null"] }
         category: { type: string, description: "e.g. Haircuts, Shaves & Beards" }
+        booksyVariantId: { type: ["integer", "null"], description: "Booksy service variant ID; adds a Book link that opens the widget on this service" }
         displayOrder: { type: integer }
         active: { type: boolean }
         updatedAt: { type: string, format: date-time }
@@ -788,6 +794,7 @@ components:
         priceCents: { type: integer, minimum: 0 }
         durationMinutes: { type: ["integer", "null"] }
         category: { type: string, minLength: 1 }
+        booksyVariantId: { type: ["integer", "null"], minimum: 1 }
         displayOrder: { type: integer }
         active: { type: boolean }
     ServiceUpdate:
@@ -798,6 +805,7 @@ components:
         priceCents: { type: integer, minimum: 0 }
         durationMinutes: { type: ["integer", "null"] }
         category: { type: string, minLength: 1 }
+        booksyVariantId: { type: ["integer", "null"], minimum: 1 }
         displayOrder: { type: integer }
         active: { type: boolean }
 
@@ -866,7 +874,7 @@ components:
       type: object
       required: [type, sessionId, path]
       properties:
-        type: { type: string, enum: [call_click, book_click, landing_view] }
+        type: { type: string, enum: [call_click, book_click, booking_completed, landing_view] }
         sessionId: { type: string, minLength: 1, maxLength: 100, description: "Anonymous first-party visitor id" }
         path: { type: string, maxLength: 500 }
         barberId: { type: ["integer", "null"] }
@@ -978,7 +986,7 @@ components:
     BarberPerformance:
       type: object
       required:
-        [barberId, barberName, bookClicks, callClicks, landingViews, bookings, repeatBookings,
+        [barberId, barberName, bookClicks, callClicks, landingViews, siteBookings, bookings, repeatBookings,
          spendCents, costPerBookingCents, status]
       properties:
         barberId: { type: ["integer", "null"], description: "null = shop-wide / unattributed" }
@@ -986,6 +994,7 @@ components:
         bookClicks: { type: integer }
         callClicks: { type: integer }
         landingViews: { type: integer }
+        siteBookings: { type: integer, description: "Bookings the Booksy widget reported as made on this site (booking_completed events)" }
         bookings: { type: integer }
         repeatBookings: { type: integer }
         spendCents: { type: integer }
@@ -1010,11 +1019,12 @@ components:
         targetCostPerBookingCents: { type: integer }
         totals:
           type: object
-          required: [bookClicks, callClicks, landingViews, bookings, spendCents, costPerBookingCents]
+          required: [bookClicks, callClicks, landingViews, siteBookings, bookings, spendCents, costPerBookingCents]
           properties:
             bookClicks: { type: integer }
             callClicks: { type: integer }
             landingViews: { type: integer }
+            siteBookings: { type: integer }
             bookings: { type: integer }
             spendCents: { type: integer }
             costPerBookingCents: { type: ["integer", "null"] }

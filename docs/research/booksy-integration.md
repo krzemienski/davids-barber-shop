@@ -76,20 +76,21 @@ All are sent with target origin `*`, so this site receives them. Each carries th
 - `logged-in {accessToken}` / `logged-out`: **contains the customer's Booksy access token. Never log, store, or forward it.**
 - `booking {action, appointmentUid}` is only sent in Booksy's marketplace context, not to website widgets.
 
-## 5. Integration plan for this site's design
+## 5. What was built (2026-10-27)
 
-Current behavior: every gold **Book** button opens the Booksy profile in a new tab (`bookUrlFor` in `src/components/site.tsx`). Barber buttons show a note telling the visitor to pick the barber on Booksy.
+Every gold **Book** button now opens Booksy's booking form in a panel on the site instead of a new tab, once **Booksy business ID** is set in admin Settings. Without the ID, the buttons behave as before (Booksy link in a new tab, or Call when there is no link).
 
-Proposed:
+- **Panel** (`src/components/booking-sheet.tsx`): site-styled dialog around the widget iframe (`mode=dialog`). Full screen on phones. Header has an "Open in Booksy" link and a close button; Esc also closes. If the widget hasn't loaded after 15 s, it offers the Booksy link and the phone number. Booksy's `code.js` is not loaded.
+- **Links stay real**: each Book button still points at the Booksy page, so middle-click, Ctrl/Cmd-click and no-JavaScript visits open Booksy directly. Only a plain click opens the panel.
+- **Per barber**: admin Barbers has a "Booksy staff ID" field. With it, that barber's Book opens Booksy on that barber (`stafferId`) and the "choose this barber" notes disappear. Without it, the panel shows "Choose {name} when Booksy asks who you'd like." A barber with a custom Booksy link and no staff ID keeps the old new-tab link.
+- **Per service**: admin Services has a "Booksy service ID" field. Services with an ID get a small Book link on the price list that opens straight on that service's time picker (`variantId`). Only fill it in when the site price matches Booksy's.
+- **Tracking**: `book_click` as before. `booking_completed` is recorded when Booksy's own close message says `appointmentCompleted: true`; it shows as "Booked on site" on the Performance page and in the dataLayer. Messages are accepted only from `https://booksy.com`, from our iframe, with our `uniqueId`; `logged-in`/`logged-out` are ignored. Stored UTMs are passed into the widget URL.
+- **Privacy page** now says the form is run by Booksy inside this site.
 
-1. **Keep the site's own gold Book buttons.** Do not load `code.js`: it injects Booksy's teal image button and its own overlay CSS. Build the widget iframe URL ourselves from the same parameters. The site keeps its look, and Booksy's code stays out of the site's own page.
-2. **Booking sheet.** Clicking Book opens a site-styled dialog: ink overlay, gold rule, close button, focus trap, Esc to close. It holds the iframe (`mode=dialog`, so the widget shows its own close/back), sized by the `resize` messages. On phones it fills the screen, as Booksy's CSS does under 480 px. Booksy's white card sits inside the dark frame; its colors cannot be changed.
-3. **Per-barber booking.** Add a "Booksy staffer ID" field for each barber in admin. A barber's Book button passes `stafferId`, and the "choose your barber on Booksy" note disappears for that barber.
-4. **Per-service booking.** Add a "Booksy service ID" field for each service in admin. A service row's Book button passes `variantId`, plus `stafferId` when it is shown on a barber's page.
-5. **Settings.** Replace (or derive from) the "Booksy business URL" setting with a **business ID** field. The business URL stays as the no-JavaScript and failure fallback.
-6. **Fallback.** Every Book button stays a real link to the Booksy page (works with JavaScript off, middle-click, or if the iframe fails to load within a timeout). The click is intercepted only to open the sheet.
-7. **Tracking.** Keep `book_click`. Add `booking_widget_ready`, plus `booking_completed` when `close.appointmentCompleted === true`, with barber and service but no customer data. Accept messages only from origin `https://booksy.com` with the matching `uniqueId`, and ignore `logged-in`/`logged-out`. Pass the visitor's stored UTMs into the iframe URL, as the buttons already do for the outbound link.
-8. **Copy.** The privacy page says "When you tap Book, you leave this site for Booksy." Change it to say the booking form is provided by Booksy, inside this site, under Booksy's privacy policy.
-9. **Admin bookings log.** `booking_completed` gives a count of bookings made on the site. It is still not a confirmed appointment with a value; the manual log stays the source for ad imports until Booksy grants API access.
+Verified by hand in a real browser on dev: panel opens and loads, UTMs reach the widget URL, Booksy's own close button closes the panel without a false booking event, our close button and Esc close it, phone layout, staff ID (Michael, temporarily) opens on that barber, service ID (Beard, temporarily) opens on the Beard time picker, admin fields save, and the report counts a `booking_completed` event. The temporary IDs were removed afterwards.
 
-What stays unverified until the owner acts: filtering between multiple barbers (needs the two staff added); `booking_completed` firing on a real booking (needs one real test booking, then cancelled, with the owner's permission).
+Not verified:
+- `booking_completed` from a real booking. Needs one real test booking, then cancelled, with the owner's permission.
+- Bookings where the visitor closes with the site's close button instead of Booksy's lose the completion signal, so "Booked on site" is a lower bound.
+- `booking_completed` is not a confirmed appointment with a value; the manual bookings log stays the source for ad conversion imports.
+- Production needs the business ID entered in the live admin Settings; the seed only fills an empty database.

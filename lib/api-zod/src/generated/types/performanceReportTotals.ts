@@ -10,6 +10,7 @@ export type PerformanceReportTotals = {
   bookClicks: number;
   callClicks: number;
   landingViews: number;
+  siteBookings: number;
   bookings: number;
   spendCents: number;
   /** @nullable */

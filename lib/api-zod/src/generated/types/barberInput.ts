@@ -28,6 +28,11 @@ export interface BarberInput {
   otherSocialUrl?: string | null;
   /** @nullable */
   booksyUrl?: string | null;
+  /**
+     * @minimum 1
+     * @nullable
+     */
+  booksyStafferId?: number | null;
   displayOrder?: number;
   active?: boolean;
   notableClients?: NotableClient[];
