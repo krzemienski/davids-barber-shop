@@ -5,6 +5,7 @@ import { useGetSiteSettings } from '@workspace/api-client-react';
 import type { Barber, SiteSettings, Service, Testimonial } from '@workspace/api-client-react';
 import { getAttribution, useTracker } from '@/lib/tracking';
 import { booksyProfileUrl, canUseWidget, useBooking } from '@/lib/booking';
+import { placementFromTestId, trackEvent } from '@/lib/analytics';
 import { assetUrl, basePath, formatPhone, fullAddress, hoursLabel, initials, money, telHref, todayName } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
@@ -108,7 +109,7 @@ export function CallLink({ settings, className, children, variant = 'outline', s
     <a
       href={telHref(settings.phone)}
       data-testid={testId}
-      onClick={() => track('call_click', { barberId: barber?.id ?? null, barberName: barber?.name ?? null })}
+      onClick={() => track('call_click', { barberId: barber?.id ?? null, barberName: barber?.name ?? null, placement: placementFromTestId(testId) })}
       className={cn(variant !== 'bare' && btnBase, variant !== 'bare' && btnSizes[size], btnVariants[variant], className)}
     >
       {children ?? (<><Phone className="h-4 w-4" /> {formatPhone(settings.phone)}</>)}
@@ -125,7 +126,7 @@ export function BookButton({ settings, barber, className, label, variant = 'gold
   const inSite = !!booking && canUseWidget(barber, settings);
   const url = bookUrlFor(barber, settings) ?? (settings.booksyBusinessId != null ? booksyProfileUrl(settings.booksyBusinessId) : null);
   const text = label ?? (barber ? `Book with ${barber.name.split(' ')[0]}` : 'Book now');
-  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null };
+  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null, placement: placementFromTestId(testId) };
   if (!url) {
     return (
       <CallLink settings={settings} variant={variant} size={size} className={className} testId={testId} barber={barber}>
@@ -282,6 +283,7 @@ export function Footer({ settings }: { settings: SiteSettings | undefined }) {
           )}
           {settings?.instagramUrl && (
             <a href={settings.instagramUrl} target="_blank" rel="noopener noreferrer" data-testid="link-footer-instagram"
+              onClick={() => trackEvent('social_click', { network: 'instagram', profile: 'shop' })}
               className="inline-flex items-center gap-2 text-sm text-bone hover:text-gold transition-colors">
               <Instagram className="h-4 w-4" /> Instagram
             </a>
@@ -418,7 +420,7 @@ export function ServiceRow({ s, barber }: { s: Service; barber?: Barber | null }
   const { data: settings } = useSettings();
   const track = useTracker();
   const bookable = !!booking && s.booksyVariantId != null && canUseWidget(barber, settings);
-  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null };
+  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null, placement: 'service_row', service: s.name };
   return (
     <li className="group py-5" data-testid={`row-service-${s.id}`}>
       <div className="flex items-baseline gap-3">

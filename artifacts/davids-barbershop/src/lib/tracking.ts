@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext } from 'react';
 import { useTrackEvent } from '@workspace/api-client-react';
 import type { TrackEventInput } from '@workspace/api-client-react';
+import { trackEvent } from './analytics';
 
 const ATTR_KEY = 'dbs_attribution';
 const SESSION_KEY = 'dbs_session_id';
@@ -122,9 +123,16 @@ function pushDataLayer(event: string, barber: string | null) {
   }
 }
 
-export type TrackOpts = { barberId?: number | null; barberName?: string | null };
+export type TrackOpts = {
+  barberId?: number | null;
+  barberName?: string | null;
+  /** Which button was used, e.g. "hero" or "mobilebar". Analytics only. */
+  placement?: string;
+  /** Service name, when booking starts from a service row. Analytics only. */
+  service?: string;
+};
 
-/** Returns a fire-and-forget tracker. Never blocks navigation, never throws. */
+/** Returns a fire-and-forget tracker: first-party event log, dataLayer and Replit Analytics. Never blocks navigation, never throws. */
 export function useTracker() {
   const landing = useContext(LandingContext);
   const { mutate } = useTrackEvent();
@@ -142,6 +150,16 @@ export function useTracker() {
           ...a,
         };
         if (type !== 'landing_view') pushDataLayer(type, opts.barberName ?? null);
+        trackEvent(type, {
+          barber: opts.barberName ?? '',
+          placement: opts.placement ?? '',
+          service: opts.service ?? '',
+          landing_page: landing?.slug ?? '',
+          variant: landing?.variant ?? '',
+          utm_source: a.utmSource ?? '',
+          utm_campaign: a.utmCampaign ?? '',
+          ad_click: a.gclid ? 'google' : a.fbclid ? 'meta' : '',
+        });
         mutate({ data }, { onError: () => undefined });
       } catch {
         /* ignore */

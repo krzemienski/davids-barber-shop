@@ -13,6 +13,7 @@ import {
 import { usePageMeta, useLocalBusinessJsonLd } from '@/lib/meta';
 import { assetUrl, errorStatus, formatPhone, fullAddress, mediaUrl, money, yearsSince } from '@/lib/format';
 import { cn } from '@/lib/utils';
+import { trackEvent } from '@/lib/analytics';
 
 /* ================= /barbers ================= */
 export function BarbersPage() {
@@ -112,7 +113,7 @@ export function BarberProfilePage() {
                 {socials.length > 0 && (
                   <div className="mt-10 flex flex-wrap gap-4">
                     {socials.map((so) => (
-                      <a key={so.label} href={so.href} target="_blank" rel="noopener noreferrer" className="inline-flex items-center gap-2 text-sm text-bone hover:text-gold" data-testid={`link-social-${so.label.toLowerCase()}`}>{so.icon}{so.label}</a>
+                      <a key={so.label} href={so.href} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('social_click', { network: so.label.toLowerCase(), profile: b.name })} className="inline-flex items-center gap-2 text-sm text-bone hover:text-gold" data-testid={`link-social-${so.label.toLowerCase()}`}>{so.icon}{so.label}</a>
                     ))}
                   </div>
                 )}
@@ -303,7 +304,7 @@ export function VisitPage() {
                     referrerPolicy="no-referrer-when-downgrade"
                   />
                 </div>
-                <a href={s.googleMapsUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress(s))}`} target="_blank" rel="noopener noreferrer"
+                <a href={s.googleMapsUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress(s))}`} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('directions_click', { placement: 'visit_page' })}
                   className="mt-4 inline-flex items-center gap-2 text-sm text-gold hover:underline" data-testid="link-google-maps">Open in Google Maps <ArrowRight className="h-4 w-4" /></a>
               </div>
               <div className="lg:col-span-5 order-1 lg:order-2 space-y-8">
@@ -344,7 +345,7 @@ export function PrivacyPage() {
         <h2>Booking through Booksy</h2>
         <p>Appointments are booked through <strong>Booksy</strong>, which processes your booking under its own privacy policy. When you tap Book, Booksy&rsquo;s booking form opens on this site. That form is run by Booksy: what you enter in it goes to Booksy, not to us. If it can&rsquo;t load, Book takes you to Booksy&rsquo;s own site. When the form tells us a booking was made, we record that it happened, with the barber, the page and any ad click ID, but none of your details. We may also record that a booking was confirmed, along with its value, so we can measure our advertising.</p>
         <h2>Analytics tags</h2>
-        <p>Call and Book clicks are also pushed to a browser <code>dataLayer</code> so a tag manager can count them. No personal information is included.</p>
+        <p>Call and Book clicks are also pushed to a browser <code>dataLayer</code> so a tag manager can count them. We also use our host&rsquo;s built-in analytics to count page visits and the same clicks, with the button used, the barber or service, and the ad campaign tags. No personal information is included.</p>
         <h2>Your choices</h2>
         <ul>
           <li>Clear your browser&rsquo;s site data to remove the visitor ID and stored campaign tags.</li>

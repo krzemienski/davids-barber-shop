@@ -4,6 +4,7 @@ import { ArrowUpRight, Loader2, Phone, X } from 'lucide-react';
 import type { SiteSettings } from '@workspace/api-client-react';
 import { BOOKSY_ORIGIN, BookingContext, booksyProfileUrl, booksyWidgetUrl, type BookingRequest } from '@/lib/booking';
 import { formatPhone, telHref } from '@/lib/format';
+import { trackEvent } from '@/lib/analytics';
 import { PoleRule, useSettings } from './site';
 
 const SLOW_MS = 15000;
@@ -47,6 +48,8 @@ function BookingSheet({ request, settings, businessId, onClose }: { request: Ope
   const firstName = barber?.name.split(' ')[0];
   const title = service ? service.name : firstName ? `Book with ${firstName}` : `Book at ${settings.shopName}`;
 
+  const fallback = (placement: string) => trackEvent('booking_fallback_click', { placement, barber: barber?.name ?? '' });
+
   const finish = useCallback((completed: boolean) => {
     if (completed) onCompleted?.();
     onClose();
@@ -75,9 +78,12 @@ function BookingSheet({ request, settings, businessId, onClose }: { request: Ope
 
   useEffect(() => {
     if (status !== 'loading') return;
-    const t = window.setTimeout(() => setStatus('slow'), SLOW_MS);
+    const t = window.setTimeout(() => {
+      setStatus('slow');
+      trackEvent('booking_widget_slow', { barber: barber?.name ?? '', service: service?.name ?? '' });
+    }, SLOW_MS);
     return () => window.clearTimeout(t);
-  }, [status]);
+  }, [status, barber?.name, service?.name]);
 
   return (
     <Dialog.Root open onOpenChange={(o) => !o && onClose()}>
@@ -96,7 +102,7 @@ function BookingSheet({ request, settings, businessId, onClose }: { request: Ope
                 Booking is handled by Booksy. What you enter goes to Booksy, not to us.
               </Dialog.Description>
             </div>
-            <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-testid="link-booking-open-booksy"
+            <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-testid="link-booking-open-booksy" onClick={() => fallback('panel_header')}
               className="hidden shrink-0 items-center gap-1 pt-1 text-xs text-bone/65 transition-colors hover:text-gold sm:inline-flex">
               Open in Booksy <ArrowUpRight className="h-3.5 w-3.5" />
             </a>
@@ -132,7 +138,7 @@ function BookingSheet({ request, settings, businessId, onClose }: { request: Ope
                     <p className="font-display text-2xl text-bone">Booksy is taking too long.</p>
                     <p className="max-w-sm text-sm text-bone/70">You can book on Booksy&rsquo;s own site, or call and we&rsquo;ll fit you in.</p>
                     <div className="mt-2 flex flex-wrap justify-center gap-3">
-                      <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-testid="link-booking-fallback"
+                      <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-testid="link-booking-fallback" onClick={() => fallback('panel_slow')}
                         className="inline-flex h-12 items-center gap-2 rounded-sm bg-gold px-6 text-sm font-semibold text-ink hover:bg-[hsl(42_60%_68%)]">
                         Open Booksy <ArrowUpRight className="h-3.5 w-3.5" />
                       </a>
@@ -146,7 +152,7 @@ function BookingSheet({ request, settings, businessId, onClose }: { request: Ope
               </div>
             )}
           </div>
-          <a href={fallbackUrl} target="_blank" rel="noopener noreferrer"
+          <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-testid="link-booking-open-booksy-mobile" onClick={() => fallback('panel_footer')}
             className="flex items-center justify-center gap-1 border-t border-gold/15 py-3 pb-[max(0.75rem,env(safe-area-inset-bottom))] text-xs text-bone/65 hover:text-gold sm:hidden">
             Open in Booksy instead <ArrowUpRight className="h-3.5 w-3.5" />
           </a>
