@@ -7,6 +7,7 @@ description: What may and may not be claimed in site/ad copy for David's Barber 
 - Known conflicts the owner must resolve: offer $30 vs Booksy $35 vs old site $25; site roster David/Sean vs Booksy staff Michael/Russel/Alex (as of 2026-11-03); Booksy menu, durations and weekday hours also differ from the site; 1972 vs the "84" in the old domain.
 - Comparison claim ($45 median of 8 UES shops, checked 2026-10-22) stays off until owner approval.
 - Only real shop photos may be shown or captioned as the shop; the styled public/media images (interior, pole, tools, towel, clippers, hero film) are not the shop and are mood/background only. Google rating is 4.7, so never show a 5-star row.
+- Ad rules (set when the ad kit was built, 2026-11-04): ad photos only from attached_assets/brand/about1–3 (gallery1–6 are tiny/stock-looking); Google image assets carry no text/logo overlays; no star ratings in ads; "without the UES price" counts as a comparison claim; FOX 5 credit stays off until the owner confirms. Booksy has no shave service, so the shave ad stays blocked.
 - Celebrity names (from the old site) are never published without recorded consent.
 - 2026-11-03 user decisions: wall photos of Yankees players (Judge, Beltran, #22 Ellsbury) go on the site hidden until the owner approves each; never in ads. Google listing photos are shown live with credit, never downloaded or reused. Real listing: CID 3355011163649612090.
 

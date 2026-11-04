@@ -12,4 +12,5 @@ export type LandingPageUpdateKind = typeof LandingPageUpdateKind[keyof typeof La
 export const LandingPageUpdateKind = {
   barber: 'barber',
   offer: 'offer',
+  service: 'service',
 } as const;

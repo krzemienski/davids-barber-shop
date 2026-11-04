@@ -33,6 +33,11 @@ export interface SiteSettings {
   /** @nullable */
   announcementBanner: string | null;
   /**
+     * TV or press credit shown as text, "As seen on <pressMention>", on the home and landing pages. Null hides it; set only once the owner confirms it is accurate.
+     * @nullable
+     */
+  pressMention: string | null;
+  /**
      * Booksy profile link; opened directly when the widget cannot be used
      * @nullable
      */

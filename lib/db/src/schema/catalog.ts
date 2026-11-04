@@ -26,8 +26,10 @@ export const testimonialsTable = pgTable("testimonials", {
 export const landingPagesTable = pgTable("landing_pages", {
   id: serial("id").primaryKey(),
   slug: text("slug").notNull().unique(),
-  kind: text("kind", { enum: ["barber", "offer"] }).notNull(),
+  kind: text("kind", { enum: ["barber", "offer", "service"] }).notNull(),
   barberId: integer("barber_id").references(() => barbersTable.id, { onDelete: "set null" }),
+  // A "service" page leads with one service's own price and opens Booksy on it (e.g. a hot towel shave ad).
+  serviceId: integer("service_id").references(() => servicesTable.id, { onDelete: "set null" }),
   headline: text("headline").notNull(),
   subheadline: text("subheadline").notNull().default(""),
   variantBHeadline: text("variant_b_headline"),

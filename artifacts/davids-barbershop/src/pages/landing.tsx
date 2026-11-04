@@ -3,7 +3,7 @@ import { Link, useParams } from 'wouter';
 import { MapPin, Phone, ArrowLeft } from 'lucide-react';
 import { useGetLandingPage, getGetLandingPageQueryKey, useListTestimonials, useListServices } from '@workspace/api-client-react';
 import type { LandingPageDetail } from '@workspace/api-client-react';
-import { BookButton, BooksyBarberNote, CallLink, Eyebrow, AnnouncementBanner, BarberPortrait, HoursTable, TestimonialCard, SkeletonBlock, SkeletonLines, Wordmark, closedDaysLine, useSettings, MobileBar, ServiceRow, ui } from '@/components/site';
+import { BookButton, BooksyBarberNote, CallLink, Eyebrow, AnnouncementBanner, BarberPortrait, HoursTable, PressMention, TestimonialCard, SkeletonBlock, SkeletonLines, Wordmark, closedDaysLine, useSettings, MobileBar, ServiceRow, ui } from '@/components/site';
 import { HeroVideo } from '@/components/hero-video';
 import { LandingContext, getVariant, useTracker } from '@/lib/tracking';
 import { usePageMeta } from '@/lib/meta';
@@ -50,10 +50,16 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
   const headline = variant === 'B' && page.variantBHeadline ? page.variantBHeadline : page.headline;
   const sub = variant === 'B' && page.variantBHeadline ? (page.variantBSubheadline ?? page.subheadline) : page.subheadline;
   const barber = page.kind === 'barber' ? page.barber : null;
+  // A service page (e.g. the hot towel shave ad) leads with that service's posted price, not the haircut offer.
+  const service = page.kind === 'service' ? page.service : null;
+  const bookLabel = barber ? `Book with ${barber.name}` : service ? `Book a ${service.name.toLowerCase()}` : 'Book your cut';
   usePageMeta(`${headline} | David's Barber Shop`, sub || "Book at David's Barber Shop on the Upper East Side.", { noindex: true, image: barber?.photoUrl });
 
   const reviews = (testimonials.data ?? []).filter((t) => !barber || !t.barberName || t.barberName.toLowerCase().includes(barber.name.split(' ')[0]!.toLowerCase())).slice(0, 3);
-  const topServices = [...(services.data ?? [])].sort((a, b) => a.displayOrder - b.displayOrder).slice(0, 4);
+  const topServices = [...(services.data ?? [])]
+    .filter((x) => !service || x.category === service.category)
+    .sort((a, b) => a.displayOrder - b.displayOrder)
+    .slice(0, 4);
 
   return (
     <div className="grain min-h-[100dvh] pb-28 lg:pb-0" data-testid={`landing-${page.slug}-${variant}`}>
@@ -76,22 +82,28 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
         )}
         <div className="relative z-10 mx-auto w-full max-w-7xl px-5 lg:px-8 pt-28 pb-16">
           <div className="max-w-2xl">
-            <div className="rise"><Eyebrow>{barber ? `${barber.title} · ${s ? `Since ${s.foundedYear}` : 'Upper East Side'}` : 'Upper East Side · East 84th St'}</Eyebrow></div>
+            <div className="rise"><Eyebrow>{barber ? `${barber.title} · ${s ? `Since ${s.foundedYear}` : 'Upper East Side'}` : `Father & son · Since ${s?.foundedYear ?? 1972} · East 84th St`}</Eyebrow></div>
             <h1 className="rise mt-6 font-display text-[clamp(2.75rem,7.5vw,6rem)] font-semibold leading-[0.92] text-bone" style={{ animationDelay: '120ms' }} data-testid="text-landing-headline"><AccentHeadline text={headline} /></h1>
             {sub && <p className="rise mt-6 text-lg md:text-xl text-bone/80 leading-relaxed" style={{ animationDelay: '220ms' }} data-testid="text-landing-subheadline">{sub}</p>}
-            {s && (
+            {service ? (
               <div className="rise mt-8 flex items-baseline gap-4" style={{ animationDelay: '300ms' }}>
-                <span className="font-display text-6xl text-gold">{money(s.offerPriceCents)}</span>
+                <span className="font-display text-6xl text-gold" data-testid="text-landing-price">{money(service.priceCents)}</span>
+                <span className="text-sm uppercase tracking-[0.25em] text-bone/70">{service.name}</span>
+              </div>
+            ) : s && (
+              <div className="rise mt-8 flex items-baseline gap-4" style={{ animationDelay: '300ms' }}>
+                <span className="font-display text-6xl text-gold" data-testid="text-landing-price">{money(s.offerPriceCents)}</span>
                 <span className="text-sm uppercase tracking-[0.25em] text-bone/70">a cut</span>
                 {s.comparisonPriceCents != null && <span className="font-mono text-xs text-bone/50">vs. {money(s.comparisonPriceCents)} median at nearby UES shops</span>}
               </div>
             )}
             <div className="rise mt-9 flex flex-col sm:flex-row gap-3" style={{ animationDelay: '380ms' }}>
-              <BookButton settings={s} barber={barber} size="lg" label={barber ? `Book with ${barber.name}` : 'Book your cut'} testId="button-landing-book" />
+              <BookButton settings={s} barber={barber} service={service} size="lg" label={bookLabel} testId="button-landing-book" />
               <CallLink settings={s} size="lg" barber={barber} testId="link-landing-call" className="bg-ink/40 backdrop-blur" />
             </div>
             <BooksyBarberNote settings={s} barber={barber} className="mt-3" />
             {s && <p className="rise mt-6 flex items-center gap-2 text-sm text-bone/60" style={{ animationDelay: '460ms' }}><MapPin className="h-4 w-4 text-gold" />{fullAddress(s)}{closedDaysLine(s) && <> · {closedDaysLine(s)}</>}</p>}
+            <PressMention settings={s} className="rise mt-4" />
           </div>
         </div>
       </section>
@@ -122,7 +134,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
               <div>
                 <h2 className="font-display text-4xl text-bone">Ready when <span className="italic text-gold">you are.</span></h2>
                 <div className="mt-8 flex flex-col gap-3">
-                  <BookButton settings={s} barber={barber} size="lg" label={barber ? `Book with ${barber.name}` : 'Book your cut'} testId="button-landing-book-bottom" />
+                  <BookButton settings={s} barber={barber} service={service} size="lg" label={bookLabel} testId="button-landing-book-bottom" />
                   <CallLink settings={s} size="lg" barber={barber} testId="link-landing-call-bottom"><Phone className="h-4 w-4" /> Call {formatPhone(s.phone)}</CallLink>
                 </div>
               </div>
@@ -134,7 +146,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
           </section>
         )}
       </div>
-      <MobileBar settings={s} barber={barber} />
+      <MobileBar settings={s} barber={barber} service={service} />
     </div>
   );
 }

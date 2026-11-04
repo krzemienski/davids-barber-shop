@@ -23,6 +23,8 @@ export const siteSettingsTable = pgTable("site_settings", {
   comparisonPriceCents: integer("comparison_price_cents"),
   comparisonSourceNote: text("comparison_source_note"),
   announcementBanner: text("announcement_banner"),
+  // TV/press credit shown as text ("As seen on …") on the home and ad landing pages. Null until the owner confirms it.
+  pressMention: text("press_mention"),
   booksyBusinessUrl: text("booksy_business_url"),
   booksyBusinessId: integer("booksy_business_id"),
   instagramUrl: text("instagram_url"),

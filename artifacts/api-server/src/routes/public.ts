@@ -141,11 +141,20 @@ router.get("/landing-pages/:slug", async (req, res) => {
       .where(and(eq(barbersTable.id, page.barberId), eq(barbersTable.active, true)));
     barber = row ? serializeBarber(row, { publicView: true }) : null;
   }
-  if (page.kind === "barber" && !barber) {
+  let service = null;
+  if (page.serviceId !== null) {
+    const [row] = await db
+      .select()
+      .from(servicesTable)
+      .where(and(eq(servicesTable.id, page.serviceId), eq(servicesTable.active, true)));
+    service = row ? serializeService(row) : null;
+  }
+  // A barber or service page whose barber/service is gone or switched off must not show a stale promise.
+  if ((page.kind === "barber" && !barber) || (page.kind === "service" && !service)) {
     res.status(404).json({ error: "Landing page not found" });
     return;
   }
-  res.json({ ...serializeLandingPage(page), barber });
+  res.json({ ...serializeLandingPage(page), barber, service });
 });
 
 const clip = (v: string | null | undefined, max = 200) => (v ? v.slice(0, max) : null);

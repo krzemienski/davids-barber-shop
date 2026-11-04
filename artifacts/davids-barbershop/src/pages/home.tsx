@@ -5,7 +5,7 @@ import aboutStorefront from '@assets/brand/about2.jpg';
 import aboutChairs from '@assets/brand/about3.jpg';
 import {
   PublicLayout, useSettings, BookButton, CallLink, Eyebrow, Reveal, PoleRule, BarberCard, ServiceRow, groupServices,
-  TestimonialCard, HoursTable, SkeletonBlock, SkeletonLines, ErrorState, EmptyState, closedDaysLine, ui,
+  TestimonialCard, HoursTable, PressMention, SkeletonBlock, SkeletonLines, ErrorState, EmptyState, closedDaysLine, ui,
 } from '@/components/site';
 import { HeroVideo } from '@/components/hero-video';
 import { usePageMeta, useLocalBusinessJsonLd } from '@/lib/meta';
@@ -63,6 +63,7 @@ export default function Home() {
                 {closedDaysLine(s)}
               </p>
             )}
+            <PressMention settings={s} className="rise mt-3" />
           </div>
         </div>
       </section>

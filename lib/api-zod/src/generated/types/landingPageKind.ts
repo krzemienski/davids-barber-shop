@@ -6,10 +6,14 @@
  * OpenAPI spec version: 0.1.0
  */
 
+/**
+ * offer = shop-wide price page; barber = one barber; service = one service's price (e.g. a shave ad)
+ */
 export type LandingPageKind = typeof LandingPageKind[keyof typeof LandingPageKind];
 
 
 export const LandingPageKind = {
   barber: 'barber',
   offer: 'offer',
+  service: 'service',
 } as const;

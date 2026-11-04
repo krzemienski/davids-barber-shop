@@ -13,6 +13,8 @@ export interface LandingPageInput {
   kind: LandingPageInputKind;
   /** @nullable */
   barberId?: number | null;
+  /** @nullable */
+  serviceId?: number | null;
   /** @minLength 1 */
   headline: string;
   subheadline: string;

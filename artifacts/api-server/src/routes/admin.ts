@@ -227,16 +227,23 @@ router.get("/admin/landing-pages", async (_req, res) => {
   res.json(rows.map(serializeLandingPage));
 });
 
-function validateLandingKind(kind: string | undefined, barberId: number | null | undefined): string | null {
+function validateLandingKind(
+  kind: string | undefined,
+  barberId: number | null | undefined,
+  serviceId: number | null | undefined,
+): string | null {
   if (kind === "barber" && (barberId === null || barberId === undefined)) {
     return "A barber landing page needs a barber";
+  }
+  if (kind === "service" && (serviceId === null || serviceId === undefined)) {
+    return "A service landing page needs a service";
   }
   return null;
 }
 
 router.post("/admin/landing-pages", async (req, res) => {
   const body = AdminCreateLandingPageBody.parse(req.body);
-  const problem = validateLandingKind(body.kind, body.barberId);
+  const problem = validateLandingKind(body.kind, body.barberId, body.serviceId);
   if (problem) {
     res.status(400).json({ error: problem });
     return;
@@ -262,6 +269,7 @@ router.patch("/admin/landing-pages/:id", async (req, res) => {
   const problem = validateLandingKind(
     body.kind ?? existing.kind,
     body.barberId !== undefined ? body.barberId : existing.barberId,
+    body.serviceId !== undefined ? body.serviceId : existing.serviceId,
   );
   if (problem) {
     res.status(400).json({ error: problem });

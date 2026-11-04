@@ -30,6 +30,11 @@ export interface SiteSettingsInput {
   comparisonSourceNote?: string | null;
   /** @nullable */
   announcementBanner?: string | null;
+  /**
+     * @maxLength 120
+     * @nullable
+     */
+  pressMention?: string | null;
   /** @nullable */
   booksyBusinessUrl?: string | null;
   /**

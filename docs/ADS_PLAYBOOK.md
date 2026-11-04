@@ -2,6 +2,8 @@
 
 Goal: paid traffic → landing page → Booksy booking at **≤ $60 cost per confirmed booking**. Evidence and sources behind every recommendation here are in `docs/research/booksy-and-tracking.md` and `docs/research/competitors.md`.
 
+**Ready-to-load creative** (every ad group, keyword list, counted headline and description, extension, image and final URL, with its landing page and on-hold status) is in `docs/ads/AD_CREATIVE.md`. The owner reviews it in `docs/ads/preview.html`; images are in `docs/ads/images/`.
+
 ## Before spending a dollar (launch blockers)
 
 1. **The $30 price must be bookable.** The old site says Hair Cut $25; the live Booksy listing (1663005) says Haircut $35. Ads promising $30 that land on a $35 booking page will burn money and invite complaints. Owner: set Haircut to $30 on Booksy (or change the offer price in Site settings to match Booksy).
@@ -9,6 +11,10 @@ Goal: paid traffic → landing page → Booksy booking at **≤ $60 cost per con
 3. **Comparison claim:** only turn on "vs. $45 median at nearby UES shops" after the owner approves it; keep the source note filled in (it shows as a footnote). Re-check prices every 6 months.
 4. **Owners added** under Staff access (at least two).
 5. **Pixel/tag IDs and a consent banner** — see "Platform tags" below; not needed to launch with Google's offline import, needed before adding Meta Pixel or a Google tag.
+6. **Shave on Booksy.** The hot towel shave ad group needs a bookable $25 Royal Shave on Booksy, with its Booksy service ID entered on Admin → Services → Royal Shave.
+7. **Price asset:** every price item must match Booksy (today only Haircut $35 and Beard trim $20 exist there).
+8. **Photo consent:** the owner confirms that the barber and clients in the ad photos agreed to appear, and supplies full-size originals.
+9. **"As seen on FOX 5 Good Day New York":** off until the owner confirms it is accurate. Then fill *TV or press credit* in Site settings (it shows as text on the home and landing pages) and add the reserve headline.
 
 ## What the site measures
 
@@ -27,18 +33,28 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
 
 ### Google Ads (start here)
 
-- **Search**, geo: ~1 mile around 233 E 84th St (UES + Yorkville), ad schedule matching opening hours (no Saturday).
-- Keywords: `barber upper east side`, `barbershop near me`, `mens haircut UES`, `barber 10028`, `fade upper east side`, `hot towel shave nyc` (phrase/exact). Negatives: `jobs`, `school`, `license`, `salon women`, `kids` (if not offered).
-- Final URL: `/l/30-dollar-cut` for shop-wide ads; `/l/book-<barber>` for barber-name or "book with X" ads.
-- Turn on **auto-tagging** (adds gclid). Add a tracking template only for UTMs: `{lpurl}?utm_source=google&utm_medium=cpc&utm_campaign={campaignid}&utm_content={creative}&utm_term={keyword}`.
-- Assets: call asset with the shop number (enable call reporting), location asset (link Google Business Profile), price asset ($30 haircut).
+- **Search** campaign `search-ues`, geo: ~1 mile around 233 E 84th St (UES + Yorkville), ad schedule matching opening hours (no Saturday).
+- One responsive search ad per ad group, each landing on its own page (headline 1 pinned to the line that matches the landing headline):
+
+  | Ad group | Landing page | Status |
+  | --- | --- | --- |
+  | Shop-wide $30 cut | `/l/30-dollar-cut` | blocked until Booksy shows $30 |
+  | Barber / UES searches | `/l/upper-east-side-barber` | blocked until Booksy shows $30 (page shows the offer) |
+  | Hot towel shave | `/l/hot-towel-shave` (service page, Royal Shave $25) | blocked until the shave is on Booksy |
+  | Barber: Sean, Barber: David | `/l/book-sean`, `/l/book-david` | blocked until the barber is on Booksy |
+
+  New barbers get an ad group only after they have a site profile and can be chosen on Booksy.
+- Keywords and negatives per ad group: see `docs/ads/AD_CREATIVE.md`.
+- Turn on **auto-tagging** (adds gclid). Put readable UTMs in each ad group's **Final URL suffix**: `utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-<ad group>&utm_term={keyword}`. These show up as-is on landing views and Book clicks.
+- Assets: sitelinks (Services & prices, Our Story, Barbers, Visit), callouts (including "Closed Saturdays", never shown as open), structured snippet of services, call asset with the shop number (call reporting on), location asset (link the Google Business Profile), image and logo assets from `docs/ads/images/google/`. The price asset waits until every price matches Booksy.
 - **Conversions:** create an *Import → Other data sources → Track conversions from clicks* action named exactly `booking_confirmed`, category "Converted lead", value = use value from file. Keep it **secondary** at first; use clicks/calls for bidding until there are roughly 15+ imported bookings a month, then make `booking_confirmed` primary.
 - Bidding: start with Maximize Clicks with a CPC cap (~$3), move to Maximize Conversions once `booking_confirmed` has volume, then Target CPA $60.
 
 ### Meta (Facebook / Instagram)
 
-- Objective: Traffic (or Leads with a website destination) to `/l/30-dollar-cut`; radius ~1–2 miles; men 21–55 as a starting audience.
-- Creative: shop interior, chair, hot towel, the "$30 a cut" line, and real barbers once photos exist. No celebrity names or images without written consent.
+- Objective: Traffic (or Leads with a website destination); radius ~1–2 miles; men 21–55 as a starting audience.
+- Two ad sets: `meta-ues-30-cut` (price-led) → `/l/30-dollar-cut`, and `meta-ues-heritage` (no price in the ad) → `/l/upper-east-side-barber`. Each has Feed 1:1, Feed 4:5 and Stories 9:16 creative from `docs/ads/images/meta/`; copy is in `docs/ads/AD_CREATIVE.md`.
+- Creative uses the shop's own photos only, with the pole rule and gold mark and no words on the image. Not the styled site media (towel, interior, tools), not Google listing photos posted by others, and no player or celebrity names or images on any platform.
 - Tag every ad URL: `?utm_source=meta&utm_medium=paid_social&utm_campaign=<name>&utm_content=<ad>`. Meta adds `fbclid` itself.
 - Booksy's own **Facebook "Book Now" integration** can attach a Meta pixel to the Booksy profile (Booksy Settings → Online Booking → Facebook). Test it in Events Manager → Test Events before relying on it; which events it sends is not documented.
 - Meta's old Offline Conversions API ended in May 2025. To report bookings, upload a CSV to a **dataset** in Events Manager (Data sources → dataset → Upload events) or use Conversions API later. Uploads cannot be edited or deleted, so check the file first.
@@ -57,7 +73,14 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
 ## A/B testing on landing pages
 
 - Each `/l/<slug>` can carry a B headline/subheadline (Admin → Landing pages). Visitors are split 50/50 and keep their variant.
-- Test one thing at a time: price-led ("Manhattan quality. $30 a cut.") vs heritage-led ("A real Upper East Side barber, without the Upper East Side price.") is seeded on `/l/30-dollar-cut`.
+- Page kinds: **Offer** (leads with the Site settings offer price), **Barber** (one barber), **Service** (leads with one service's posted price and opens Booksy on that service).
+- Test one thing at a time: change the headline and leave the B subheadline blank so B reuses A's. Seeded tests:
+  - `/l/30-dollar-cut`: "Manhattan quality. $30 a cut." vs "A real Upper East Side barber. Since 1972."
+  - `/l/upper-east-side-barber`: "Your Upper East Side barber. Since 1972." vs "The barber on East 84th Street. Since 1972."
+  - `/l/hot-towel-shave`: "Hot towel shave. Straight razor." vs "A proper shave. Hot towels, straight razor."
+  - `/l/book-<barber>`: "Book with X." vs "Your next cut, with X."
+- The ad's pinned headline 1 options match A and B, so whichever variant a visitor gets, the words they clicked are on the page.
+- Landing pages and the home page carry the ads' proof points: father-and-son, since 1972, East 84th St, posted prices, Closed Saturdays, verbatim reviews, and the TV credit once confirmed.
 
 ## Platform tags and consent (deferred)
 
@@ -70,6 +93,8 @@ The site currently loads **no third-party ad pixels or analytics** — only its 
 ## Things never to do
 
 - Don't promise a price that Booksy doesn't honour.
+- Don't make comparison claims ("vs. $45", "without the UES price") until the owner approves them and the source note is filled in.
+- Don't use star ratings or review counts in ads, or photos other people uploaded to the Google listing.
 - Don't name celebrity clients in ads or on the site without recorded consent (Admin → Barbers → Notable clients → consent switch).
 - Don't use ethnic or religious descriptors for the shop, barbers or audiences.
 - Don't attach a gclid to a booking by guessing; unmatched bookings still count in the totals.

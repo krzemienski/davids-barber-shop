@@ -38,6 +38,7 @@ export const GetSiteSettingsResponse = zod.object({
   "comparisonPriceCents": zod.number().int().nullable().describe('Typical Manhattan price used in comparison copy; null hides the comparison'),
   "comparisonSourceNote": zod.string().nullable().describe('Where the comparison number comes from (substantiation)'),
   "announcementBanner": zod.string().nullable(),
+  "pressMention": zod.string().nullable().describe('TV or press credit shown as text, "As seen on <pressMention>", on the home and landing pages. Null hides it; set only once the owner confirms it is accurate.'),
   "booksyBusinessUrl": zod.string().nullable().describe('Booksy profile link; opened directly when the widget cannot be used'),
   "booksyBusinessId": zod.number().int().nullable().describe('Booksy business ID; when set, Book buttons open the Booksy widget inside the site'),
   "instagramUrl": zod.string().nullable(),
@@ -147,8 +148,9 @@ export const GetLandingPageParams = zod.object({
 export const GetLandingPageResponse = zod.object({
   "id": zod.number().int(),
   "slug": zod.string(),
-  "kind": zod.enum(['barber', 'offer']),
+  "kind": zod.enum(['barber', 'offer', 'service']).describe('offer = shop-wide price page; barber = one barber; service = one service\'s price (e.g. a shave ad)'),
   "barberId": zod.number().int().nullable(),
+  "serviceId": zod.number().int().nullable().describe('Required for service pages'),
   "headline": zod.string().describe('Variant A headline'),
   "subheadline": zod.string().describe('Variant A supporting copy'),
   "variantBHeadline": zod.string().nullable().describe('When set, visitors are split 50/50 between A and B'),
@@ -180,6 +182,18 @@ export const GetLandingPageResponse = zod.object({
   "note": zod.string().nullish()
 })),
   "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+}),zod.null()]),
+  "service": zod.union([zod.object({
+  "id": zod.number().int(),
+  "name": zod.string(),
+  "description": zod.string(),
+  "priceCents": zod.number().int(),
+  "durationMinutes": zod.number().int().nullable(),
+  "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
+  "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
+  "displayOrder": zod.number().int(),
+  "active": zod.boolean(),
   "updatedAt": zod.coerce.date()
 }),zod.null()])
 }))
@@ -283,6 +297,8 @@ export const updateSiteSettingsBodyOfferPriceCentsMin = 0;
 
 export const updateSiteSettingsBodyComparisonPriceCentsMin = 0;
 
+export const updateSiteSettingsBodyPressMentionMax = 120;
+
 
 
 
@@ -305,6 +321,7 @@ export const UpdateSiteSettingsBody = zod.object({
   "comparisonPriceCents": zod.number().int().min(updateSiteSettingsBodyComparisonPriceCentsMin).nullish(),
   "comparisonSourceNote": zod.string().nullish(),
   "announcementBanner": zod.string().nullish(),
+  "pressMention": zod.string().max(updateSiteSettingsBodyPressMentionMax).nullish(),
   "booksyBusinessUrl": zod.string().nullish(),
   "booksyBusinessId": zod.number().int().min(1).nullish(),
   "instagramUrl": zod.string().nullish(),
@@ -331,6 +348,7 @@ export const UpdateSiteSettingsResponse = zod.object({
   "comparisonPriceCents": zod.number().int().nullable().describe('Typical Manhattan price used in comparison copy; null hides the comparison'),
   "comparisonSourceNote": zod.string().nullable().describe('Where the comparison number comes from (substantiation)'),
   "announcementBanner": zod.string().nullable(),
+  "pressMention": zod.string().nullable().describe('TV or press credit shown as text, "As seen on <pressMention>", on the home and landing pages. Null hides it; set only once the owner confirms it is accurate.'),
   "booksyBusinessUrl": zod.string().nullable().describe('Booksy profile link; opened directly when the widget cannot be used'),
   "booksyBusinessId": zod.number().int().nullable().describe('Booksy business ID; when set, Book buttons open the Booksy widget inside the site'),
   "instagramUrl": zod.string().nullable(),
@@ -687,8 +705,9 @@ export const AdminDeleteServiceResponse = zod.void()
 export const AdminListLandingPagesResponseItem = zod.object({
   "id": zod.number().int(),
   "slug": zod.string(),
-  "kind": zod.enum(['barber', 'offer']),
+  "kind": zod.enum(['barber', 'offer', 'service']).describe('offer = shop-wide price page; barber = one barber; service = one service\'s price (e.g. a shave ad)'),
   "barberId": zod.number().int().nullable(),
+  "serviceId": zod.number().int().nullable().describe('Required for service pages'),
   "headline": zod.string().describe('Variant A headline'),
   "subheadline": zod.string().describe('Variant A supporting copy'),
   "variantBHeadline": zod.string().nullable().describe('When set, visitors are split 50/50 between A and B'),
@@ -706,8 +725,9 @@ export const AdminListLandingPagesResponse = zod.array(AdminListLandingPagesResp
 
 export const AdminCreateLandingPageBody = zod.object({
   "slug": zod.string().min(1),
-  "kind": zod.enum(['barber', 'offer']),
+  "kind": zod.enum(['barber', 'offer', 'service']),
   "barberId": zod.number().int().nullish(),
+  "serviceId": zod.number().int().nullish(),
   "headline": zod.string().min(1),
   "subheadline": zod.string(),
   "variantBHeadline": zod.string().nullish(),
@@ -718,8 +738,9 @@ export const AdminCreateLandingPageBody = zod.object({
 export const AdminCreateLandingPageResponse = zod.object({
   "id": zod.number().int(),
   "slug": zod.string(),
-  "kind": zod.enum(['barber', 'offer']),
+  "kind": zod.enum(['barber', 'offer', 'service']).describe('offer = shop-wide price page; barber = one barber; service = one service\'s price (e.g. a shave ad)'),
   "barberId": zod.number().int().nullable(),
+  "serviceId": zod.number().int().nullable().describe('Required for service pages'),
   "headline": zod.string().describe('Variant A headline'),
   "subheadline": zod.string().describe('Variant A supporting copy'),
   "variantBHeadline": zod.string().nullable().describe('When set, visitors are split 50/50 between A and B'),
@@ -740,8 +761,9 @@ export const AdminUpdateLandingPageParams = zod.object({
 
 export const AdminUpdateLandingPageBody = zod.object({
   "slug": zod.string().min(1).optional(),
-  "kind": zod.enum(['barber', 'offer']).optional(),
+  "kind": zod.enum(['barber', 'offer', 'service']).optional(),
   "barberId": zod.number().int().nullish(),
+  "serviceId": zod.number().int().nullish(),
   "headline": zod.string().min(1).optional(),
   "subheadline": zod.string().optional(),
   "variantBHeadline": zod.string().nullish(),
@@ -752,8 +774,9 @@ export const AdminUpdateLandingPageBody = zod.object({
 export const AdminUpdateLandingPageResponse = zod.object({
   "id": zod.number().int(),
   "slug": zod.string(),
-  "kind": zod.enum(['barber', 'offer']),
+  "kind": zod.enum(['barber', 'offer', 'service']).describe('offer = shop-wide price page; barber = one barber; service = one service\'s price (e.g. a shave ad)'),
   "barberId": zod.number().int().nullable(),
+  "serviceId": zod.number().int().nullable().describe('Required for service pages'),
   "headline": zod.string().describe('Variant A headline'),
   "subheadline": zod.string().describe('Variant A supporting copy'),
   "variantBHeadline": zod.string().nullable().describe('When set, visitors are split 50/50 between A and B'),

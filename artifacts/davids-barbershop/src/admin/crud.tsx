@@ -121,11 +121,13 @@ export function AdminLandingPagesPage() {
   const errT = useErrToast();
   const list = useAdminListLandingPages();
   const barbers = useAdminListBarbers();
+  const services = useAdminListServices();
   const del = useAdminDeleteLandingPage();
   const [editing, setEditing] = useState<LandingPage | 'new' | null>(null);
   const invalidate = () => qc.invalidateQueries({ queryKey: getAdminListLandingPagesQueryKey() });
   const origin = typeof window !== 'undefined' ? window.location.origin : '';
   const barberName = (id: number | null) => barbers.data?.find((b) => b.id === id)?.name;
+  const serviceName = (id: number | null) => services.data?.find((x) => x.id === id)?.name;
   return (
     <>
       <PageTitle title="Landing pages" sub="Ad destinations at /l/slug. Add variant B copy to split traffic 50/50." actions={<Btn onClick={() => setEditing('new')} data-testid="button-new-landing"><Plus className="h-3.5 w-3.5" /> New page</Btn>} />
@@ -139,7 +141,7 @@ export function AdminLandingPagesPage() {
               <div className="p-5 space-y-4" data-testid={`card-landing-${p.id}`}>
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex flex-wrap gap-1.5">
-                    <Pill tone="gold">{p.kind}</Pill>{p.kind === 'barber' && <Pill>{barberName(p.barberId) ?? 'No barber'}</Pill>}
+                    <Pill tone="gold">{p.kind}</Pill>{p.kind === 'barber' && <Pill>{barberName(p.barberId) ?? 'No barber'}</Pill>}{p.kind === 'service' && <Pill>{serviceName(p.serviceId) ?? 'No service'}</Pill>}
                     {p.variantBHeadline ? <Pill tone="green">A/B live</Pill> : <Pill>A only</Pill>}{!p.active && <Pill tone="red">Inactive</Pill>}
                   </div>
                   <div className="flex shrink-0">
@@ -153,29 +155,31 @@ export function AdminLandingPagesPage() {
                 <div className="space-y-1.5 border-t border-card-border pt-3">
                   <div className="flex items-center gap-2 bg-background px-2.5 py-1.5"><code className="flex-1 truncate font-mono text-[11.5px] text-bone">{url}</code><CopyBtn text={url} testId={`button-copy-url-${p.id}`} /></div>
                   <div className="flex items-center gap-2 bg-background px-2.5 py-1.5"><code className="flex-1 truncate font-mono text-[11px] text-muted-foreground">{tagged}</code><CopyBtn text={tagged} testId={`button-copy-tagged-${p.id}`} /></div>
-                  <p className="text-[10.5px] text-muted-foreground">Google adds gclid automatically; Meta adds fbclid. Use utm_source=facebook for Meta ads.</p>
+                  <p className="text-[10.5px] text-muted-foreground">Google adds gclid automatically; Meta adds fbclid. For Meta ads use utm_source=meta&amp;utm_medium=paid_social (see docs/ads/AD_CREATIVE.md).</p>
                 </div>
               </div>
             </Panel>
           );
         })}</div>}
-      {editing && <LandingForm page={editing === 'new' ? null : editing} barbers={(barbers.data ?? []).map((b) => ({ id: b.id, name: b.name }))} onClose={() => setEditing(null)} onSaved={invalidate} />}
+      {editing && <LandingForm page={editing === 'new' ? null : editing} barbers={(barbers.data ?? []).map((b) => ({ id: b.id, name: b.name }))} services={(services.data ?? []).map((x) => ({ id: x.id, name: x.name }))} onClose={() => setEditing(null)} onSaved={invalidate} />}
     </>
   );
 }
 
-function LandingForm({ page, barbers, onClose, onSaved }: { page: LandingPage | null; barbers: { id: number; name: string }[]; onClose: () => void; onSaved: () => void }) {
+type LandingKind = 'barber' | 'offer' | 'service';
+
+function LandingForm({ page, barbers, services, onClose, onSaved }: { page: LandingPage | null; barbers: { id: number; name: string }[]; services: { id: number; name: string }[]; onClose: () => void; onSaved: () => void }) {
   const errT = useErrToast();
   const create = useAdminCreateLandingPage();
   const update = useAdminUpdateLandingPage();
   const [f, setF] = useState({
-    slug: page?.slug ?? '', kind: (page?.kind ?? 'offer') as 'barber' | 'offer', barberId: page?.barberId != null ? String(page.barberId) : '',
+    slug: page?.slug ?? '', kind: (page?.kind ?? 'offer') as LandingKind, barberId: page?.barberId != null ? String(page.barberId) : '', serviceId: page?.serviceId != null ? String(page.serviceId) : '',
     headline: page?.headline ?? '', subheadline: page?.subheadline ?? '', bH: page?.variantBHeadline ?? '', bS: page?.variantBSubheadline ?? '', active: page?.active ?? true,
   });
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const data = {
-      slug: f.slug.trim(), kind: f.kind, barberId: f.kind === 'barber' && f.barberId ? Number(f.barberId) : null, headline: f.headline.trim(), subheadline: f.subheadline,
+      slug: f.slug.trim(), kind: f.kind, barberId: f.kind === 'barber' && f.barberId ? Number(f.barberId) : null, serviceId: f.kind === 'service' && f.serviceId ? Number(f.serviceId) : null, headline: f.headline.trim(), subheadline: f.subheadline,
       variantBHeadline: f.bH.trim() || null, variantBSubheadline: f.bH.trim() ? (f.bS.trim() || null) : null, active: f.active,
     };
     const opts = { onSuccess: () => { onSaved(); onClose(); }, onError: errT('Save failed') };
@@ -186,10 +190,17 @@ function LandingForm({ page, barbers, onClose, onSaved }: { page: LandingPage | 
       <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
         <Field label="Slug" hint={`URL: ${basePath}/l/${f.slug || 'your-slug'}`}><input required className="field font-mono" value={f.slug} onChange={(e) => setF({ ...f, slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-') })} data-testid="input-landing-slug" /></Field>
         <Field label="Kind">
-          <select className="field" value={f.kind} onChange={(e) => setF({ ...f, kind: e.target.value as 'barber' | 'offer' })} data-testid="select-landing-kind">
-            <option value="offer">Offer (price-led)</option><option value="barber">Barber (features one barber)</option>
+          <select className="field" value={f.kind} onChange={(e) => setF({ ...f, kind: e.target.value as LandingKind })} data-testid="select-landing-kind">
+            <option value="offer">Offer (price-led)</option><option value="barber">Barber (features one barber)</option><option value="service">Service (leads with one service&rsquo;s price)</option>
           </select>
         </Field>
+        {f.kind === 'service' && (
+          <Field label="Service" hint="The page shows this service's posted price and opens Booksy on it when it has a Booksy service ID." className="sm:col-span-2">
+            <select required className="field" value={f.serviceId} onChange={(e) => setF({ ...f, serviceId: e.target.value })} data-testid="select-landing-service">
+              <option value="">Choose a service</option>{services.map((x) => <option key={x.id} value={x.id}>{x.name}</option>)}
+            </select>
+          </Field>
+        )}
         {f.kind === 'barber' && (
           <Field label="Barber" className="sm:col-span-2">
             <select required className="field" value={f.barberId} onChange={(e) => setF({ ...f, barberId: e.target.value })} data-testid="select-landing-barber">
@@ -202,7 +213,7 @@ function LandingForm({ page, barbers, onClose, onSaved }: { page: LandingPage | 
           <Field label="Variant A subheadline"><textarea rows={2} className="field" value={f.subheadline} onChange={(e) => setF({ ...f, subheadline: e.target.value })} data-testid="input-landing-subheadline" /></Field>
         </div>
         <div className="sm:col-span-2 grid gap-4 border-l-2 border-border pl-4">
-          <Field label="Variant B headline" hint="Optional. When set, visitors are split 50/50 and stay on their variant."><input className="field" value={f.bH} onChange={(e) => setF({ ...f, bH: e.target.value })} data-testid="input-landing-b-headline" /></Field>
+          <Field label="Variant B headline" hint="Optional. When set, visitors are split 50/50 and stay on their variant. Change one thing at a time: leave the B subheadline blank to reuse A's."><input className="field" value={f.bH} onChange={(e) => setF({ ...f, bH: e.target.value })} data-testid="input-landing-b-headline" /></Field>
           <Field label="Variant B subheadline"><textarea rows={2} className="field" value={f.bS} onChange={(e) => setF({ ...f, bS: e.target.value })} disabled={!f.bH.trim()} data-testid="input-landing-b-subheadline" /></Field>
         </div>
         <div className="sm:col-span-2"><Toggle checked={f.active} onChange={(v) => setF({ ...f, active: v })} label="Active" testId="switch-landing-active" /></div>
@@ -430,7 +441,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
   const [f, setF] = useState({
     shopName: s.shopName, foundedYear: String(s.foundedYear), phone: s.phone, email: s.email, streetAddress: s.streetAddress, city: s.city, region: s.region, postalCode: s.postalCode,
     offer: centsToDollarsInput(s.offerPriceCents), comparison: centsToDollarsInput(s.comparisonPriceCents), comparisonSourceNote: s.comparisonSourceNote ?? '',
-    announcementBanner: s.announcementBanner ?? '', booksyBusinessUrl: s.booksyBusinessUrl ?? '', booksyBusinessId: s.booksyBusinessId != null ? String(s.booksyBusinessId) : '', instagramUrl: s.instagramUrl ?? '', googleMapsUrl: s.googleMapsUrl ?? '', googlePlaceId: s.googlePlaceId ?? '',
+    announcementBanner: s.announcementBanner ?? '', pressMention: s.pressMention ?? '', booksyBusinessUrl: s.booksyBusinessUrl ?? '', booksyBusinessId: s.booksyBusinessId != null ? String(s.booksyBusinessId) : '', instagramUrl: s.instagramUrl ?? '', googleMapsUrl: s.googleMapsUrl ?? '', googlePlaceId: s.googlePlaceId ?? '',
   });
   const [hours, setHours] = useState<HoursEntry[]>(() => DAYS.map((d) => s.hours.find((h) => h.day === d) ?? { day: d, open: '09:00', close: '19:00', closed: false }));
   const setH = (i: number, patch: Partial<HoursEntry>) => setHours((p) => p.map((h, j) => (j === i ? { ...h, ...patch } : h)));
@@ -444,7 +455,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
       shopName: f.shopName.trim(), foundedYear: Number(f.foundedYear), phone: f.phone.trim(), email: f.email.trim(), streetAddress: f.streetAddress.trim(), city: f.city.trim(), region: f.region.trim(), postalCode: f.postalCode.trim(),
       hours: hours.map((h) => (h.closed ? { ...h, open: null, close: null } : h)),
       offerPriceCents: dollarsToCents(f.offer) ?? 0, comparisonPriceCents: dollarsToCents(f.comparison), comparisonSourceNote: nz(f.comparisonSourceNote),
-      announcementBanner: nz(f.announcementBanner), booksyBusinessUrl: nz(f.booksyBusinessUrl), booksyBusinessId: f.booksyBusinessId ? Number(f.booksyBusinessId) : null, instagramUrl: nz(f.instagramUrl), googleMapsUrl: nz(f.googleMapsUrl), googlePlaceId: nz(f.googlePlaceId),
+      announcementBanner: nz(f.announcementBanner), pressMention: nz(f.pressMention), booksyBusinessUrl: nz(f.booksyBusinessUrl), booksyBusinessId: f.booksyBusinessId ? Number(f.booksyBusinessId) : null, instagramUrl: nz(f.instagramUrl), googleMapsUrl: nz(f.googleMapsUrl), googlePlaceId: nz(f.googlePlaceId),
     } }, {
       onSuccess: (data) => { qc.setQueryData(getGetSiteSettingsQueryKey(), data); toast({ title: 'Settings saved', description: 'The public site is updated.' }); },
       onError: (err) => toast({ title: 'Save failed', description: errorMessage(err), variant: 'destructive' }),
@@ -460,6 +471,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
           <Field label="Comparison source" hint="Where the number comes from"><input className="field" value={f.comparisonSourceNote} onChange={up('comparisonSourceNote')} data-testid="input-comparison-source" /></Field>
           {comparisonWithoutSource && <p className="sm:col-span-3 flex items-center gap-2 text-xs text-gold"><AlertTriangle className="h-3.5 w-3.5" /> Add a source for the comparison price so the claim is substantiated.</p>}
           <Field label="Announcement banner" hint="Blank hides the banner" className="sm:col-span-3"><input className="field" value={f.announcementBanner} onChange={up('announcementBanner')} data-testid="input-banner" /></Field>
+          <Field label="TV or press credit" hint={'Shown as text, "As seen on …", on the home and ad landing pages. Fill in only once the owner confirms it is accurate to say. Blank hides it.'} className="sm:col-span-3"><input className="field" maxLength={120} value={f.pressMention} onChange={up('pressMention')} placeholder="FOX 5 Good Day New York" data-testid="input-press-mention" /></Field>
         </div>
       </Panel>
       <Panel title="Hours">

@@ -78,9 +78,11 @@ Framed photos from the shop wall, shown as a timeline on **Our Story** and as a 
 
 Each landing page lives at `/l/<slug>`.
 
-- **Kind:** *offer* (shop-wide, video hero) or *barber* (that barber's card and Book button).
-- **Variant A / B:** fill the B headline/subheadline to run an A/B test. Each visitor is assigned A or B once and keeps it. Leave B empty to show A to everyone.
-- Seeded pages: `/l/30-dollar-cut` (offer, has a B variant), `/l/book-david`, `/l/book-sean`.
+- **Kind:** *offer* (shop-wide, video hero, Site settings offer price), *barber* (that barber's card and Book button) or *service* (leads with one service's posted price; Book opens Booksy on that service once the service has a Booksy service ID).
+- **Variant A / B:** fill the B headline to run an A/B test. Each visitor is assigned A or B once and keeps it. Leave B empty to show A to everyone. Change one thing at a time: leave the B subheadline empty so B reuses A's.
+- Seeded pages, all with a B headline: `/l/30-dollar-cut`, `/l/upper-east-side-barber` (offer), `/l/hot-towel-shave` (service: Royal Shave), `/l/book-david`, `/l/book-sean`. The ad that points at each one is in `docs/ads/AD_CREATIVE.md`.
+- To retire `/l/upper-east-side-barber` or `/l/hot-towel-shave`, switch it **off** rather than deleting it; a deleted one is recreated when the server restarts.
+- A service or barber page that is switched off, or whose service/barber is switched off, shows "This offer has closed up shop" instead of a stale promise.
 - Landing pages are hidden from search engines (`noindex`) on purpose; they exist for ads.
 
 ### Site settings
@@ -88,6 +90,7 @@ Each landing page lives at `/l/<slug>`.
 - **Offer price** drives the "$30 a cut" headline everywhere.
 - **Comparison price + source note:** shown as "vs. $X median at nearby UES shops" with the note as a footnote. Leave it empty until the owner approves the claim. Research supporting $45 is in `docs/research/competitors.md`.
 - **Announcement banner:** a one-line strip at the top of every page (holiday hours, closures). Empty = hidden.
+- **TV or press credit:** shown as text, "As seen on …", on the home page hero and every ad landing page. Leave it empty until the owner confirms the credit is accurate to state (e.g. `FOX 5 Good Day New York`). Never a channel logo.
 - Shop name, founded year, phone (E.164, e.g. `+12128619179`), email, address, Booksy business URL, Instagram.
 - **Google Maps listing link:** the shop's own Google listing (`https://maps.google.com/?cid=3355011163649612090`, "David's Barber Shop, 233 E 84th St"). Every Directions / Open in Google Maps link, the map on Visit, and the search-engine data use it. Use the listing's link, not an address search.
 - **Google Place ID:** filled in automatically the first time the Gallery loads listing photos. It is cleared automatically if you change the listing link, and looked up again.

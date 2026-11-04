@@ -1,4 +1,4 @@
-import { and, count, eq } from "drizzle-orm";
+import { and, count, eq, isNull } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import {
   adminUsersTable,
@@ -87,6 +87,34 @@ const SEAN_BIO = "The name that comes up most in our reviews. Clients travel in 
 const OLD_SEAN_BIO = "The name that comes up most in our reviews. Clients travel in from Queens and Long Island to keep their standing appointment with Sean.";
 const OFFER_SUBHEADLINE = "Cutting hair on East 84th Street since 1972. Book online or call the shop.";
 const OLD_OFFER_SUBHEADLINE = "Cutting hair on East 84th Street since 1972. Book online in under a minute.";
+// Variant B tests one thing at a time: the headline. A null B subheadline reuses variant A's.
+const OLD_OFFER_B_SUBHEADLINE = "Father-and-son shop, cutting since 1972. Book your chair now.";
+const barberBHeadline = (name: string) => `Your next cut, with ${name}.`;
+// "…without the Upper East Side price" is a comparison claim; comparisons stay off until the owner approves them.
+const OLD_OFFER_B_HEADLINE = "A real Upper East Side barber, without the Upper East Side price.";
+const OFFER_B_HEADLINE = "A real Upper East Side barber. Since 1972.";
+
+// Landing pages for the ad creative kit (docs/ads/AD_CREATIVE.md). Each is added only while its slug is
+// missing, so a fresh or production database gets them too. To retire one, switch it off in the admin;
+// a deleted kit page is added back on the next restart.
+const AD_KIT_PAGES = [
+  {
+    slug: "upper-east-side-barber",
+    kind: "offer" as const,
+    serviceName: null,
+    headline: "Your Upper East Side barber. Since 1972.",
+    subheadline: "A father-and-son shop between Second and Third Avenue. Book online or call the shop.",
+    variantBHeadline: "The barber on East 84th Street. Since 1972.",
+  },
+  {
+    slug: "hot-towel-shave",
+    kind: "service" as const,
+    serviceName: "Royal Shave",
+    headline: "Hot towel shave. Straight razor.",
+    subheadline: "A royal shave with hot towels on East 84th Street, since 1972. Book online or call the shop.",
+    variantBHeadline: "A proper shave. Hot towels, straight razor.",
+  },
+];
 
 async function isEmpty(table: PgTable): Promise<boolean> {
   const [{ n }] = await db.select({ n: count() }).from(table);
@@ -132,7 +160,17 @@ export async function seedDatabase(): Promise<void> {
     .set({ subheadline: OFFER_SUBHEADLINE, updatedAt: new Date() })
     .where(eq(landingPagesTable.subheadline, OLD_OFFER_SUBHEADLINE))
     .returning({ id: landingPagesTable.id });
-  if (bio.length + sub.length > 0) logger.info("Applied audited copy corrections");
+  const offerB = await db
+    .update(landingPagesTable)
+    .set({ variantBSubheadline: null, updatedAt: new Date() })
+    .where(and(eq(landingPagesTable.slug, "30-dollar-cut"), eq(landingPagesTable.variantBSubheadline, OLD_OFFER_B_SUBHEADLINE)))
+    .returning({ id: landingPagesTable.id });
+  const offerBHead = await db
+    .update(landingPagesTable)
+    .set({ variantBHeadline: OFFER_B_HEADLINE, updatedAt: new Date() })
+    .where(and(eq(landingPagesTable.slug, "30-dollar-cut"), eq(landingPagesTable.variantBHeadline, OLD_OFFER_B_HEADLINE)))
+    .returning({ id: landingPagesTable.id });
+  if (bio.length + sub.length + offerB.length + offerBHead.length > 0) logger.info("Applied audited copy corrections");
 
   if (await isEmpty(wallEntriesTable)) {
     await db.insert(wallEntriesTable).values(WALL_DRAFTS.map((w, i) => ({ ...w, permissionOnFile: false, displayOrder: i })));
@@ -181,8 +219,7 @@ export async function seedDatabase(): Promise<void> {
           barberId: null,
           headline: "Manhattan quality. $30 a cut.",
           subheadline: OFFER_SUBHEADLINE,
-          variantBHeadline: "A real Upper East Side barber, without the Upper East Side price.",
-          variantBSubheadline: "Father-and-son shop, cutting since 1972. Book your chair now.",
+          variantBHeadline: OFFER_B_HEADLINE,
         },
         ...inserted.map((b) => ({
           slug: `book-${b.slug}`,
@@ -190,11 +227,14 @@ export async function seedDatabase(): Promise<void> {
           barberId: b.id,
           headline: `Book with ${b.name}.`,
           subheadline: "Pick a time on Booksy, or call the shop and we will fit you in.",
+          variantBHeadline: barberBHeadline(b.name),
         })),
       ]);
       logger.info("Seeded landing pages");
     }
   }
+
+  await seedAdKitLandingPages();
 
   const bootstrap = (process.env.ADMIN_BOOTSTRAP_EMAILS ?? "")
     .split(",")
@@ -203,5 +243,44 @@ export async function seedDatabase(): Promise<void> {
   if (bootstrap.length > 0 && (await isEmpty(adminUsersTable))) {
     await db.insert(adminUsersTable).values(bootstrap.map((email) => ({ email, role: "owner" as const })));
     logger.info({ count: bootstrap.length }, "Bootstrapped owner accounts from ADMIN_BOOTSTRAP_EMAILS");
+  }
+}
+
+async function seedAdKitLandingPages(): Promise<void> {
+  // Barber pages seeded before variant B existed get the one-variable headline test, unless edited since.
+  const barbers = await db.select({ id: barbersTable.id, name: barbersTable.name }).from(barbersTable);
+  let testsAdded = 0;
+  for (const b of barbers) {
+    const rows = await db
+      .update(landingPagesTable)
+      .set({ variantBHeadline: barberBHeadline(b.name), updatedAt: new Date() })
+      .where(
+        and(
+          eq(landingPagesTable.barberId, b.id),
+          eq(landingPagesTable.kind, "barber"),
+          eq(landingPagesTable.headline, `Book with ${b.name}.`),
+          isNull(landingPagesTable.variantBHeadline),
+        ),
+      )
+      .returning({ id: landingPagesTable.id });
+    testsAdded += rows.length;
+  }
+  if (testsAdded > 0) logger.info({ count: testsAdded }, "Added variant B headlines to barber landing pages");
+
+  for (const page of AD_KIT_PAGES) {
+    const [existing] = await db.select({ id: landingPagesTable.id }).from(landingPagesTable).where(eq(landingPagesTable.slug, page.slug));
+    if (existing) continue;
+    let serviceId: number | null = null;
+    if (page.serviceName) {
+      const [svc] = await db.select({ id: servicesTable.id }).from(servicesTable).where(eq(servicesTable.name, page.serviceName));
+      if (!svc) {
+        logger.warn({ slug: page.slug, service: page.serviceName }, "Skipped ad landing page: its service is missing");
+        continue;
+      }
+      serviceId = svc.id;
+    }
+    const { serviceName: _s, ...values } = page;
+    await db.insert(landingPagesTable).values({ ...values, serviceId }).onConflictDoNothing();
+    logger.info({ slug: page.slug }, "Added ad landing page");
   }
 }

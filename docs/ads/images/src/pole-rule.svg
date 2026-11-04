@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="14" viewBox="0 0 1200 14">
+  <!-- The brand pole rule: gold / oxblood / bone diagonal stripes on ink, as in the site's .pole-rule -->
+  <defs>
+    <pattern id="p" width="67" height="67" patternUnits="userSpaceOnUse" patternTransform="rotate(45)">
+      <rect width="67" height="67" fill="#0D0B0A"/>
+      <rect x="0" width="16" height="67" fill="#C8A464"/>
+      <rect x="22" width="16" height="67" fill="#912731"/>
+      <rect x="44" width="16" height="67" fill="#ECE6DA"/>
+    </pattern>
+  </defs>
+  <rect width="1200" height="14" fill="url(#p)"/>
+</svg>

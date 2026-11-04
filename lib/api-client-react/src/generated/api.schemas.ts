@@ -59,6 +59,11 @@ export interface SiteSettings {
   /** @nullable */
   announcementBanner: string | null;
   /**
+     * TV or press credit shown as text, "As seen on <pressMention>", on the home and landing pages. Null hides it; set only once the owner confirms it is accurate.
+     * @nullable
+     */
+  pressMention: string | null;
+  /**
      * Booksy profile link; opened directly when the widget cannot be used
      * @nullable
      */
@@ -106,6 +111,11 @@ export interface SiteSettingsInput {
   comparisonSourceNote?: string | null;
   /** @nullable */
   announcementBanner?: string | null;
+  /**
+     * @maxLength 120
+     * @nullable
+     */
+  pressMention?: string | null;
   /** @nullable */
   booksyBusinessUrl?: string | null;
   /**
@@ -300,20 +310,30 @@ export interface Testimonial {
   source: string | null;
 }
 
+/**
+ * offer = shop-wide price page; barber = one barber; service = one service's price (e.g. a shave ad)
+ */
 export type LandingPageKind = typeof LandingPageKind[keyof typeof LandingPageKind];
 
 
 export const LandingPageKind = {
   barber: 'barber',
   offer: 'offer',
+  service: 'service',
 } as const;
 
 export interface LandingPage {
   id: number;
   slug: string;
+  /** offer = shop-wide price page; barber = one barber; service = one service's price (e.g. a shave ad) */
   kind: LandingPageKind;
   /** @nullable */
   barberId: number | null;
+  /**
+     * Required for service pages
+     * @nullable
+     */
+  serviceId: number | null;
   /** Variant A headline */
   headline: string;
   /** Variant A supporting copy */
@@ -332,6 +352,7 @@ export interface LandingPage {
 
 export type LandingPageDetail = LandingPage & ({
   barber: Barber | null;
+  service: Service | null;
 });
 
 export type LandingPageInputKind = typeof LandingPageInputKind[keyof typeof LandingPageInputKind];
@@ -340,6 +361,7 @@ export type LandingPageInputKind = typeof LandingPageInputKind[keyof typeof Land
 export const LandingPageInputKind = {
   barber: 'barber',
   offer: 'offer',
+  service: 'service',
 } as const;
 
 export interface LandingPageInput {
@@ -348,6 +370,8 @@ export interface LandingPageInput {
   kind: LandingPageInputKind;
   /** @nullable */
   barberId?: number | null;
+  /** @nullable */
+  serviceId?: number | null;
   /** @minLength 1 */
   headline: string;
   subheadline: string;
@@ -364,6 +388,7 @@ export type LandingPageUpdateKind = typeof LandingPageUpdateKind[keyof typeof La
 export const LandingPageUpdateKind = {
   barber: 'barber',
   offer: 'offer',
+  service: 'service',
 } as const;
 
 export interface LandingPageUpdate {
@@ -372,6 +397,8 @@ export interface LandingPageUpdate {
   kind?: LandingPageUpdateKind;
   /** @nullable */
   barberId?: number | null;
+  /** @nullable */
+  serviceId?: number | null;
   /** @minLength 1 */
   headline?: string;
   subheadline?: string;

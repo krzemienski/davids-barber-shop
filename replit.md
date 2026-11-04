@@ -23,7 +23,7 @@ Website for David's Barber Shop (233 E 84th St, Upper East Side, since 1972) bui
 - Admin API + performance report: `artifacts/api-server/src/routes/admin.ts`
 - Tracking (first-touch UTMs, events, A/B): `artifacts/davids-barbershop/src/lib/tracking.ts`
 - Brand tokens: `artifacts/davids-barbershop/src/index.css`
-- Docs: `docs/PROGRESS.md`, `docs/DECISIONS.md`, `docs/ADMIN_GUIDE.md`, `docs/ADS_PLAYBOOK.md`, `docs/brand/BRAND_GUIDE.md`, research in `docs/research/`
+- Docs: `docs/PROGRESS.md`, `docs/DECISIONS.md`, `docs/ADMIN_GUIDE.md`, `docs/ADS_PLAYBOOK.md`, `docs/brand/BRAND_GUIDE.md`, research in `docs/research/`; ad creative kit (copy, images, owner preview) in `docs/ads/`
 
 ## Architecture decisions
 

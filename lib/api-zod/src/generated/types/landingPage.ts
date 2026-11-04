@@ -10,9 +10,15 @@ import type { LandingPageKind } from './landingPageKind';
 export interface LandingPage {
   id: number;
   slug: string;
+  /** offer = shop-wide price page; barber = one barber; service = one service's price (e.g. a shave ad) */
   kind: LandingPageKind;
   /** @nullable */
   barberId: number | null;
+  /**
+     * Required for service pages
+     * @nullable
+     */
+  serviceId: number | null;
   /** Variant A headline */
   headline: string;
   /** Variant A supporting copy */

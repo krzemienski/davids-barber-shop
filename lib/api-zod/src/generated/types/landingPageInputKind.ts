@@ -12,4 +12,5 @@ export type LandingPageInputKind = typeof LandingPageInputKind[keyof typeof Land
 export const LandingPageInputKind = {
   barber: 'barber',
   offer: 'offer',
+  service: 'service',
 } as const;

@@ -7,7 +7,9 @@
  */
 import type { Barber } from './barber';
 import type { LandingPage } from './landingPage';
+import type { Service } from './service';
 
 export type LandingPageDetail = LandingPage & ({
   barber: Barber | null;
+  service: Service | null;
 });

@@ -764,7 +764,7 @@ components:
       type: object
       required:
         [shopName, foundedYear, phone, email, streetAddress, city, region, postalCode, hours,
-         offerPriceCents, comparisonPriceCents, comparisonSourceNote, announcementBanner,
+         offerPriceCents, comparisonPriceCents, comparisonSourceNote, announcementBanner, pressMention,
          booksyBusinessUrl, booksyBusinessId, instagramUrl, googleMapsUrl, googlePlaceId, updatedAt]
       properties:
         shopName: { type: string }
@@ -782,6 +782,7 @@ components:
         comparisonPriceCents: { type: ["integer", "null"], description: "Typical Manhattan price used in comparison copy; null hides the comparison" }
         comparisonSourceNote: { type: ["string", "null"], description: "Where the comparison number comes from (substantiation)" }
         announcementBanner: { type: ["string", "null"] }
+        pressMention: { type: ["string", "null"], description: "TV or press credit shown as text, \"As seen on <pressMention>\", on the home and landing pages. Null hides it; set only once the owner confirms it is accurate." }
         booksyBusinessUrl: { type: ["string", "null"], description: "Booksy profile link; opened directly when the widget cannot be used" }
         booksyBusinessId: { type: ["integer", "null"], description: "Booksy business ID; when set, Book buttons open the Booksy widget inside the site" }
         instagramUrl: { type: ["string", "null"] }
@@ -806,6 +807,7 @@ components:
         comparisonPriceCents: { type: ["integer", "null"], minimum: 0 }
         comparisonSourceNote: { type: ["string", "null"] }
         announcementBanner: { type: ["string", "null"] }
+        pressMention: { type: ["string", "null"], maxLength: 120 }
         booksyBusinessUrl: { type: ["string", "null"] }
         booksyBusinessId: { type: ["integer", "null"], minimum: 1 }
         instagramUrl: { type: ["string", "null"] }
@@ -936,13 +938,14 @@ components:
     LandingPage:
       type: object
       required:
-        [id, slug, kind, barberId, headline, subheadline, variantBHeadline, variantBSubheadline,
+        [id, slug, kind, barberId, serviceId, headline, subheadline, variantBHeadline, variantBSubheadline,
          active, createdAt, updatedAt]
       properties:
         id: { type: integer }
         slug: { type: string }
-        kind: { type: string, enum: [barber, offer] }
+        kind: { type: string, enum: [barber, offer, service], description: "offer = shop-wide price page; barber = one barber; service = one service's price (e.g. a shave ad)" }
         barberId: { type: ["integer", "null"] }
+        serviceId: { type: ["integer", "null"], description: "Required for service pages" }
         headline: { type: string, description: "Variant A headline" }
         subheadline: { type: string, description: "Variant A supporting copy" }
         variantBHeadline: { type: ["string", "null"], description: "When set, visitors are split 50/50 between A and B" }
@@ -954,19 +957,24 @@ components:
       allOf:
         - $ref: "#/components/schemas/LandingPage"
         - type: object
-          required: [barber]
+          required: [barber, service]
           properties:
             barber:
               oneOf:
                 - $ref: "#/components/schemas/Barber"
+                - type: "null"
+            service:
+              oneOf:
+                - $ref: "#/components/schemas/Service"
                 - type: "null"
     LandingPageInput:
       type: object
       required: [slug, kind, headline, subheadline]
       properties:
         slug: { type: string, minLength: 1 }
-        kind: { type: string, enum: [barber, offer] }
+        kind: { type: string, enum: [barber, offer, service] }
         barberId: { type: ["integer", "null"] }
+        serviceId: { type: ["integer", "null"] }
         headline: { type: string, minLength: 1 }
         subheadline: { type: string }
         variantBHeadline: { type: ["string", "null"] }
@@ -976,8 +984,9 @@ components:
       type: object
       properties:
         slug: { type: string, minLength: 1 }
-        kind: { type: string, enum: [barber, offer] }
+        kind: { type: string, enum: [barber, offer, service] }
         barberId: { type: ["integer", "null"] }
+        serviceId: { type: ["integer", "null"] }
         headline: { type: string, minLength: 1 }
         subheadline: { type: string }
         variantBHeadline: { type: ["string", "null"] }

@@ -117,8 +117,8 @@ export function CallLink({ settings, className, children, variant = 'outline', s
   );
 }
 
-export function BookButton({ settings, barber, className, label, variant = 'gold', size = 'md', testId = 'button-book' }: {
-  settings: SiteSettings | undefined; barber?: Barber | null; className?: string; label?: string; variant?: BtnVariant; size?: keyof typeof btnSizes; testId?: string;
+export function BookButton({ settings, barber, service, className, label, variant = 'gold', size = 'md', testId = 'button-book' }: {
+  settings: SiteSettings | undefined; barber?: Barber | null; service?: Service | null; className?: string; label?: string; variant?: BtnVariant; size?: keyof typeof btnSizes; testId?: string;
 }) {
   const track = useTracker();
   const booking = useBooking();
@@ -126,7 +126,7 @@ export function BookButton({ settings, barber, className, label, variant = 'gold
   const inSite = !!booking && canUseWidget(barber, settings);
   const url = bookUrlFor(barber, settings) ?? (settings.booksyBusinessId != null ? booksyProfileUrl(settings.booksyBusinessId) : null);
   const text = label ?? (barber ? `Book with ${barber.name.split(' ')[0]}` : 'Book now');
-  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null, placement: placementFromTestId(testId) };
+  const who = { barberId: barber?.id ?? null, barberName: barber?.name ?? null, placement: placementFromTestId(testId), service: service?.name };
   if (!url) {
     return (
       <CallLink settings={settings} variant={variant} size={size} className={className} testId={testId} barber={barber}>
@@ -144,7 +144,7 @@ export function BookButton({ settings, barber, className, label, variant = 'gold
         track('book_click', who);
         if (inSite && booking && plainClick(e.nativeEvent)) {
           e.preventDefault();
-          booking.open({ barber, onCompleted: () => track('booking_completed', who) });
+          booking.open({ barber, service, onCompleted: () => track('booking_completed', who) });
         }
       }}
       className={cn(btnBase, btnSizes[size], btnVariants[variant], className)}
@@ -154,6 +154,13 @@ export function BookButton({ settings, barber, className, label, variant = 'gold
       {!inSite && <ArrowUpRight className="h-3.5 w-3.5 opacity-60 transition-transform group-hover:-translate-y-0.5 group-hover:translate-x-0.5" />}
     </a>
   );
+}
+
+/* ---------- Press credit ---------- */
+/** "As seen on …" as plain text (no logos). Hidden until the owner confirms it in Site settings. */
+export function PressMention({ settings, className }: { settings: SiteSettings | undefined; className?: string }) {
+  if (!settings?.pressMention) return null;
+  return <p data-testid="text-press-mention" className={cn('text-xs font-semibold uppercase tracking-[0.25em] text-gold/90', className)}>As seen on {settings.pressMention}</p>;
 }
 
 /* ---------- Banner ---------- */
@@ -225,14 +232,14 @@ export function Header({ settings, transparent }: { settings: SiteSettings | und
 }
 
 /* ---------- Mobile bottom bar ---------- */
-export function MobileBar({ settings, barber }: { settings: SiteSettings | undefined; barber?: Barber | null }) {
+export function MobileBar({ settings, barber, service }: { settings: SiteSettings | undefined; barber?: Barber | null; service?: Service | null }) {
   return (
     <div className="lg:hidden fixed inset-x-0 bottom-0 z-40 border-t border-gold/25 bg-ink/95 backdrop-blur-md px-3 pt-3 pb-[max(0.75rem,env(safe-area-inset-bottom))]">
       <div className="grid grid-cols-[1fr_1.4fr] gap-2.5">
         <CallLink settings={settings} barber={barber} testId="link-mobilebar-call" className="h-12 w-full">
           <Phone className="h-4 w-4" /> Call
         </CallLink>
-        <BookButton settings={settings} barber={barber} className="h-12 w-full" testId="button-mobilebar-book" label={barber ? `Book ${barber.name.split(' ')[0]}` : 'Book now'} />
+        <BookButton settings={settings} barber={barber} service={service} className="h-12 w-full" testId="button-mobilebar-book" label={barber ? `Book ${barber.name.split(' ')[0]}` : 'Book now'} />
       </div>
     </div>
   );

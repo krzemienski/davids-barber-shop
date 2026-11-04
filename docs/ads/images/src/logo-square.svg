@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="1200" viewBox="0 0 1200 1200">
+  <!-- Google/Meta square logo: the working mark from public/logo.svg, stacked, gold on ink -->
+  <defs>
+    <linearGradient id="g" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E2C688"/><stop offset="0.55" stop-color="#C8A464"/><stop offset="1" stop-color="#A9852F"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="1200" fill="#0D0B0A"/>
+  <g transform="translate(600 450) scale(5.2)">
+    <circle r="44" fill="#0E0C0A" stroke="url(#g)" stroke-width="2.5"/>
+    <circle r="37" fill="none" stroke="url(#g)" stroke-width="1" opacity="0.7"/>
+    <path d="M-12 -22 h14 c14 0 22 9 22 22 s-8 22 -22 22 h-14 z M-4 -15 v30 h6 c9 0 14 -6 14 -15 s-5 -15 -14 -15 z" fill="url(#g)" fill-rule="evenodd"/>
+    <path d="M-30 30 L30 -30" stroke="#0E0C0A" stroke-width="5"/>
+    <path d="M-30 30 L30 -30" stroke="url(#g)" stroke-width="1.4"/>
+    <circle cx="-26" cy="0" r="1.6" fill="url(#g)"/>
+    <circle cx="26" cy="0" r="1.6" fill="url(#g)"/>
+  </g>
+  <text x="600" y="900" text-anchor="middle" font-family="'Playfair Display'" font-size="150" font-weight="700" fill="url(#g)" letter-spacing="3">David&#8217;s</text>
+  <text x="608" y="990" text-anchor="middle" font-family="'Poppins'" font-size="44" font-weight="600" fill="#E8DCC4" letter-spacing="18">BARBER SHOP · 1972</text>
+</svg>
