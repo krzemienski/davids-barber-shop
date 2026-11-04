@@ -11,7 +11,9 @@ import {
   ServiceRow, groupServices, TestimonialCard, HoursTable, SkeletonBlock, SkeletonLines, ErrorState, EmptyState, closedDaysLine, ui,
 } from '@/components/site';
 import { usePageMeta, useLocalBusinessJsonLd } from '@/lib/meta';
-import { assetUrl, errorStatus, formatPhone, fullAddress, mediaUrl, money, yearsSince } from '@/lib/format';
+import { WallTimeline } from '@/components/wall';
+import { GoogleListingStrip } from '@/components/google-photos';
+import { assetUrl, errorStatus, formatPhone, fullAddress, mapsEmbedUrl, mapsListingUrl, mediaUrl, money, yearsSince } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { trackEvent } from '@/lib/analytics';
 
@@ -217,6 +219,7 @@ export function OurStoryPage() {
           ))}
         </ol>
       </section>
+      <WallTimeline />
       <PoleRule />
       <section className="bg-ink py-24 text-center px-5">
         <h2 className="font-display text-4xl md:text-6xl text-bone">Become a <span className="italic text-gold">regular.</span></h2>
@@ -277,6 +280,7 @@ export function GalleryPage() {
           <div className="mt-14"><BookButton settings={s} size="lg" testId="button-gallery-book" /></div>
         </div>
       </section>
+      <GoogleListingStrip />
     </PublicLayout>
   );
 }
@@ -298,13 +302,13 @@ export function VisitPage() {
                 <div className="relative aspect-[4/3] overflow-hidden border border-gold/20">
                   <iframe
                     title="Map to David's Barber Shop"
-                    src={`https://maps.google.com/maps?q=${encodeURIComponent(fullAddress(s))}&z=16&output=embed`}
+                    src={mapsEmbedUrl(s)}
                     className="absolute inset-0 h-full w-full [filter:grayscale(0.9)_invert(0.92)_sepia(0.25)_contrast(0.9)]"
                     loading="lazy"
                     referrerPolicy="no-referrer-when-downgrade"
                   />
                 </div>
-                <a href={s.googleMapsUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress(s))}`} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('directions_click', { placement: 'visit_page' })}
+                <a href={mapsListingUrl(s)} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('directions_click', { placement: 'visit_page' })}
                   className="mt-4 inline-flex items-center gap-2 text-sm text-gold hover:underline" data-testid="link-google-maps">Open in Google Maps <ArrowRight className="h-4 w-4" /></a>
               </div>
               <div className="lg:col-span-5 order-1 lg:order-2 space-y-8">

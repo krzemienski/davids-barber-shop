@@ -10,6 +10,7 @@ import {
   landingPagesTable,
   servicesTable,
   siteSettingsTable,
+  wallEntriesTable,
 } from "@workspace/db";
 import {
   AdminCreateBarberBody,
@@ -18,6 +19,7 @@ import {
   AdminCreateLandingPageBody,
   AdminCreateServiceBody,
   AdminCreateUserBody,
+  AdminCreateWallEntryBody,
   AdminDeleteBarberParams,
   AdminGetPerformanceQueryParams,
   AdminListRecentEventsQueryParams,
@@ -26,6 +28,7 @@ import {
   AdminUpdateCampaignBody,
   AdminUpdateLandingPageBody,
   AdminUpdateServiceBody,
+  AdminUpdateWallEntryBody,
   UpdateSiteSettingsBody,
 } from "@workspace/api-zod";
 import { requireAdmin } from "../middlewares/requireAdmin";
@@ -38,6 +41,7 @@ import {
   serializeLandingPage,
   serializeService,
   serializeSettings,
+  serializeWallEntry,
   slugify,
   toDateString,
 } from "../lib/serialize";
@@ -70,6 +74,17 @@ router.get("/admin/me", (req, res) => {
 
 router.put("/admin/site", async (req, res) => {
   const body = UpdateSiteSettingsBody.parse(req.body);
+  // A new listing link makes the stored Place ID stale unless the owner set a new one too;
+  // clearing it makes the server look the Place ID up again for the new listing.
+  const [current] = await db.select().from(siteSettingsTable).where(eq(siteSettingsTable.id, 1));
+  if (
+    current &&
+    body.googleMapsUrl !== undefined &&
+    body.googleMapsUrl !== current.googleMapsUrl &&
+    (body.googlePlaceId === undefined || body.googlePlaceId === current.googlePlaceId)
+  ) {
+    body.googlePlaceId = null;
+  }
   const [row] = await db
     .update(siteSettingsTable)
     .set({ ...body, updatedAt: new Date() })
@@ -159,6 +174,50 @@ router.patch("/admin/services/:id", async (req, res) => {
 
 router.delete("/admin/services/:id", async (req, res) => {
   await db.delete(servicesTable).where(eq(servicesTable.id, idOf(req.params)));
+  res.status(204).end();
+});
+
+// ---------- From the wall ----------
+const cleanPeople = (people: string[] | undefined) =>
+  people === undefined ? undefined : [...new Set(people.map((p) => p.trim()).filter(Boolean))];
+
+router.get("/admin/wall", async (_req, res) => {
+  const rows = await db.select().from(wallEntriesTable).orderBy(asc(wallEntriesTable.displayOrder), asc(wallEntriesTable.id));
+  res.json(rows.map(serializeWallEntry));
+});
+
+router.post("/admin/wall", async (req, res) => {
+  const body = AdminCreateWallEntryBody.parse(req.body);
+  const [row] = await db
+    .insert(wallEntriesTable)
+    .values({ ...body, caption: body.caption.trim(), people: cleanPeople(body.people) ?? [], pressOutlet: body.pressOutlet?.trim() || null })
+    .returning();
+  res.status(201).json(serializeWallEntry(row));
+});
+
+router.patch("/admin/wall/:id", async (req, res) => {
+  const id = idOf(req.params);
+  const body = AdminUpdateWallEntryBody.parse(req.body);
+  const [row] = await db
+    .update(wallEntriesTable)
+    .set({
+      ...body,
+      ...(body.caption !== undefined ? { caption: body.caption.trim() } : {}),
+      ...(body.people !== undefined ? { people: cleanPeople(body.people) } : {}),
+      ...(body.pressOutlet !== undefined ? { pressOutlet: body.pressOutlet?.trim() || null } : {}),
+      updatedAt: new Date(),
+    })
+    .where(eq(wallEntriesTable.id, id))
+    .returning();
+  if (!row) {
+    res.status(404).json({ error: "Entry not found" });
+    return;
+  }
+  res.json(serializeWallEntry(row));
+});
+
+router.delete("/admin/wall/:id", async (req, res) => {
+  await db.delete(wallEntriesTable).where(eq(wallEntriesTable.id, idOf(req.params)));
   res.status(204).end();
 });
 

@@ -6,7 +6,9 @@ import {
 import { Router, type IRouter, type Request, type Response } from 'express';
 
 import { ObjectPermission } from '../lib/objectAcl';
-import { requireAdmin } from '../middlewares/requireAdmin';
+import { eq } from 'drizzle-orm';
+import { db, wallEntriesTable } from '@workspace/db';
+import { adminFromRequest, requireAdmin } from '../middlewares/requireAdmin';
 import {
   ObjectNotFoundError,
   ObjectStorageService,
@@ -116,25 +118,26 @@ router.get('/storage/objects/*path', async (req: Request, res: Response) => {
     const objectFile =
       await objectStorageService.getObjectEntityFile(objectPath);
 
-    // --- Protected route example (uncomment when using replit-auth) ---
-    // if (!req.isAuthenticated()) {
-    //   res.status(401).json({ error: "Unauthorized" });
-    //   return;
-    // }
-    // const canAccess = await objectStorageService.canAccessObjectEntity({
-    //   userId: req.user.id,
-    //   objectFile,
-    //   requestedPermission: ObjectPermission.READ,
-    // });
-    // if (!canAccess) {
-    //   res.status(403).json({ error: "Forbidden" });
-    //   return;
-    // }
+    // "From the wall" photos follow the consent gate: until an entry that uses
+    // the image has permission on file, only signed-in staff may fetch it.
+    // Anything stored under wall/ is gated even when no entry references it.
+    const wallRefs = await db
+      .select({ approved: wallEntriesTable.permissionOnFile })
+      .from(wallEntriesTable)
+      .where(eq(wallEntriesTable.photoUrl, `/api/storage${objectPath}`));
+    const isWallPhoto = wallRefs.length > 0 || objectPath.startsWith('/objects/wall/');
+    if (isWallPhoto && !wallRefs.some((r) => r.approved) && !(await adminFromRequest(req))) {
+      res.setHeader('Cache-Control', 'no-store');
+      res.status(404).json({ error: 'Object not found' });
+      return;
+    }
 
     const response = await objectStorageService.downloadObject(objectFile);
 
     res.status(response.status);
     response.headers.forEach((value, key) => res.setHeader(key, value));
+    // Never let a browser or proxy keep a wall photo: permission can be withdrawn.
+    if (isWallPhoto) res.setHeader('Cache-Control', 'no-store');
 
     if (response.body) {
       const nodeStream = Readable.fromWeb(

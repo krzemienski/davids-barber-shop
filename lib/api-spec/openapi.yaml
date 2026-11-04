@@ -132,6 +132,61 @@ paths:
               schema:
                 $ref: "#/components/schemas/ErrorEnvelope"
 
+  /wall:
+    get:
+      operationId: listWallEntries
+      tags: [public]
+      summary: From-the-wall timeline entries with permission on file, in the owner order. Unapproved entries are never returned.
+      responses:
+        "200":
+          description: Wall entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/PublicWallEntry"
+  /google/photos:
+    get:
+      operationId: getGooglePhotos
+      tags: [public]
+      summary: Live photos from the shop's Google listing, with author attributions. Empty when no key is set or Google fails.
+      responses:
+        "200":
+          description: Photos
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/GooglePhotos"
+  /google/photos/media:
+    get:
+      operationId: getGooglePhotoMedia
+      tags: [public]
+      summary: Streams one listing photo from Google without exposing the API key. Nothing is stored.
+      parameters:
+        - name: name
+          in: query
+          required: true
+          schema: { type: string }
+        - name: maxWidthPx
+          in: query
+          required: false
+          schema: { type: integer, minimum: 100, maximum: 1600, default: 800 }
+      responses:
+        "200":
+          description: Image
+          content:
+            "image/*":
+              schema:
+                type: string
+                format: binary
+        "404":
+          description: Not a photo of this listing, or unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorEnvelope"
+
   # ---------- Tracking ----------
   /events:
     post:
@@ -245,6 +300,63 @@ paths:
                 $ref: "#/components/schemas/Barber"
     delete:
       operationId: adminDeleteBarber
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      responses:
+        "204":
+          description: Deleted
+  /admin/wall:
+    get:
+      operationId: adminListWallEntries
+      tags: [admin]
+      summary: All From-the-wall entries, including drafts without permission
+      responses:
+        "200":
+          description: Wall entries
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/WallEntry"
+    post:
+      operationId: adminCreateWallEntry
+      tags: [admin]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WallEntryInput"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WallEntry"
+  /admin/wall/{id}:
+    patch:
+      operationId: adminUpdateWallEntry
+      tags: [admin]
+      parameters:
+        - $ref: "#/components/parameters/IdParam"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/WallEntryUpdate"
+      responses:
+        "200":
+          description: Updated
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/WallEntry"
+    delete:
+      operationId: adminDeleteWallEntry
       tags: [admin]
       parameters:
         - $ref: "#/components/parameters/IdParam"
@@ -653,7 +765,7 @@ components:
       required:
         [shopName, foundedYear, phone, email, streetAddress, city, region, postalCode, hours,
          offerPriceCents, comparisonPriceCents, comparisonSourceNote, announcementBanner,
-         booksyBusinessUrl, booksyBusinessId, instagramUrl, googleMapsUrl, updatedAt]
+         booksyBusinessUrl, booksyBusinessId, instagramUrl, googleMapsUrl, googlePlaceId, updatedAt]
       properties:
         shopName: { type: string }
         foundedYear: { type: integer }
@@ -673,7 +785,8 @@ components:
         booksyBusinessUrl: { type: ["string", "null"], description: "Booksy profile link; opened directly when the widget cannot be used" }
         booksyBusinessId: { type: ["integer", "null"], description: "Booksy business ID; when set, Book buttons open the Booksy widget inside the site" }
         instagramUrl: { type: ["string", "null"] }
-        googleMapsUrl: { type: ["string", "null"] }
+        googleMapsUrl: { type: ["string", "null"], description: "Link to the shop's Google listing (used by Directions links and structured data)" }
+        googlePlaceId: { type: ["string", "null"], description: "Google Place ID of the listing; filled automatically the first time listing photos load" }
         updatedAt: { type: string, format: date-time }
     SiteSettingsInput:
       type: object
@@ -697,6 +810,7 @@ components:
         booksyBusinessId: { type: ["integer", "null"], minimum: 1 }
         instagramUrl: { type: ["string", "null"] }
         googleMapsUrl: { type: ["string", "null"] }
+        googlePlaceId: { type: ["string", "null"] }
 
     NotableClient:
       type: object
@@ -869,6 +983,75 @@ components:
         variantBHeadline: { type: ["string", "null"] }
         variantBSubheadline: { type: ["string", "null"] }
         active: { type: boolean }
+
+    PublicWallEntry:
+      type: object
+      required: [id, photoUrl, caption, year, people, pressOutlet]
+      properties:
+        id: { type: integer }
+        photoUrl: { type: ["string", "null"] }
+        caption: { type: string }
+        year: { type: ["integer", "null"], description: "Only set when the owner knows it" }
+        people: { type: array, items: { type: string } }
+        pressOutlet: { type: ["string", "null"], description: "Shown as text: As seen on <outlet>" }
+    WallEntry:
+      type: object
+      required: [id, photoUrl, caption, year, people, pressOutlet, permissionOnFile, displayOrder, createdAt, updatedAt]
+      properties:
+        id: { type: integer }
+        photoUrl: { type: ["string", "null"], description: "Absolute URL or /api/storage/... path" }
+        caption: { type: string }
+        year: { type: ["integer", "null"] }
+        people: { type: array, items: { type: string } }
+        pressOutlet: { type: ["string", "null"] }
+        permissionOnFile: { type: boolean, description: "Written permission recorded. Only these entries are shown publicly." }
+        displayOrder: { type: integer }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+    WallEntryInput:
+      type: object
+      required: [caption]
+      properties:
+        photoUrl: { type: ["string", "null"] }
+        caption: { type: string, minLength: 1, maxLength: 500 }
+        year: { type: ["integer", "null"], minimum: 1900, maximum: 2100 }
+        people: { type: array, items: { type: string, maxLength: 120 }, maxItems: 20 }
+        pressOutlet: { type: ["string", "null"], maxLength: 120 }
+        permissionOnFile: { type: boolean }
+        displayOrder: { type: integer }
+    WallEntryUpdate:
+      type: object
+      properties:
+        photoUrl: { type: ["string", "null"] }
+        caption: { type: string, minLength: 1, maxLength: 500 }
+        year: { type: ["integer", "null"], minimum: 1900, maximum: 2100 }
+        people: { type: array, items: { type: string, maxLength: 120 }, maxItems: 20 }
+        pressOutlet: { type: ["string", "null"], maxLength: 120 }
+        permissionOnFile: { type: boolean }
+        displayOrder: { type: integer }
+
+    GoogleAuthorAttribution:
+      type: object
+      required: [displayName, uri, photoUri]
+      properties:
+        displayName: { type: string }
+        uri: { type: ["string", "null"], description: "Link to the author's Google Maps profile" }
+        photoUri: { type: ["string", "null"] }
+    GooglePhoto:
+      type: object
+      required: [src, widthPx, heightPx, authorAttributions]
+      properties:
+        src: { type: string, description: "Same-origin path that streams the photo from Google" }
+        widthPx: { type: integer }
+        heightPx: { type: integer }
+        authorAttributions: { type: array, items: { $ref: "#/components/schemas/GoogleAuthorAttribution" } }
+    GooglePhotos:
+      type: object
+      required: [available, listingUrl, photos]
+      properties:
+        available: { type: boolean, description: "False when no key is configured or Google could not be reached; hide the strip" }
+        listingUrl: { type: ["string", "null"] }
+        photos: { type: array, items: { $ref: "#/components/schemas/GooglePhoto" } }
 
     TrackEventInput:
       type: object

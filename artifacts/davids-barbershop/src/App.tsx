@@ -13,6 +13,7 @@ import { BarbersPage, BarberProfilePage, ServicesPage, OurStoryPage, GalleryPage
 import { AdminGate } from '@/admin/shell';
 import PerformancePage from '@/admin/performance';
 import AdminBarbersPage from '@/admin/barbers';
+import AdminWallPage from '@/admin/wall';
 import { AdminServicesPage, AdminLandingPagesPage, AdminBookingsPage, AdminCampaignsPage, AdminSettingsPage, AdminUsersPage } from '@/admin/crud';
 import { BookingProvider } from '@/components/booking-sheet';
 import { captureAttribution } from '@/lib/tracking';
@@ -178,6 +179,7 @@ function Router() {
         <Route path="/admin" component={admin(PerformancePage)} />
         <Route path="/admin/barbers" component={admin(AdminBarbersPage)} />
         <Route path="/admin/services" component={admin(AdminServicesPage)} />
+        <Route path="/admin/wall" component={admin(AdminWallPage)} />
         <Route path="/admin/landing-pages" component={admin(AdminLandingPagesPage)} />
         <Route path="/admin/bookings" component={admin(AdminBookingsPage)} />
         <Route path="/admin/campaigns" component={admin(AdminCampaignsPage)} />

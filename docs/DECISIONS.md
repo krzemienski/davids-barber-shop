@@ -44,6 +44,15 @@ Why: stock faces presented as staff would mislead customers.
 **Celebrity clients are stored with a consent flag; unconsented names never leave the server.**
 Why: the old site named Aaron Judge, Carlos Beltran, Jacoby Ellsbury and Sandy Alderson with no recorded consent. None are published. Filtering happens in the public API, so a front-end mistake cannot leak them.
 
+**"From the wall" photos are hidden until the owner records written permission for each one** (dated 2026-11-03).
+Why: New York Civil Rights Law §50–51 requires written consent to use a living person's name or likeness for advertising or trade, and the project rule is no celebrity names without recorded consent. The public API returns only entries with "permission on file", so a front-end mistake cannot leak an unapproved photo or name. The image files are gated too: the storage endpoint serves a wall photo to the public only while an entry using it has permission on file (signed-in staff can always see it), anything stored under `wall/` is gated even if no entry uses it, and wall photos are sent with `Cache-Control: no-store` so withdrawing permission takes effect immediately. The FOX 5 entry may say "As seen on FOX 5 Good Day New York" in text, never with the FOX logo; its photo is a broadcast still, so it is gated the same way. These photos are never used in ads. Years are shown only when the owner supplies them; undated entries keep the owner's manual order. The restored scans were only cropped, straightened and globally adjusted for glare and haze; faces and signatures were not retouched, and the original scans are kept. What would change it: nothing short of signed releases, entered entry by entry.
+
+**Google listing photos are shown live with credit, never downloaded** (dated 2026-11-03).
+Why: Google Maps Platform terms forbid storing or caching Places content (only the Place ID may be kept), and many listing photos belong to customers. The server calls Places API (New) with its own key (never sent to the browser), asks only for the `photos` field, shows at most six, and streams each image through a same-origin endpoint that accepts only photo names under the shop's own Place ID, with `Cache-Control: no-store`. Each photo shows its author's name linked to their Google profile, plus "Google Maps" attribution and a "See all on Google" link. Daily ceilings (400 detail lookups, 150 photo images, 5 Place ID lookups) cap the cost; past them, or when the key is missing or Google fails, the strip is hidden and the Gallery still works. What would change it: the owner licensing specific photos directly from their authors.
+
+**Every map link opens the shop's real Google listing, not an address search** (dated 2026-11-03).
+Why: an address search can land on a neighbour or a pin with no reviews. The listing is "David's Barber Shop, 233 E 84th St" (CID 3355011163649612090). The seed migrates the old search link to the listing link only if it was never edited.
+
 ## Admin and access
 
 **Clerk sign-in + a staff allowlist in the database (owner / editor).**

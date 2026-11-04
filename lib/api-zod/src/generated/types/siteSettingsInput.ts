@@ -41,4 +41,6 @@ export interface SiteSettingsInput {
   instagramUrl?: string | null;
   /** @nullable */
   googleMapsUrl?: string | null;
+  /** @nullable */
+  googlePlaceId?: string | null;
 }

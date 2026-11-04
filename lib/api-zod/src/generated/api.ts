@@ -41,7 +41,8 @@ export const GetSiteSettingsResponse = zod.object({
   "booksyBusinessUrl": zod.string().nullable().describe('Booksy profile link; opened directly when the widget cannot be used'),
   "booksyBusinessId": zod.number().int().nullable().describe('Booksy business ID; when set, Book buttons open the Booksy widget inside the site'),
   "instagramUrl": zod.string().nullable(),
-  "googleMapsUrl": zod.string().nullable(),
+  "googleMapsUrl": zod.string().nullable().describe('Link to the shop\'s Google listing (used by Directions links and structured data)'),
+  "googlePlaceId": zod.string().nullable().describe('Google Place ID of the listing; filled automatically the first time listing photos load'),
   "updatedAt": zod.coerce.date()
 })
 
@@ -185,6 +186,56 @@ export const GetLandingPageResponse = zod.object({
 
 
 /**
+ * @summary From-the-wall timeline entries with permission on file, in the owner order. Unapproved entries are never returned.
+ */
+export const ListWallEntriesResponseItem = zod.object({
+  "id": zod.number().int(),
+  "photoUrl": zod.string().nullable(),
+  "caption": zod.string(),
+  "year": zod.number().int().nullable().describe('Only set when the owner knows it'),
+  "people": zod.array(zod.string()),
+  "pressOutlet": zod.string().nullable().describe('Shown as text: As seen on <outlet>')
+})
+export const ListWallEntriesResponse = zod.array(ListWallEntriesResponseItem)
+
+
+/**
+ * @summary Live photos from the shop's Google listing, with author attributions. Empty when no key is set or Google fails.
+ */
+export const GetGooglePhotosResponse = zod.object({
+  "available": zod.boolean().describe('False when no key is configured or Google could not be reached; hide the strip'),
+  "listingUrl": zod.string().nullable(),
+  "photos": zod.array(zod.object({
+  "src": zod.string().describe('Same-origin path that streams the photo from Google'),
+  "widthPx": zod.number().int(),
+  "heightPx": zod.number().int(),
+  "authorAttributions": zod.array(zod.object({
+  "displayName": zod.string(),
+  "uri": zod.string().nullable().describe('Link to the author\'s Google Maps profile'),
+  "photoUri": zod.string().nullable()
+}))
+}))
+})
+
+
+/**
+ * @summary Streams one listing photo from Google without exposing the API key. Nothing is stored.
+ */
+export const getGooglePhotoMediaQueryMaxWidthPxDefault = 800;
+export const getGooglePhotoMediaQueryMaxWidthPxMin = 100;
+export const getGooglePhotoMediaQueryMaxWidthPxMax = 1600;
+
+
+
+export const GetGooglePhotoMediaQueryParams = zod.object({
+  "name": zod.coerce.string(),
+  "maxWidthPx": zod.coerce.number().int().min(getGooglePhotoMediaQueryMaxWidthPxMin).max(getGooglePhotoMediaQueryMaxWidthPxMax).default(getGooglePhotoMediaQueryMaxWidthPxDefault)
+})
+
+export const GetGooglePhotoMediaResponse = zod.unknown()
+
+
+/**
  * @summary Record a first-party conversion event (call_click, book_click, booking_completed, landing_view)
  */
 export const trackEventBodySessionIdMax = 100;
@@ -257,7 +308,8 @@ export const UpdateSiteSettingsBody = zod.object({
   "booksyBusinessUrl": zod.string().nullish(),
   "booksyBusinessId": zod.number().int().min(1).nullish(),
   "instagramUrl": zod.string().nullish(),
-  "googleMapsUrl": zod.string().nullish()
+  "googleMapsUrl": zod.string().nullish(),
+  "googlePlaceId": zod.string().nullish()
 })
 
 export const UpdateSiteSettingsResponse = zod.object({
@@ -282,7 +334,8 @@ export const UpdateSiteSettingsResponse = zod.object({
   "booksyBusinessUrl": zod.string().nullable().describe('Booksy profile link; opened directly when the widget cannot be used'),
   "booksyBusinessId": zod.number().int().nullable().describe('Booksy business ID; when set, Book buttons open the Booksy widget inside the site'),
   "instagramUrl": zod.string().nullable(),
-  "googleMapsUrl": zod.string().nullable(),
+  "googleMapsUrl": zod.string().nullable().describe('Link to the shop\'s Google listing (used by Directions links and structured data)'),
+  "googlePlaceId": zod.string().nullable().describe('Google Place ID of the listing; filled automatically the first time listing photos load'),
   "updatedAt": zod.coerce.date()
 })
 
@@ -436,6 +489,109 @@ export const AdminDeleteBarberParams = zod.object({
 })
 
 export const AdminDeleteBarberResponse = zod.void()
+
+
+/**
+ * @summary All From-the-wall entries, including drafts without permission
+ */
+export const AdminListWallEntriesResponseItem = zod.object({
+  "id": zod.number().int(),
+  "photoUrl": zod.string().nullable().describe('Absolute URL or /api/storage/... path'),
+  "caption": zod.string(),
+  "year": zod.number().int().nullable(),
+  "people": zod.array(zod.string()),
+  "pressOutlet": zod.string().nullable(),
+  "permissionOnFile": zod.boolean().describe('Written permission recorded. Only these entries are shown publicly.'),
+  "displayOrder": zod.number().int(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+export const AdminListWallEntriesResponse = zod.array(AdminListWallEntriesResponseItem)
+
+
+export const adminCreateWallEntryBodyCaptionMax = 500;
+
+export const adminCreateWallEntryBodyYearMin = 1900;
+export const adminCreateWallEntryBodyYearMax = 2100;
+
+export const adminCreateWallEntryBodyPeopleItemMax = 120;
+
+export const adminCreateWallEntryBodyPeopleMax = 20;
+
+export const adminCreateWallEntryBodyPressOutletMax = 120;
+
+
+
+export const AdminCreateWallEntryBody = zod.object({
+  "photoUrl": zod.string().nullish(),
+  "caption": zod.string().min(1).max(adminCreateWallEntryBodyCaptionMax),
+  "year": zod.number().int().min(adminCreateWallEntryBodyYearMin).max(adminCreateWallEntryBodyYearMax).nullish(),
+  "people": zod.array(zod.string().max(adminCreateWallEntryBodyPeopleItemMax)).max(adminCreateWallEntryBodyPeopleMax).optional(),
+  "pressOutlet": zod.string().max(adminCreateWallEntryBodyPressOutletMax).nullish(),
+  "permissionOnFile": zod.boolean().optional(),
+  "displayOrder": zod.number().int().optional()
+})
+
+export const AdminCreateWallEntryResponse = zod.object({
+  "id": zod.number().int(),
+  "photoUrl": zod.string().nullable().describe('Absolute URL or /api/storage/... path'),
+  "caption": zod.string(),
+  "year": zod.number().int().nullable(),
+  "people": zod.array(zod.string()),
+  "pressOutlet": zod.string().nullable(),
+  "permissionOnFile": zod.boolean().describe('Written permission recorded. Only these entries are shown publicly.'),
+  "displayOrder": zod.number().int(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+export const AdminUpdateWallEntryParams = zod.object({
+  "id": zod.coerce.number().int()
+})
+
+export const adminUpdateWallEntryBodyCaptionMax = 500;
+
+export const adminUpdateWallEntryBodyYearMin = 1900;
+export const adminUpdateWallEntryBodyYearMax = 2100;
+
+export const adminUpdateWallEntryBodyPeopleItemMax = 120;
+
+export const adminUpdateWallEntryBodyPeopleMax = 20;
+
+export const adminUpdateWallEntryBodyPressOutletMax = 120;
+
+
+
+export const AdminUpdateWallEntryBody = zod.object({
+  "photoUrl": zod.string().nullish(),
+  "caption": zod.string().min(1).max(adminUpdateWallEntryBodyCaptionMax).optional(),
+  "year": zod.number().int().min(adminUpdateWallEntryBodyYearMin).max(adminUpdateWallEntryBodyYearMax).nullish(),
+  "people": zod.array(zod.string().max(adminUpdateWallEntryBodyPeopleItemMax)).max(adminUpdateWallEntryBodyPeopleMax).optional(),
+  "pressOutlet": zod.string().max(adminUpdateWallEntryBodyPressOutletMax).nullish(),
+  "permissionOnFile": zod.boolean().optional(),
+  "displayOrder": zod.number().int().optional()
+})
+
+export const AdminUpdateWallEntryResponse = zod.object({
+  "id": zod.number().int(),
+  "photoUrl": zod.string().nullable().describe('Absolute URL or /api/storage/... path'),
+  "caption": zod.string(),
+  "year": zod.number().int().nullable(),
+  "people": zod.array(zod.string()),
+  "pressOutlet": zod.string().nullable(),
+  "permissionOnFile": zod.boolean().describe('Written permission recorded. Only these entries are shown publicly.'),
+  "displayOrder": zod.number().int(),
+  "createdAt": zod.coerce.date(),
+  "updatedAt": zod.coerce.date()
+})
+
+
+export const AdminDeleteWallEntryParams = zod.object({
+  "id": zod.coerce.number().int()
+})
+
+export const AdminDeleteWallEntryResponse = zod.void()
 
 
 export const AdminListServicesResponseItem = zod.object({

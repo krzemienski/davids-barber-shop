@@ -33,6 +33,8 @@ import type {
   CampaignInput,
   CampaignUpdate,
   ErrorEnvelope,
+  GetGooglePhotoMediaParams,
+  GooglePhotos,
   HealthStatus,
   LandingPage,
   LandingPageDetail,
@@ -40,6 +42,7 @@ import type {
   LandingPageUpdate,
   OkResponse,
   PerformanceReport,
+  PublicWallEntry,
   Service,
   ServiceInput,
   ServiceUpdate,
@@ -49,7 +52,10 @@ import type {
   TrackEventInput,
   TrackedEvent,
   UploadUrlRequest,
-  UploadUrlResponse
+  UploadUrlResponse,
+  WallEntry,
+  WallEntryInput,
+  WallEntryUpdate
 } from './api.schemas';
 
 import { customFetch } from '../custom-fetch';
@@ -594,6 +600,244 @@ export function useGetLandingPage<TData = Awaited<ReturnType<typeof getLandingPa
  ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
 
   const queryOptions = getGetLandingPageQueryOptions(slug,options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getListWallEntriesUrl = () => {
+
+
+
+
+  return `/api/wall`
+}
+
+/**
+ * @summary From-the-wall timeline entries with permission on file, in the owner order. Unapproved entries are never returned.
+ */
+export const listWallEntries = async ( options?: Parameters<typeof customFetch>[1]): Promise<PublicWallEntry[]> => {
+
+  return customFetch<PublicWallEntry[]>(getListWallEntriesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getListWallEntriesQueryKey = () => {
+    return [
+    `/api/wall`
+    ] as const;
+    }
+
+
+export const getListWallEntriesQueryOptions = <TData = Awaited<ReturnType<typeof listWallEntries>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listWallEntries>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getListWallEntriesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof listWallEntries>>> = ({ signal }) => listWallEntries({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof listWallEntries>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type ListWallEntriesQueryResult = NonNullable<Awaited<ReturnType<typeof listWallEntries>>>
+export type ListWallEntriesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary From-the-wall timeline entries with permission on file, in the owner order. Unapproved entries are never returned.
+ */
+
+export function useListWallEntries<TData = Awaited<ReturnType<typeof listWallEntries>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof listWallEntries>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getListWallEntriesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetGooglePhotosUrl = () => {
+
+
+
+
+  return `/api/google/photos`
+}
+
+/**
+ * @summary Live photos from the shop's Google listing, with author attributions. Empty when no key is set or Google fails.
+ */
+export const getGooglePhotos = async ( options?: Parameters<typeof customFetch>[1]): Promise<GooglePhotos> => {
+
+  return customFetch<GooglePhotos>(getGetGooglePhotosUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetGooglePhotosQueryKey = () => {
+    return [
+    `/api/google/photos`
+    ] as const;
+    }
+
+
+export const getGetGooglePhotosQueryOptions = <TData = Awaited<ReturnType<typeof getGooglePhotos>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getGooglePhotos>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGooglePhotosQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGooglePhotos>>> = ({ signal }) => getGooglePhotos({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGooglePhotos>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGooglePhotosQueryResult = NonNullable<Awaited<ReturnType<typeof getGooglePhotos>>>
+export type GetGooglePhotosQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary Live photos from the shop's Google listing, with author attributions. Empty when no key is set or Google fails.
+ */
+
+export function useGetGooglePhotos<TData = Awaited<ReturnType<typeof getGooglePhotos>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getGooglePhotos>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetGooglePhotosQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getGetGooglePhotoMediaUrl = (params: GetGooglePhotoMediaParams,) => {
+  const normalizedParams = new URLSearchParams();
+
+  Object.entries(params || {}).forEach(([key, value]) => {
+
+    if (value !== undefined) {
+      normalizedParams.append(key, value === null ? 'null' : String(value))
+    }
+  });
+
+  const stringifiedParams = normalizedParams.toString();
+
+  return stringifiedParams.length > 0 ? `/api/google/photos/media?${stringifiedParams}` : `/api/google/photos/media`
+}
+
+/**
+ * @summary Streams one listing photo from Google without exposing the API key. Nothing is stored.
+ */
+export const getGooglePhotoMedia = async (params: GetGooglePhotoMediaParams, options?: Parameters<typeof customFetch>[1]): Promise<Blob> => {
+
+  return customFetch<Blob>(getGetGooglePhotoMediaUrl(params),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getGetGooglePhotoMediaQueryKey = (params?: GetGooglePhotoMediaParams,) => {
+    return [
+    `/api/google/photos/media`, ...(params ? [params] : [])
+    ] as const;
+    }
+
+
+export const getGetGooglePhotoMediaQueryOptions = <TData = Awaited<ReturnType<typeof getGooglePhotoMedia>>, TError = ErrorType<ErrorEnvelope>>(params: GetGooglePhotoMediaParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getGooglePhotoMedia>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getGetGooglePhotoMediaQueryKey(params);
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof getGooglePhotoMedia>>> = ({ signal }) => getGooglePhotoMedia(params, { signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof getGooglePhotoMedia>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type GetGooglePhotoMediaQueryResult = NonNullable<Awaited<ReturnType<typeof getGooglePhotoMedia>>>
+export type GetGooglePhotoMediaQueryError = ErrorType<ErrorEnvelope>
+
+
+/**
+ * @summary Streams one listing photo from Google without exposing the API key. Nothing is stored.
+ */
+
+export function useGetGooglePhotoMedia<TData = Awaited<ReturnType<typeof getGooglePhotoMedia>>, TError = ErrorType<ErrorEnvelope>>(
+ params: GetGooglePhotoMediaParams, options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof getGooglePhotoMedia>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getGetGooglePhotoMediaQueryOptions(params,options)
 
   const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
 
@@ -1161,6 +1405,316 @@ const {mutation: mutationOptions, request: requestOptions} = options ?
         TContext
       > => {
       return useMutation(getAdminDeleteBarberMutationOptions(options));
+    }
+
+export const getAdminListWallEntriesUrl = () => {
+
+
+
+
+  return `/api/admin/wall`
+}
+
+/**
+ * @summary All From-the-wall entries, including drafts without permission
+ */
+export const adminListWallEntries = async ( options?: Parameters<typeof customFetch>[1]): Promise<WallEntry[]> => {
+
+  return customFetch<WallEntry[]>(getAdminListWallEntriesUrl(),
+  {
+    ...options,
+    method: 'GET'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminListWallEntriesQueryKey = () => {
+    return [
+    `/api/admin/wall`
+    ] as const;
+    }
+
+
+export const getAdminListWallEntriesQueryOptions = <TData = Awaited<ReturnType<typeof adminListWallEntries>>, TError = ErrorType<unknown>>( options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminListWallEntries>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+) => {
+
+const {query: queryOptions, request: requestOptions} = options ?? {};
+
+  const queryKey =  queryOptions?.queryKey ?? getAdminListWallEntriesQueryKey();
+
+
+
+    const queryFn: QueryFunction<Awaited<ReturnType<typeof adminListWallEntries>>> = ({ signal }) => adminListWallEntries({ signal, ...requestOptions });
+
+
+
+
+
+   return  { queryKey, queryFn, ...queryOptions} as UseQueryOptions<Awaited<ReturnType<typeof adminListWallEntries>>, TError, TData> & { queryKey: QueryKey }
+}
+
+export type AdminListWallEntriesQueryResult = NonNullable<Awaited<ReturnType<typeof adminListWallEntries>>>
+export type AdminListWallEntriesQueryError = ErrorType<unknown>
+
+
+/**
+ * @summary All From-the-wall entries, including drafts without permission
+ */
+
+export function useAdminListWallEntries<TData = Awaited<ReturnType<typeof adminListWallEntries>>, TError = ErrorType<unknown>>(
+  options?: { query?:UseQueryOptions<Awaited<ReturnType<typeof adminListWallEntries>>, TError, TData>, request?: SecondParameter<typeof customFetch>}
+
+ ):  UseQueryResult<TData, TError> & { queryKey: QueryKey } {
+
+  const queryOptions = getAdminListWallEntriesQueryOptions(options)
+
+  const query = useQuery(queryOptions) as  UseQueryResult<TData, TError> & { queryKey: QueryKey };
+
+  return withQueryKey(query, queryOptions.queryKey);
+}
+
+
+
+
+
+
+
+export const getAdminCreateWallEntryUrl = () => {
+
+
+
+
+  return `/api/admin/wall`
+}
+
+export const adminCreateWallEntry = async (wallEntryInput: WallEntryInput, options?: Parameters<typeof customFetch>[1]): Promise<WallEntry> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<WallEntry>(getAdminCreateWallEntryUrl(),
+  {
+    ...options,
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(wallEntryInput)
+  }
+);}
+
+
+
+
+
+export const getAdminCreateWallEntryMutationKey = () => ['adminCreateWallEntry'] as const;
+
+export const getAdminCreateWallEntryMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateWallEntry>>, TError,AdminCreateWallEntryMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminCreateWallEntry>>, TError,AdminCreateWallEntryMutationVariables, TContext> => {
+
+const mutationKey = getAdminCreateWallEntryMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminCreateWallEntry>>, AdminCreateWallEntryMutationVariables> = (props) => {
+          const {data} = props ?? {};
+
+          return  adminCreateWallEntry(data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminCreateWallEntryMutationResult = NonNullable<Awaited<ReturnType<typeof adminCreateWallEntry>>>
+    export type AdminCreateWallEntryMutationBody = BodyType<WallEntryInput>
+    export type AdminCreateWallEntryMutationError = ErrorType<unknown>
+    export type AdminCreateWallEntryMutationVariables = {data: BodyType<WallEntryInput>}
+
+    export const useAdminCreateWallEntry = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminCreateWallEntry>>, TError,AdminCreateWallEntryMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminCreateWallEntry>>,
+        TError,
+        AdminCreateWallEntryMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminCreateWallEntryMutationOptions(options));
+    }
+
+export const getAdminUpdateWallEntryUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/wall/${id}`
+}
+
+export const adminUpdateWallEntry = async (id: number,
+    wallEntryUpdate: WallEntryUpdate, options?: Parameters<typeof customFetch>[1]): Promise<WallEntry> => {
+
+    const getHeaders = (h?: NonNullable<RequestInit['headers']>): Record<string, string | readonly string[]> => {
+    if (!h) return {};
+    if (h instanceof Headers) return Object.fromEntries(h.entries());
+    if (Symbol.iterator in h) {
+      return Object.fromEntries(
+        Array.from(h as Iterable<Iterable<string>>, (entry) => Array.from(entry) as [string, string]),
+      );
+    }
+    const headers: Record<string, string | readonly string[]> = {};
+    for (const [name, value] of Object.entries<string | readonly string[] | undefined>(h)) {
+      if (value !== undefined) headers[name] = value;
+    }
+    return headers;
+  };
+return customFetch<WallEntry>(getAdminUpdateWallEntryUrl(id),
+  {
+    ...options,
+    method: 'PATCH',
+    headers: { 'Content-Type': 'application/json', ...getHeaders(options?.headers) },
+    body: JSON.stringify(wallEntryUpdate)
+  }
+);}
+
+
+
+
+
+export const getAdminUpdateWallEntryMutationKey = () => ['adminUpdateWallEntry'] as const;
+
+export const getAdminUpdateWallEntryMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateWallEntry>>, TError,AdminUpdateWallEntryMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminUpdateWallEntry>>, TError,AdminUpdateWallEntryMutationVariables, TContext> => {
+
+const mutationKey = getAdminUpdateWallEntryMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminUpdateWallEntry>>, AdminUpdateWallEntryMutationVariables> = (props) => {
+          const {id,data} = props ?? {};
+
+          return  adminUpdateWallEntry(id,data,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminUpdateWallEntryMutationResult = NonNullable<Awaited<ReturnType<typeof adminUpdateWallEntry>>>
+    export type AdminUpdateWallEntryMutationBody = BodyType<WallEntryUpdate>
+    export type AdminUpdateWallEntryMutationError = ErrorType<unknown>
+    export type AdminUpdateWallEntryMutationVariables = {id: number;data: BodyType<WallEntryUpdate>}
+
+    export const useAdminUpdateWallEntry = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminUpdateWallEntry>>, TError,AdminUpdateWallEntryMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminUpdateWallEntry>>,
+        TError,
+        AdminUpdateWallEntryMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminUpdateWallEntryMutationOptions(options));
+    }
+
+export const getAdminDeleteWallEntryUrl = (id: number,) => {
+
+
+
+
+  return `/api/admin/wall/${id}`
+}
+
+export const adminDeleteWallEntry = async (id: number, options?: Parameters<typeof customFetch>[1]): Promise<void> => {
+
+  return customFetch<void>(getAdminDeleteWallEntryUrl(id),
+  {
+    ...options,
+    method: 'DELETE'
+
+
+  }
+);}
+
+
+
+
+
+export const getAdminDeleteWallEntryMutationKey = () => ['adminDeleteWallEntry'] as const;
+
+export const getAdminDeleteWallEntryMutationOptions = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminDeleteWallEntry>>, TError,AdminDeleteWallEntryMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+): UseMutationOptions<Awaited<ReturnType<typeof adminDeleteWallEntry>>, TError,AdminDeleteWallEntryMutationVariables, TContext> => {
+
+const mutationKey = getAdminDeleteWallEntryMutationKey();
+const {mutation: mutationOptions, request: requestOptions} = options ?
+      options.mutation && 'mutationKey' in options.mutation && options.mutation.mutationKey ?
+      options
+      : {...options, mutation: {...options.mutation, mutationKey}}
+      : {mutation: { mutationKey, }, request: undefined};
+
+
+
+
+      const mutationFn: MutationFunction<Awaited<ReturnType<typeof adminDeleteWallEntry>>, AdminDeleteWallEntryMutationVariables> = (props) => {
+          const {id} = props ?? {};
+
+          return  adminDeleteWallEntry(id,requestOptions)
+        }
+
+
+
+
+
+
+  return  { mutationFn, ...mutationOptions }}
+
+    export type AdminDeleteWallEntryMutationResult = NonNullable<Awaited<ReturnType<typeof adminDeleteWallEntry>>>
+
+    export type AdminDeleteWallEntryMutationError = ErrorType<unknown>
+    export type AdminDeleteWallEntryMutationVariables = {id: number}
+
+    export const useAdminDeleteWallEntry = <TError = ErrorType<unknown>,
+    TContext = unknown>(options?: { mutation?:UseMutationOptions<Awaited<ReturnType<typeof adminDeleteWallEntry>>, TError,AdminDeleteWallEntryMutationVariables, TContext>, request?: SecondParameter<typeof customFetch>}
+ ): UseMutationResult<
+        Awaited<ReturnType<typeof adminDeleteWallEntry>>,
+        TError,
+        AdminDeleteWallEntryMutationVariables,
+        TContext
+      > => {
+      return useMutation(getAdminDeleteWallEntryMutationOptions(options));
     }
 
 export const getAdminListServicesUrl = () => {

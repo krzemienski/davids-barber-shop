@@ -1,5 +1,5 @@
 import { Link } from 'wouter';
-import { ArrowRight, MapPin, Star } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, MapPin, Star } from 'lucide-react';
 import { useListBarbers, useListServices, useListTestimonials } from '@workspace/api-client-react';
 import aboutStorefront from '@assets/brand/about2.jpg';
 import aboutChairs from '@assets/brand/about3.jpg';
@@ -9,7 +9,9 @@ import {
 } from '@/components/site';
 import { HeroVideo } from '@/components/hero-video';
 import { usePageMeta, useLocalBusinessJsonLd } from '@/lib/meta';
-import { fullAddress, mediaUrl, money, yearsSince } from '@/lib/format';
+import { fullAddress, mapsListingUrl, mediaUrl, money, yearsSince } from '@/lib/format';
+import { trackEvent } from '@/lib/analytics';
+import { WallTeaser } from '@/components/wall';
 import { cn } from '@/lib/utils';
 
 export default function Home() {
@@ -200,6 +202,8 @@ export default function Home() {
           </div>
         </section>
 
+        <WallTeaser />
+
         {/* VISIT */}
         <section className="py-24 md:py-32">
           <div className="mx-auto max-w-7xl px-5 lg:px-8 grid gap-14 lg:grid-cols-2">
@@ -217,7 +221,10 @@ export default function Home() {
               <Reveal delay={200} className="mt-8 flex flex-wrap gap-3">
                 <BookButton settings={s} testId="button-visit-book" />
                 <CallLink settings={s} testId="link-visit-call" />
-                <Link href="/visit" className={cn(ui.btnBase, ui.btnSizes.md, ui.btnVariants.ghost)} data-testid="link-directions">Directions <ArrowRight className="h-4 w-4" /></Link>
+                {s && (
+                  <a href={mapsListingUrl(s)} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('directions_click', { placement: 'home_visit' })}
+                    className={cn(ui.btnBase, ui.btnSizes.md, ui.btnVariants.ghost)} data-testid="link-directions">Directions <ArrowUpRight className="h-4 w-4" /></a>
+                )}
               </Reveal>
             </div>
             <Reveal delay={120} className="border border-gold/20 bg-card p-6 md:p-8">

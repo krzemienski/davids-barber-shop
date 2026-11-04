@@ -3,7 +3,7 @@ import { Link, useLocation } from 'wouter';
 import { useAuth, useClerk, useUser } from '@clerk/react';
 import { useGetAdminMe, getGetAdminMeQueryKey } from '@workspace/api-client-react';
 import type { AdminUser } from '@workspace/api-client-react';
-import { BarChart3, Scissors, Tag, Megaphone, CalendarCheck, Target, Settings, Users, LogOut, ExternalLink, Menu, X, ShieldAlert, Trash2, Loader2, KeyRound } from 'lucide-react';
+import { BarChart3, Scissors, Tag, Megaphone, CalendarCheck, Target, Settings, Users, Frame, LogOut, ExternalLink, Menu, X, ShieldAlert, Trash2, Loader2, KeyRound } from 'lucide-react';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
@@ -22,6 +22,7 @@ const NAV = [
   { href: '/admin/landing-pages', label: 'Landing pages', icon: Megaphone },
   { href: '/admin/barbers', label: 'Barbers', icon: Scissors },
   { href: '/admin/services', label: 'Services', icon: Tag },
+  { href: '/admin/wall', label: 'From the wall', icon: Frame },
   { href: '/admin/settings', label: 'Site settings', icon: Settings },
   { href: '/admin/users', label: 'Staff access', icon: Users, owner: true },
 ];

@@ -31,13 +31,14 @@ Website for David's Barber Shop (233 E 84th St, Upper East Side, since 1972) bui
 - Book buttons open Booksy's widget in an on-site panel when Settings has a Booksy business ID (staff/service IDs optional per barber/service); `booking_completed` comes from the widget's close message and is a lower bound. Details: `docs/research/booksy-integration.md` §5.
 - Admin access = Clerk sign-in + DB allowlist with owner/editor roles. `ADMIN_BOOTSTRAP_EMAILS` (shared env var) seeds the first owner only while the staff table is empty.
 - Replit Analytics custom events go through `trackEvent` in `src/lib/analytics.ts`; every `useTracker` event is mirrored there with `placement` (derived from the button's testId). Don't call `window.umami` directly.
-- Money in cents. Unconsented notable clients are filtered out in the public API.
+- Money in cents. Unconsented notable clients and "From the wall" entries without permission on file are filtered out in the public API.
+- Google listing photos (Gallery) are fetched live server-side with `GOOGLE_MAPS_API_KEY` and streamed through `/api/google/photos/media`; never stored or cached (only the Place ID is kept in site settings).
 - See `docs/DECISIONS.md` for the full list and reasons.
 
 ## Product
 
-- Public: Home (video hero), Barbers + profiles, Services, Our Story, Gallery, Visit, Privacy, ad landing pages `/l/<slug>` with A/B variants, mobile Call/Book bar.
-- Admin `/admin`: Performance (cost per booking vs $60), Bookings + Google Ads offline CSV, Campaigns, Landing pages, Barbers, Services, Site settings, Staff access.
+- Public: Home (video hero, wall teaser), Barbers + profiles, Services, Our Story (+ From-the-wall timeline), Gallery (+ live Google listing photos), Visit (map of the real Google listing), Privacy, ad landing pages `/l/<slug>` with A/B variants, mobile Call/Book bar.
+- Admin `/admin`: Performance (cost per booking vs $60), Bookings + Google Ads offline CSV, Campaigns, Landing pages, Barbers, Services, From the wall, Site settings, Staff access.
 
 ## User preferences
 

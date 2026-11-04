@@ -1,4 +1,4 @@
-import { count, eq } from "drizzle-orm";
+import { and, count, eq } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import {
   adminUsersTable,
@@ -8,7 +8,9 @@ import {
   servicesTable,
   siteSettingsTable,
   testimonialsTable,
+  wallEntriesTable,
 } from "@workspace/db";
+import { DEFAULT_LISTING_URL } from "./googlePlaces";
 import { logger } from "./logger";
 
 // Starting content mirrors davidsbarbershop84.com as of October 2026. Every
@@ -45,6 +47,40 @@ const TESTIMONIALS = [
   { author: "Chris R.", barberName: "Sean", quote: "Sean and his team have always been welcoming and masters of their craft - I even bring my father in law from Queens here because I trust and like them the best. No matter where I live in the city will always come here, like family!" },
 ];
 
+// Restored scans of the framed photos on the shop wall (originals in
+// attached_assets/, restored copies in attached_assets/wall-restored/), uploaded
+// to private object storage under unguessable names. Seeded as drafts: nothing
+// is public until the owner records permission. No years are guessed.
+const WALL_DRAFTS = [
+  {
+    photoUrl: "/api/storage/objects/wall/72cd0a03-40cd-4c16-9982-caab2f7badae.jpg",
+    caption: "The shop's name and address on screen during a haircut segment on Good Day New York.",
+    people: [] as string[],
+    pressOutlet: "FOX 5 Good Day New York",
+  },
+  {
+    photoUrl: "/api/storage/objects/wall/3f1ef7cd-2d53-4090-9fbc-efa6c8d84ff0.jpg",
+    caption: "A signed #22 photo, taken in the shop doorway.",
+    people: ["Jacoby Ellsbury"],
+    pressOutlet: null,
+  },
+  {
+    photoUrl: "/api/storage/objects/wall/b88fe06c-8bc2-4bca-86af-32d00ecfdc0b.jpg",
+    caption: "Aaron Judge in the chair, with a selfie in the mirror. Signed for the shop wall.",
+    people: ["Aaron Judge"],
+    pressOutlet: null,
+  },
+  {
+    photoUrl: "/api/storage/objects/wall/4621df81-eb25-4209-bb6c-8ed6506077fb.jpg",
+    caption: "Carlos Beltran outside the shop on East 84th Street.",
+    people: ["Carlos Beltran"],
+    pressOutlet: null,
+  },
+];
+
+// The Maps link seeded before the real listing was known. Replaced only while it is still this exact value.
+const OLD_DEFAULT_MAPS_URL = "https://www.google.com/maps/search/?api=1&query=233+E+84th+St,+New+York,+NY+10028";
+
 async function isEmpty(table: PgTable): Promise<boolean> {
   const [{ n }] = await db.select({ n: count() }).from(table);
   return n === 0;
@@ -71,9 +107,21 @@ export async function seedDatabase(): Promise<void> {
       booksyBusinessUrl: "https://booksy.com/en-us/1663005_davids-barbershop_barber-shop_30067_new-york-city",
       booksyBusinessId: 1663005,
       instagramUrl: null,
-      googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=233+E+84th+St,+New+York,+NY+10028",
+      googleMapsUrl: DEFAULT_LISTING_URL,
     });
     logger.info("Seeded site settings");
+  } else {
+    const moved = await db
+      .update(siteSettingsTable)
+      .set({ googleMapsUrl: DEFAULT_LISTING_URL, updatedAt: new Date() })
+      .where(and(eq(siteSettingsTable.id, 1), eq(siteSettingsTable.googleMapsUrl, OLD_DEFAULT_MAPS_URL)))
+      .returning({ id: siteSettingsTable.id });
+    if (moved.length > 0) logger.info("Pointed the Google Maps link at the shop's listing");
+  }
+
+  if (await isEmpty(wallEntriesTable)) {
+    await db.insert(wallEntriesTable).values(WALL_DRAFTS.map((w, i) => ({ ...w, permissionOnFile: false, displayOrder: i })));
+    logger.info("Seeded From-the-wall drafts (all hidden until permission is recorded)");
   }
 
   if (await isEmpty(servicesTable)) {

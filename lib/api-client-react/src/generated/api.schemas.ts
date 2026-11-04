@@ -70,8 +70,16 @@ export interface SiteSettings {
   booksyBusinessId: number | null;
   /** @nullable */
   instagramUrl: string | null;
-  /** @nullable */
+  /**
+     * Link to the shop's Google listing (used by Directions links and structured data)
+     * @nullable
+     */
   googleMapsUrl: string | null;
+  /**
+     * Google Place ID of the listing; filled automatically the first time listing photos load
+     * @nullable
+     */
+  googlePlaceId: string | null;
   updatedAt: string;
 }
 
@@ -109,6 +117,8 @@ export interface SiteSettingsInput {
   instagramUrl?: string | null;
   /** @nullable */
   googleMapsUrl?: string | null;
+  /** @nullable */
+  googlePlaceId?: string | null;
 }
 
 export interface NotableClient {
@@ -370,6 +380,127 @@ export interface LandingPageUpdate {
   /** @nullable */
   variantBSubheadline?: string | null;
   active?: boolean;
+}
+
+export interface PublicWallEntry {
+  id: number;
+  /** @nullable */
+  photoUrl: string | null;
+  caption: string;
+  /**
+     * Only set when the owner knows it
+     * @nullable
+     */
+  year: number | null;
+  people: string[];
+  /**
+     * Shown as text: As seen on <outlet>
+     * @nullable
+     */
+  pressOutlet: string | null;
+}
+
+export interface WallEntry {
+  id: number;
+  /**
+     * Absolute URL or /api/storage/... path
+     * @nullable
+     */
+  photoUrl: string | null;
+  caption: string;
+  /** @nullable */
+  year: number | null;
+  people: string[];
+  /** @nullable */
+  pressOutlet: string | null;
+  /** Written permission recorded. Only these entries are shown publicly. */
+  permissionOnFile: boolean;
+  displayOrder: number;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface WallEntryInput {
+  /** @nullable */
+  photoUrl?: string | null;
+  /**
+     * @minLength 1
+     * @maxLength 500
+     */
+  caption: string;
+  /**
+     * @minimum 1900
+     * @maximum 2100
+     * @nullable
+     */
+  year?: number | null;
+  /**
+     * @maxItems 20
+     * @items.maxLength 120
+     */
+  people?: string[];
+  /**
+     * @maxLength 120
+     * @nullable
+     */
+  pressOutlet?: string | null;
+  permissionOnFile?: boolean;
+  displayOrder?: number;
+}
+
+export interface WallEntryUpdate {
+  /** @nullable */
+  photoUrl?: string | null;
+  /**
+     * @minLength 1
+     * @maxLength 500
+     */
+  caption?: string;
+  /**
+     * @minimum 1900
+     * @maximum 2100
+     * @nullable
+     */
+  year?: number | null;
+  /**
+     * @maxItems 20
+     * @items.maxLength 120
+     */
+  people?: string[];
+  /**
+     * @maxLength 120
+     * @nullable
+     */
+  pressOutlet?: string | null;
+  permissionOnFile?: boolean;
+  displayOrder?: number;
+}
+
+export interface GoogleAuthorAttribution {
+  displayName: string;
+  /**
+     * Link to the author's Google Maps profile
+     * @nullable
+     */
+  uri: string | null;
+  /** @nullable */
+  photoUri: string | null;
+}
+
+export interface GooglePhoto {
+  /** Same-origin path that streams the photo from Google */
+  src: string;
+  widthPx: number;
+  heightPx: number;
+  authorAttributions: GoogleAuthorAttribution[];
+}
+
+export interface GooglePhotos {
+  /** False when no key is configured or Google could not be reached; hide the strip */
+  available: boolean;
+  /** @nullable */
+  listingUrl: string | null;
+  photos: GooglePhoto[];
 }
 
 export type TrackEventInputType = typeof TrackEventInputType[keyof typeof TrackEventInputType];
@@ -695,6 +826,15 @@ export interface UploadUrlResponse {
   objectPath: string;
   metadata?: UploadUrlRequest;
 }
+
+export type GetGooglePhotoMediaParams = {
+name: string;
+/**
+ * @minimum 100
+ * @maximum 1600
+ */
+maxWidthPx?: number;
+};
 
 export type AdminGetPerformanceParams = {
 /**

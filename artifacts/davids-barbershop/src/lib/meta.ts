@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import type { SiteSettings } from '@workspace/api-client-react';
-import { basePath, fullAddress } from './format';
+import { basePath, mapsListingUrl } from './format';
 
 export function usePageMeta(title: string, description: string, opts: { noindex?: boolean } = {}) {
   const { noindex = false } = opts;
@@ -64,7 +64,7 @@ export function useLocalBusinessJsonLd(s: SiteSettings | undefined) {
         postalCode: s.postalCode,
         addressCountry: 'US',
       },
-      hasMap: s.googleMapsUrl ?? `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(fullAddress(s))}`,
+      hasMap: mapsListingUrl(s),
       sameAs: [s.instagramUrl].filter(Boolean),
       priceRange: '$',
       openingHours: s.hours

@@ -56,6 +56,22 @@ export function fullAddress(s: SiteSettings): string {
   return `${s.streetAddress}, ${s.city}, ${s.region} ${s.postalCode}`;
 }
 
+/** The shop's Google listing (not an address search). Falls back to a search that names the place. */
+export function mapsListingUrl(s: SiteSettings): string {
+  if (s.googleMapsUrl) return s.googleMapsUrl;
+  const q = encodeURIComponent(`${s.shopName}, ${fullAddress(s)}`);
+  return s.googlePlaceId
+    ? `https://www.google.com/maps/search/?api=1&query=${q}&query_place_id=${encodeURIComponent(s.googlePlaceId)}`
+    : `https://www.google.com/maps/search/?api=1&query=${q}`;
+}
+
+/** Keyless embed that opens on the listing card. Uses the listing's CID when the Maps link has one. */
+export function mapsEmbedUrl(s: SiteSettings): string {
+  const cid = s.googleMapsUrl?.match(/[?&]cid=(\d+)/)?.[1];
+  if (cid) return `https://maps.google.com/maps?cid=${cid}&z=16&output=embed`;
+  return `https://maps.google.com/maps?q=${encodeURIComponent(`${s.shopName}, ${fullAddress(s)}`)}&z=16&output=embed`;
+}
+
 export function assetUrl(u: string | null | undefined): string | undefined {
   if (!u) return undefined;
   if (/^https?:\/\//.test(u) || u.startsWith('data:')) return u;

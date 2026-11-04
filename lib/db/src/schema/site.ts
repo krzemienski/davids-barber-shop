@@ -27,6 +27,8 @@ export const siteSettingsTable = pgTable("site_settings", {
   booksyBusinessId: integer("booksy_business_id"),
   instagramUrl: text("instagram_url"),
   googleMapsUrl: text("google_maps_url"),
+  // Google Place ID of the shop's listing. Storing a Place ID is allowed by Google's terms.
+  googlePlaceId: text("google_place_id"),
   updatedAt: timestamp("updated_at", { withTimezone: true }).notNull().defaultNow(),
 });
 

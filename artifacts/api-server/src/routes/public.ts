@@ -1,3 +1,4 @@
+import { Readable } from "stream";
 import { Router, type IRouter } from "express";
 import { and, asc, eq } from "drizzle-orm";
 import {
@@ -8,11 +9,14 @@ import {
   servicesTable,
   siteSettingsTable,
   testimonialsTable,
+  wallEntriesTable,
 } from "@workspace/db";
-import { GetBarberParams, GetLandingPageParams, TrackEventBody } from "@workspace/api-zod";
+import { GetBarberParams, GetGooglePhotoMediaQueryParams, GetLandingPageParams, TrackEventBody } from "@workspace/api-zod";
+import { DEFAULT_LISTING_URL, fetchListingPhoto, listingPhotos } from "../lib/googlePlaces";
 import {
   serializeBarber,
   serializeLandingPage,
+  serializePublicWallEntry,
   serializeService,
   serializeSettings,
   serializeTestimonial,
@@ -66,6 +70,57 @@ router.get("/testimonials", async (_req, res) => {
     .from(testimonialsTable)
     .orderBy(asc(testimonialsTable.displayOrder), asc(testimonialsTable.id));
   res.json(rows.map(serializeTestimonial));
+});
+
+// Only entries with permission on file ever leave the server (NY Civil Rights Law §50–51).
+router.get("/wall", async (_req, res) => {
+  const rows = await db
+    .select()
+    .from(wallEntriesTable)
+    .where(eq(wallEntriesTable.permissionOnFile, true))
+    .orderBy(asc(wallEntriesTable.displayOrder), asc(wallEntriesTable.id));
+  res.json(rows.map(serializePublicWallEntry));
+});
+
+router.get("/google/photos", async (_req, res) => {
+  const [settings] = await db
+    .select({ googleMapsUrl: siteSettingsTable.googleMapsUrl })
+    .from(siteSettingsTable)
+    .where(eq(siteSettingsTable.id, 1));
+  const listingUrl = settings?.googleMapsUrl ?? DEFAULT_LISTING_URL;
+  const result = await listingPhotos();
+  // Google content must not be cached, by us or by browsers/CDNs.
+  res.setHeader("Cache-Control", "no-store");
+  if (!result || result.photos.length === 0) {
+    res.json({ available: false, listingUrl, photos: [] });
+    return;
+  }
+  res.json({
+    available: true,
+    listingUrl,
+    photos: result.photos.map((p) => ({
+      src: `/api/google/photos/media?name=${encodeURIComponent(p.name)}`,
+      widthPx: p.widthPx,
+      heightPx: p.heightPx,
+      authorAttributions: p.authorAttributions,
+    })),
+  });
+});
+
+router.get("/google/photos/media", async (req, res) => {
+  const parsed = GetGooglePhotoMediaQueryParams.safeParse(req.query);
+  if (!parsed.success) {
+    res.status(400).json({ error: "Invalid photo request" });
+    return;
+  }
+  const upstream = await fetchListingPhoto(parsed.data.name, parsed.data.maxWidthPx);
+  if (!upstream?.body) {
+    res.status(404).json({ error: "Photo unavailable" });
+    return;
+  }
+  res.setHeader("Content-Type", upstream.headers.get("content-type") ?? "image/jpeg");
+  res.setHeader("Cache-Control", "no-store");
+  Readable.fromWeb(upstream.body as import("stream/web").ReadableStream<Uint8Array>).pipe(res);
 });
 
 router.get("/landing-pages/:slug", async (req, res) => {

@@ -61,6 +61,19 @@ Add one row per ad campaign: platform, optional barber and landing page, budget,
 
 Name, description, price, duration, category (groups on the Services page), order, active. Price changes show on the site immediately. Keep these in line with Booksy — a customer who sees $30 here and $35 on Booksy will not book.
 
+### From the wall
+
+Framed photos from the shop wall, shown as a timeline on **Our Story** and as a three-photo teaser on the home page.
+
+- **Each entry:** photo, caption, optional year, the people in it, an optional TV/press credit, and the **Permission on file** switch.
+- **Permission on file is the only thing that makes an entry public.** Leave it off until you have written permission from everyone named or shown (New York Civil Rights Law §50–51), and from the broadcaster for a TV still. While it is off, the photo, caption and names are never sent to the public site, not even hidden in the page, and the photo file itself cannot be opened by anyone who is not signed in as staff.
+- **Year:** leave blank unless you know it. Entries with no year keep the order you set with the arrows (or the Display order number). Years are only displayed, never used to re-sort.
+- **TV or press credit:** shown as plain text, "As seen on FOX 5 Good Day New York". Never upload a channel logo.
+- **People:** comma separated. Only names you supply; never guessed from a face.
+- If no entry has permission, the timeline and the home teaser are hidden completely.
+- The four framed photos (FOX 5, the signed #22 photo, Aaron Judge, Carlos Beltran) were cleaned up (cropped, straightened, glare reduced, no faces or signatures retouched) and added as hidden drafts. The original scans are kept unchanged in the project files.
+- These photos are never used in ads.
+
 ### Landing pages (ads)
 
 Each landing page lives at `/l/<slug>`.
@@ -75,8 +88,14 @@ Each landing page lives at `/l/<slug>`.
 - **Offer price** drives the "$30 a cut" headline everywhere.
 - **Comparison price + source note:** shown as "vs. $X median at nearby UES shops" with the note as a footnote. Leave it empty until the owner approves the claim. Research supporting $45 is in `docs/research/competitors.md`.
 - **Announcement banner:** a one-line strip at the top of every page (holiday hours, closures). Empty = hidden.
-- Shop name, founded year, phone (E.164, e.g. `+12128619179`), email, address, Booksy business URL, Instagram, Google Maps link.
+- Shop name, founded year, phone (E.164, e.g. `+12128619179`), email, address, Booksy business URL, Instagram.
+- **Google Maps listing link:** the shop's own Google listing (`https://maps.google.com/?cid=3355011163649612090`, "David's Barber Shop, 233 E 84th St"). Every Directions / Open in Google Maps link, the map on Visit, and the search-engine data use it. Use the listing's link, not an address search.
+- **Google Place ID:** filled in automatically the first time the Gallery loads listing photos. It is cleared automatically if you change the listing link, and looked up again.
 - **Hours:** each day open/close or closed. Saturday closed is displayed in red as "Closed Saturdays" everywhere.
+
+### Google listing photos (Gallery)
+
+The Gallery shows up to six photos live from the shop's Google listing, each credited to the person who posted it, with a "See all on Google" link. They are not downloaded or saved; Google's terms forbid that, and many are customers' own photos. To change which photos appear, manage them on the Google Business Profile. The strip needs the `GOOGLE_MAPS_API_KEY` secret (Google Maps Platform, Places API (New) enabled); without it, or if Google is down, the strip simply does not appear.
 
 ### Staff access (owners only)
 

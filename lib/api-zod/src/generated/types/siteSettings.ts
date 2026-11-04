@@ -44,7 +44,15 @@ export interface SiteSettings {
   booksyBusinessId: number | null;
   /** @nullable */
   instagramUrl: string | null;
-  /** @nullable */
+  /**
+     * Link to the shop's Google listing (used by Directions links and structured data)
+     * @nullable
+     */
   googleMapsUrl: string | null;
+  /**
+     * Google Place ID of the listing; filled automatically the first time listing photos load
+     * @nullable
+     */
+  googlePlaceId: string | null;
   updatedAt: Date;
 }

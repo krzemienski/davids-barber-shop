@@ -6,7 +6,7 @@ import type { Barber, SiteSettings, Service, Testimonial } from '@workspace/api-
 import { getAttribution, useTracker } from '@/lib/tracking';
 import { booksyProfileUrl, canUseWidget, useBooking } from '@/lib/booking';
 import { placementFromTestId, trackEvent } from '@/lib/analytics';
-import { assetUrl, basePath, formatPhone, fullAddress, hoursLabel, initials, money, telHref, todayName } from '@/lib/format';
+import { assetUrl, basePath, formatPhone, fullAddress, hoursLabel, initials, mapsListingUrl, money, telHref, todayName } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export const useSettings = () => useGetSiteSettings();
@@ -293,7 +293,8 @@ export function Footer({ settings }: { settings: SiteSettings | undefined }) {
           <h3 className="text-[11px] uppercase tracking-[0.3em] text-gold">Find us</h3>
           {settings ? (
             <>
-              <p className="flex gap-3 text-bone"><MapPin className="h-4 w-4 mt-0.5 text-gold shrink-0" />{fullAddress(settings)}</p>
+              <a href={mapsListingUrl(settings)} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('directions_click', { placement: 'footer' })}
+                className="flex gap-3 text-bone hover:text-gold" data-testid="link-footer-address"><MapPin className="h-4 w-4 mt-0.5 text-gold shrink-0" />{fullAddress(settings)}</a>
               <CallLink settings={settings} variant="bare" testId="link-footer-call" className="flex gap-3 font-mono text-bone hover:text-gold">
                 <Phone className="h-4 w-4 text-gold" /> {formatPhone(settings.phone)}
               </CallLink>

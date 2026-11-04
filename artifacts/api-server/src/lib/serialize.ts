@@ -8,6 +8,7 @@ import type {
   ServiceRow,
   SiteSettingsRow,
   TestimonialRow,
+  WallEntryRow,
 } from "@workspace/db";
 
 const iso = (d: Date) => d.toISOString();
@@ -84,4 +85,13 @@ export function slugify(input: string): string {
     .replace(/[\u0300-\u036f]/g, "")
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+export function serializeWallEntry(w: WallEntryRow) {
+  return { ...w, createdAt: iso(w.createdAt), updatedAt: iso(w.updatedAt) };
+}
+
+// Public shape: no approval flag or ordering internals. Callers must only pass approved rows.
+export function serializePublicWallEntry(w: WallEntryRow) {
+  return { id: w.id, photoUrl: w.photoUrl, caption: w.caption, year: w.year, people: w.people, pressOutlet: w.pressOutlet };
 }

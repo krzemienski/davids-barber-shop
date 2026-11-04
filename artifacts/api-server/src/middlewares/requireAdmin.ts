@@ -26,20 +26,30 @@ async function verifiedEmailsFor(userId: string): Promise<string[]> {
   return emails;
 }
 
-async function resolveAdmin(req: Request, res: Response): Promise<AdminUserRow | null> {
-  const auth = getAuth(req);
-  const userId = auth?.userId;
-  if (!userId) {
-    res.status(401).json({ error: "Sign in required" });
-    return null;
-  }
+async function adminForUser(userId: string): Promise<AdminUserRow | null> {
   const emails = await verifiedEmailsFor(userId);
   for (const email of emails) {
     const [admin] = await db.select().from(adminUsersTable).where(eq(adminUsersTable.email, email));
     if (admin) return admin;
   }
-  res.status(403).json({ error: "This account does not have staff access" });
   return null;
+}
+
+/** The signed-in staff member, or null. Never writes a response. */
+export async function adminFromRequest(req: Request): Promise<AdminUserRow | null> {
+  const userId = getAuth(req)?.userId;
+  return userId ? adminForUser(userId) : null;
+}
+
+async function resolveAdmin(req: Request, res: Response): Promise<AdminUserRow | null> {
+  const userId = getAuth(req)?.userId;
+  if (!userId) {
+    res.status(401).json({ error: "Sign in required" });
+    return null;
+  }
+  const admin = await adminForUser(userId);
+  if (!admin) res.status(403).json({ error: "This account does not have staff access" });
+  return admin;
 }
 
 export function requireAdmin(role: "editor" | "owner" = "editor") {

@@ -430,7 +430,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
   const [f, setF] = useState({
     shopName: s.shopName, foundedYear: String(s.foundedYear), phone: s.phone, email: s.email, streetAddress: s.streetAddress, city: s.city, region: s.region, postalCode: s.postalCode,
     offer: centsToDollarsInput(s.offerPriceCents), comparison: centsToDollarsInput(s.comparisonPriceCents), comparisonSourceNote: s.comparisonSourceNote ?? '',
-    announcementBanner: s.announcementBanner ?? '', booksyBusinessUrl: s.booksyBusinessUrl ?? '', booksyBusinessId: s.booksyBusinessId != null ? String(s.booksyBusinessId) : '', instagramUrl: s.instagramUrl ?? '', googleMapsUrl: s.googleMapsUrl ?? '',
+    announcementBanner: s.announcementBanner ?? '', booksyBusinessUrl: s.booksyBusinessUrl ?? '', booksyBusinessId: s.booksyBusinessId != null ? String(s.booksyBusinessId) : '', instagramUrl: s.instagramUrl ?? '', googleMapsUrl: s.googleMapsUrl ?? '', googlePlaceId: s.googlePlaceId ?? '',
   });
   const [hours, setHours] = useState<HoursEntry[]>(() => DAYS.map((d) => s.hours.find((h) => h.day === d) ?? { day: d, open: '09:00', close: '19:00', closed: false }));
   const setH = (i: number, patch: Partial<HoursEntry>) => setHours((p) => p.map((h, j) => (j === i ? { ...h, ...patch } : h)));
@@ -444,7 +444,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
       shopName: f.shopName.trim(), foundedYear: Number(f.foundedYear), phone: f.phone.trim(), email: f.email.trim(), streetAddress: f.streetAddress.trim(), city: f.city.trim(), region: f.region.trim(), postalCode: f.postalCode.trim(),
       hours: hours.map((h) => (h.closed ? { ...h, open: null, close: null } : h)),
       offerPriceCents: dollarsToCents(f.offer) ?? 0, comparisonPriceCents: dollarsToCents(f.comparison), comparisonSourceNote: nz(f.comparisonSourceNote),
-      announcementBanner: nz(f.announcementBanner), booksyBusinessUrl: nz(f.booksyBusinessUrl), booksyBusinessId: f.booksyBusinessId ? Number(f.booksyBusinessId) : null, instagramUrl: nz(f.instagramUrl), googleMapsUrl: nz(f.googleMapsUrl),
+      announcementBanner: nz(f.announcementBanner), booksyBusinessUrl: nz(f.booksyBusinessUrl), booksyBusinessId: f.booksyBusinessId ? Number(f.booksyBusinessId) : null, instagramUrl: nz(f.instagramUrl), googleMapsUrl: nz(f.googleMapsUrl), googlePlaceId: nz(f.googlePlaceId),
     } }, {
       onSuccess: (data) => { qc.setQueryData(getGetSiteSettingsQueryKey(), data); toast({ title: 'Settings saved', description: 'The public site is updated.' }); },
       onError: (err) => toast({ title: 'Save failed', description: errorMessage(err), variant: 'destructive' }),
@@ -498,7 +498,8 @@ function SettingsForm({ s }: { s: SiteSettings }) {
           <Field label="Booksy business ID" hint="Opens Booksy booking inside the site. Blank = Book buttons go to the Booksy URL below."><input inputMode="numeric" pattern="[0-9]*" className="field font-mono" value={f.booksyBusinessId} onChange={(e) => setF({ ...f, booksyBusinessId: e.target.value.replace(/\D/g, '') })} data-testid="input-booksy-id" /></Field>
           <Field label="Booksy business URL" hint="Backup link if booking can't open on the site. Blank, with no ID, = Book buttons call instead."><input type="url" className="field" value={f.booksyBusinessUrl} onChange={up('booksyBusinessUrl')} data-testid="input-booksy-url" /></Field>
           <Field label="Instagram URL"><input type="url" className="field" value={f.instagramUrl} onChange={up('instagramUrl')} data-testid="input-instagram-url" /></Field>
-          <Field label="Google Maps URL"><input type="url" className="field" value={f.googleMapsUrl} onChange={up('googleMapsUrl')} data-testid="input-maps-url" /></Field>
+          <Field label="Google Maps listing link" hint="The shop's own Google listing (used by every Directions link and the map). Not an address search."><input type="url" className="field" value={f.googleMapsUrl} onChange={up('googleMapsUrl')} data-testid="input-maps-url" /></Field>
+          <Field label="Google Place ID" hint="Filled in automatically the first time listing photos load. Cleared when the listing link changes."><input className="field font-mono" value={f.googlePlaceId} onChange={up('googlePlaceId')} placeholder="Not looked up yet" data-testid="input-place-id" /></Field>
         </div>
       </Panel>
       <div className="sticky bottom-0 -mx-5 md:-mx-8 flex justify-end border-t border-border bg-background/95 px-5 md:px-8 py-3 backdrop-blur">
