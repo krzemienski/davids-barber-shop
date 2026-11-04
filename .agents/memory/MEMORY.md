@@ -3,3 +3,4 @@
 - [Booksy widget facts](booksy-widget.md) — no owner API key; embed needs public IDs only; stafferId/variantId work but undocumented.
 - [Content truth rules](content-truth.md) — no invented facts; prices/menu = Booksy ($35); hours = Google listing; roster = Michael, Russel, Alex.
 - [Google Places photos](google-places.md) — real listing CID + keyless embed; server uses GOOGLE_API_KEY; bare 403 = key/project settings.
+- [Stale lib type declarations](typecheck-stale-dist.md) — artifact typecheck reads libs' gitignored dist/.d.ts; rebuild with tsc --build before trusting errors.
