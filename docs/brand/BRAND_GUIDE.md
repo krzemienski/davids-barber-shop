@@ -26,8 +26,10 @@ Dark, warm shop interior: black-brown base, brass and gold fittings, oxblood lea
 | Card | `#171512` | Panels, cards, admin surfaces |
 | Bone | `#ECE6DA` | Primary text, headings |
 | Gold | `#C8A464` | Primary buttons, prices, links, focus rings, accents |
+| Gold hover | `#D9BC81` | Hover state of gold buttons only |
 | Bright gold / brass | `#C3A617` | Small highlights only (chart accent, hover glints). Never body text. |
-| Oxblood | `#912731` | "Closed Saturdays", warnings, the red stripe in the pole rule |
+| Oxblood | `#912731` | "Closed Saturdays" panels and borders, warnings, the red stripe in the pole rule |
+| Oxblood text | `#DB6A75` | Oxblood as small text on ink (e.g. "Closed Saturdays" in hours tables). True oxblood on ink is ~2.4:1, too low for text. |
 
 Contrast: bone on ink (~16:1), gold on ink (~8:1) and ink on gold all pass WCAG AA for body text. Keep bright gold to accents, not paragraphs.
 
@@ -57,6 +59,7 @@ Open items before final artwork: owner sign-off, the owner's branding photo, and
 ## Photography and video
 
 - Real shop, real tools, real people. Warm tungsten light, deep shadows, gold highlights.
+- Anything shown or captioned as the shop (Gallery "The space", page heroes that set the scene, JSON-LD `image`) must be a real photo of the shop. Styled or generated images are allowed only as unlabelled background mood (`alt=""`).
 - The hero video plays muted, loops, has a visible pause button, and is replaced by a still poster when the visitor prefers reduced motion.
 - Until real barber portraits exist, use the monogram card rather than generic photos.
 

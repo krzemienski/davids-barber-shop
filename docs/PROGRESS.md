@@ -1,6 +1,6 @@
 # Progress
 
-_Last updated 2026-10-22._
+_Last updated 2026-11-03._
 
 ## Built
 
@@ -45,10 +45,14 @@ All test data (events, bookings, test barber/service, test staff account) was re
 
 **Not verified:** the Google Ads / Meta upload itself (no ad account access), the Booksy booking completion (would create a real appointment — needs owner OK), production deploy and DNS.
 
+## Brand and content audit (2026-11-03)
+
+Every public page and landing page (A and B) checked at 1280 px and 402 px against the brand guide, the Google listing and Booksy. Fixes, before/after images and the owner list are in `docs/AUDIT.md`. Google hours could be confirmed only for Tuesday and Wednesday's opening (API key refused, signed-out Maps shows today only).
+
 ## Open items — need the owner
 
 1. **Make $30 bookable on Booksy** (Booksy shows $35; old site $25). Blocks ads.
-2. **Roster:** site shows David and Sean; Booksy lists only Michael. Confirm who is bookable, send photos and any per-barber Booksy links.
+2. **Roster:** site shows David and Sean; Booksy now lists Michael, Russel and Alex. Confirm who is bookable, send photos and any per-barber Booksy links.
 3. **Owner emails** (at least two) for `ADMIN_BOOTSTRAP_EMAILS`.
 4. **Approve or reject** the "$45 median at nearby UES shops" comparison.
 5. **Brand sign-off**, branding photo, vinyl measurements; 1972 vs the "84" in the domain.
@@ -56,3 +60,6 @@ All test data (events, bookings, test barber/service, test staff account) was re
 7. **Booksy Biz and ad account access, pixel IDs** → then add consent banner + tags.
 8. **Explicit go-ahead needed for:** DNS cutover, publishing celebrity names, a live test booking, any ad budget change.
 9. Send the Booksy partner-API request drafted in `docs/research/booksy-and-tracking.md`.
+10. **Menu and hours differ from Booksy** (Beard Trim $15 vs $20; Booksy weekday hours 9:30 Tue–Thu, Fri to 4:30). Confirm which is right.
+11. **Real shop photos:** only three small ones exist; the styled images are no longer presented as the shop.
+12. **Email** info@davidsbarbershop.com: confirm it receives mail (different domain from davidsbarbershop84.com).

@@ -81,6 +81,13 @@ const WALL_DRAFTS = [
 // The Maps link seeded before the real listing was known. Replaced only while it is still this exact value.
 const OLD_DEFAULT_MAPS_URL = "https://www.google.com/maps/search/?api=1&query=233+E+84th+St,+New+York,+NY+10028";
 
+// Copy corrected in the brand and content audit. Existing rows are updated only while they still hold the old text,
+// so edits made in the admin are never overwritten.
+const SEAN_BIO = "The name that comes up most in our reviews. Clients travel in from Queens and Long Island to keep their barber.";
+const OLD_SEAN_BIO = "The name that comes up most in our reviews. Clients travel in from Queens and Long Island to keep their standing appointment with Sean.";
+const OFFER_SUBHEADLINE = "Cutting hair on East 84th Street since 1972. Book online or call the shop.";
+const OLD_OFFER_SUBHEADLINE = "Cutting hair on East 84th Street since 1972. Book online in under a minute.";
+
 async function isEmpty(table: PgTable): Promise<boolean> {
   const [{ n }] = await db.select({ n: count() }).from(table);
   return n === 0;
@@ -119,6 +126,14 @@ export async function seedDatabase(): Promise<void> {
     if (moved.length > 0) logger.info("Pointed the Google Maps link at the shop's listing");
   }
 
+  const bio = await db.update(barbersTable).set({ bio: SEAN_BIO, updatedAt: new Date() }).where(eq(barbersTable.bio, OLD_SEAN_BIO)).returning({ id: barbersTable.id });
+  const sub = await db
+    .update(landingPagesTable)
+    .set({ subheadline: OFFER_SUBHEADLINE, updatedAt: new Date() })
+    .where(eq(landingPagesTable.subheadline, OLD_OFFER_SUBHEADLINE))
+    .returning({ id: landingPagesTable.id });
+  if (bio.length + sub.length > 0) logger.info("Applied audited copy corrections");
+
   if (await isEmpty(wallEntriesTable)) {
     await db.insert(wallEntriesTable).values(WALL_DRAFTS.map((w, i) => ({ ...w, permissionOnFile: false, displayOrder: i })));
     logger.info("Seeded From-the-wall drafts (all hidden until permission is recorded)");
@@ -150,7 +165,7 @@ export async function seedDatabase(): Promise<void> {
           slug: "sean",
           name: "Sean",
           title: "Barber",
-          bio: "The name that comes up most in our reviews. Clients travel in from Queens and Long Island to keep their standing appointment with Sean.",
+          bio: SEAN_BIO,
           specialties: ["Fades", "Scissor cuts", "Beard work"],
           displayOrder: 1,
         },
@@ -165,7 +180,7 @@ export async function seedDatabase(): Promise<void> {
           kind: "offer",
           barberId: null,
           headline: "Manhattan quality. $30 a cut.",
-          subheadline: "Cutting hair on East 84th Street since 1972. Book online in under a minute.",
+          subheadline: OFFER_SUBHEADLINE,
           variantBHeadline: "A real Upper East Side barber, without the Upper East Side price.",
           variantBSubheadline: "Father-and-son shop, cutting since 1972. Book your chair now.",
         },

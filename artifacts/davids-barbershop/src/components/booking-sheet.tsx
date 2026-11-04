@@ -139,7 +139,7 @@ function BookingSheet({ request, settings, businessId, onClose }: { request: Ope
                     <p className="max-w-sm text-sm text-bone/70">You can book on Booksy&rsquo;s own site, or call and we&rsquo;ll fit you in.</p>
                     <div className="mt-2 flex flex-wrap justify-center gap-3">
                       <a href={fallbackUrl} target="_blank" rel="noopener noreferrer" data-testid="link-booking-fallback" onClick={() => fallback('panel_slow')}
-                        className="inline-flex h-12 items-center gap-2 rounded-sm bg-gold px-6 text-sm font-semibold text-ink hover:bg-[hsl(42_60%_68%)]">
+                        className="inline-flex h-12 items-center gap-2 rounded-sm bg-gold px-6 text-sm font-semibold text-ink hover:bg-gold-hover">
                         Open Booksy <ArrowUpRight className="h-3.5 w-3.5" />
                       </a>
                       <a href={telHref(settings.phone)} data-testid="link-booking-call"

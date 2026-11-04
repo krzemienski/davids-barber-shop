@@ -16,7 +16,7 @@ function Frame({ entry, className, tilt = 0 }: { entry: PublicWallEntry; classNa
   const alt = entry.people.length ? `${entry.caption} (${entry.people.join(', ')})` : entry.caption;
   return (
     <figure
-      className={cn('relative bg-[hsl(28_22%_9%)] p-2.5 sm:p-3 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.85)] ring-1 ring-black/60 motion-safe:transition-transform motion-safe:duration-500', className)}
+      className={cn('relative bg-card p-2.5 sm:p-3 shadow-[0_18px_40px_-18px_rgba(0,0,0,0.85)] ring-1 ring-black/60 motion-safe:transition-transform motion-safe:duration-500', className)}
       style={tilt ? { transform: `rotate(${tilt}deg)` } : undefined}
     >
       <div className="border border-gold/45 p-1.5 sm:p-2 bg-ink">

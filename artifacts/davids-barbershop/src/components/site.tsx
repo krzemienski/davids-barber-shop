@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode, type CSSProperties } from 'react';
 import { Link, useLocation } from 'wouter';
-import { Phone, CalendarCheck, Menu, X, Instagram, MapPin, Clock, ArrowUpRight, Scissors, RotateCw } from 'lucide-react';
+import { Phone, CalendarCheck, Menu, X, Instagram, MapPin, ArrowUpRight, Scissors, RotateCw } from 'lucide-react';
 import { useGetSiteSettings } from '@workspace/api-client-react';
 import type { Barber, SiteSettings, Service, Testimonial } from '@workspace/api-client-react';
 import { getAttribution, useTracker } from '@/lib/tracking';
@@ -44,12 +44,12 @@ export function Reveal({ children, className, delay = 0, as: As = 'div' }: { chi
   );
 }
 
-export function Eyebrow({ children, className }: { children: ReactNode; className?: string }) {
+export function Eyebrow({ children, className, as: As = 'p' }: { children: ReactNode; className?: string; as?: 'p' | 'h2' | 'h3' }) {
   return (
-    <p className={cn('flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.32em] text-gold', className)}>
-      <span className="h-px w-8 bg-gold/70" />
-      {children}
-    </p>
+    <As className={cn('flex items-center gap-3 text-[11px] font-semibold uppercase tracking-[0.25em] sm:tracking-[0.32em] text-gold', className)}>
+      <span className="h-px w-8 shrink-0 bg-gold/70" />
+      <span className="min-w-0">{children}</span>
+    </As>
   );
 }
 
@@ -93,7 +93,7 @@ const plainClick = (e: MouseEvent) => e.button === 0 && !e.metaKey && !e.ctrlKey
 type BtnVariant = 'gold' | 'outline' | 'ghost' | 'bare';
 const btnBase = 'group inline-flex shrink-0 whitespace-nowrap items-center justify-center gap-2 font-semibold tracking-wide transition-[transform,background-color,color,border-color] duration-200 active:scale-[0.98] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-gold focus-visible:ring-offset-2 focus-visible:ring-offset-background';
 const btnVariants: Record<BtnVariant, string> = {
-  gold: 'bg-gold text-ink hover:bg-[hsl(42_60%_68%)] shadow-[0_10px_30px_-10px_hsl(var(--gold)/0.6)]',
+  gold: 'bg-gold text-ink hover:bg-gold-hover shadow-[0_10px_30px_-10px_hsl(var(--gold)/0.6)]',
   outline: 'border border-gold/60 text-bone hover:border-gold hover:bg-gold/10',
   ghost: 'text-bone hover:text-gold',
   bare: '',
@@ -252,7 +252,7 @@ export function HoursTable({ settings, compact }: { settings: SiteSettings; comp
               {h.day}
               {isToday && <span className="rounded-full border border-gold/50 px-2 py-px text-[10px] uppercase tracking-widest">Today</span>}
             </span>
-            <span className={cn('font-mono text-[13px]', closed && 'text-[hsl(354_60%_62%)] font-semibold uppercase tracking-wider')}>
+            <span className={cn('font-mono text-[13px]', closed && 'text-oxblood-text font-semibold uppercase tracking-wider')}>
               {closed ? `Closed ${h.day}s` : hoursLabel(h)}
             </span>
           </li>
@@ -290,7 +290,7 @@ export function Footer({ settings }: { settings: SiteSettings | undefined }) {
           )}
         </div>
         <div className="md:col-span-4 space-y-4 text-sm">
-          <h3 className="text-[11px] uppercase tracking-[0.3em] text-gold">Find us</h3>
+          <Eyebrow as="h3">Find us</Eyebrow>
           {settings ? (
             <>
               <a href={mapsListingUrl(settings)} target="_blank" rel="noopener noreferrer" onClick={() => trackEvent('directions_click', { placement: 'footer' })}
@@ -303,7 +303,7 @@ export function Footer({ settings }: { settings: SiteSettings | undefined }) {
           ) : <SkeletonLines n={3} />}
         </div>
         <div className="md:col-span-4 text-sm">
-          <h3 className="mb-2 flex items-center gap-2 text-[11px] uppercase tracking-[0.3em] text-gold"><Clock className="h-3.5 w-3.5" /> Hours</h3>
+          <Eyebrow as="h3" className="mb-2">Hours</Eyebrow>
           {settings ? <HoursTable settings={settings} compact /> : <SkeletonLines n={7} />}
         </div>
       </div>

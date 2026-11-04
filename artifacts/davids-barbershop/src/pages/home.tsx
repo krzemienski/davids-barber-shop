@@ -1,5 +1,5 @@
 import { Link } from 'wouter';
-import { ArrowRight, ArrowUpRight, MapPin, Star } from 'lucide-react';
+import { ArrowRight, ArrowUpRight, MapPin } from 'lucide-react';
 import { useListBarbers, useListServices, useListTestimonials } from '@workspace/api-client-react';
 import aboutStorefront from '@assets/brand/about2.jpg';
 import aboutChairs from '@assets/brand/about3.jpg';
@@ -73,7 +73,7 @@ export default function Home() {
           <div className="marquee flex w-max gap-10 whitespace-nowrap font-display text-xl italic text-gold/80">
             {Array.from({ length: 2 }).map((_, k) => (
               <div key={k} className="flex gap-10" aria-hidden={k === 1}>
-                {['Classic cuts', 'Skin fades', 'Hot-towel shaves', 'Beard work', "Kids' cuts", 'Royal shaves', s ? `Since ${s.foundedYear}` : 'Since 1972'].map((t) => (
+                {['Classic cuts', 'Fades', 'Hot-towel shaves', 'Beard work', 'Royal shaves', s ? `Since ${s.foundedYear}` : 'Since 1972'].map((t) => (
                   <span key={t} className="flex items-center gap-10">{t}<span className="text-oxblood not-italic">&#9670;</span></span>
                 ))}
               </div>
@@ -132,7 +132,7 @@ export default function Home() {
             <div className="flex flex-wrap items-end justify-between gap-6">
               <Reveal>
                 <Eyebrow>The chairs</Eyebrow>
-                <h2 className="mt-5 font-display text-5xl md:text-6xl text-bone">Pick your barber.</h2>
+                <h2 className="mt-5 font-display text-5xl md:text-6xl text-bone">Pick your <span className="italic text-gold">barber.</span></h2>
               </Reveal>
               <Link href="/barbers" className="text-sm font-semibold text-gold inline-flex items-center gap-2 hover:gap-3 transition-all" data-testid="link-all-barbers">All barbers <ArrowRight className="h-4 w-4" /></Link>
             </div>
@@ -170,7 +170,7 @@ export default function Home() {
                   </Reveal>
                 ))}
               </div>
-              <Reveal className="mt-10 flex flex-wrap gap-3">
+              <Reveal className="mt-10 flex flex-col sm:flex-row gap-3">
                 <BookButton settings={s} testId="button-services-book" />
                 <Link href="/services" className={cn(ui.btnBase, ui.btnSizes.md, ui.btnVariants.outline)} data-testid="link-full-menu">Full menu</Link>
               </Reveal>
@@ -181,10 +181,7 @@ export default function Home() {
         {/* REVIEWS */}
         <section className="tile-floor border-y border-gold/15 py-24 md:py-32">
           <div className="mx-auto max-w-7xl px-5 lg:px-8">
-            <Reveal className="flex items-center gap-4">
-              <Eyebrow>From the chair</Eyebrow>
-              <span className="flex text-gold">{[0, 1, 2, 3, 4].map((i) => <Star key={i} className="h-3.5 w-3.5 fill-current" />)}</span>
-            </Reveal>
+            <Reveal><Eyebrow>From the chair</Eyebrow></Reveal>
             {testimonials.isLoading ? (
               <div className="mt-12 grid gap-6 md:grid-cols-2"><SkeletonBlock className="h-64" /><SkeletonBlock className="h-64" /></div>
             ) : testimonials.isError ? (
@@ -218,7 +215,7 @@ export default function Home() {
                   <p className="mt-8 inline-block border-l-2 border-oxblood bg-oxblood/15 px-4 py-2 text-sm font-semibold uppercase tracking-[0.2em] text-bone" data-testid="text-closed-days">{closedDaysLine(s)}</p>
                 </Reveal>
               )}
-              <Reveal delay={200} className="mt-8 flex flex-wrap gap-3">
+              <Reveal delay={200} className="mt-8 flex flex-col sm:flex-row sm:flex-wrap gap-3">
                 <BookButton settings={s} testId="button-visit-book" />
                 <CallLink settings={s} testId="link-visit-call" />
                 {s && (
@@ -228,7 +225,7 @@ export default function Home() {
               </Reveal>
             </div>
             <Reveal delay={120} className="border border-gold/20 bg-card p-6 md:p-8">
-              <h3 className="text-[11px] uppercase tracking-[0.32em] text-gold">Hours</h3>
+              <Eyebrow as="h3">Hours</Eyebrow>
               {s ? <HoursTable settings={s} /> : <SkeletonLines n={7} className="mt-4" />}
               {s && <p className="mt-5 text-xs text-muted-foreground">{fullAddress(s)}</p>}
             </Reveal>

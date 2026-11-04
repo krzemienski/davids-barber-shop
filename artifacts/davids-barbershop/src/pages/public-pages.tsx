@@ -21,10 +21,10 @@ import { trackEvent } from '@/lib/analytics';
 export function BarbersPage() {
   const { data: s } = useSettings();
   const barbers = useListBarbers();
-  usePageMeta("Our Barbers | David's Barber Shop, Upper East Side", 'Meet the barbers at David\u2019s Barber Shop on East 84th Street and book directly with the one you want.');
+  usePageMeta("Our Barbers | David's Barber Shop, Upper East Side", 'Meet the barbers at David\u2019s Barber Shop on East 84th Street, then book a time with the one you want.');
   return (
     <PublicLayout>
-      <PageHero eyebrow="The chairs" title={<>Pick your <span className="italic text-gold">barber.</span></>} intro="Every barber here books directly. Find the one who fits how you wear it, then lock in a time." image={mediaUrl('interior.jpg')} />
+      <PageHero eyebrow="The chairs" title={<>Pick your <span className="italic text-gold">barber.</span></>} intro="Find the one who fits how you wear it, then book a time online or call the shop." image={aboutChairs} />
       <section className="mx-auto max-w-7xl px-5 lg:px-8 py-20">
         {barbers.isLoading ? (
           <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-3">{[0, 1, 2].map((i) => <SkeletonBlock key={i} className="aspect-[4/5]" />)}</div>
@@ -40,6 +40,8 @@ export function BarbersPage() {
   );
 }
 
+const clip = (text: string, max: number) => (text.length <= max ? text : `${text.slice(0, text.lastIndexOf(' ', max)).replace(/[,;:.]$/, '')}\u2026`);
+
 /* ================= /barbers/:slug ================= */
 export function BarberProfilePage() {
   const params = useParams<{ slug: string }>();
@@ -50,7 +52,8 @@ export function BarberProfilePage() {
   const b = q.data;
   usePageMeta(
     b ? `${b.name}, ${b.title} | David's Barber Shop` : "Barber | David's Barber Shop",
-    b ? `Book with ${b.name} at David\u2019s Barber Shop on the Upper East Side. ${b.bio.slice(0, 120)}` : 'Barber profile at David\u2019s Barber Shop.',
+    b ? `Book with ${b.name} at David\u2019s Barber Shop on the Upper East Side. ${clip(b.bio, 120)}` : 'Barber profile at David\u2019s Barber Shop.',
+    { image: b?.photoUrl },
   );
 
   if (q.isError && errorStatus(q.error) === 404) return <NotFoundPage message="That barber is not on the roster." />;
@@ -181,7 +184,7 @@ export function ServicesPage() {
         {s?.comparisonSourceNote && s.comparisonPriceCents != null && (
           <p id="price-note" className="mt-16 text-xs text-muted-foreground">Comparison price source: {s.comparisonSourceNote}</p>
         )}
-        <div className="mt-14 flex flex-wrap gap-3"><BookButton settings={s} size="lg" testId="button-services-page-book" /><CallLink settings={s} size="lg" testId="link-services-call" /></div>
+        <div className="mt-14 flex flex-col sm:flex-row gap-3"><BookButton settings={s} size="lg" testId="button-services-page-book" /><CallLink settings={s} size="lg" testId="link-services-call" /></div>
       </section>
     </PublicLayout>
   );
@@ -191,7 +194,7 @@ export function ServicesPage() {
 export function OurStoryPage() {
   const { data: s } = useSettings();
   const year = s?.foundedYear ?? 1972;
-  usePageMeta("Our Story | David's Barber Shop since 1972", `A father-and-son barbershop on East 84th Street, cutting hair on the Upper East Side since ${year}.`);
+  usePageMeta(`Our Story | David's Barber Shop since ${year}`, `A father-and-son barbershop on East 84th Street, cutting hair on the Upper East Side since ${year}.`);
   const chapters = [
     { k: String(year), t: 'The chair goes in.', b: `The shop opens on East 84th Street, between Second and Third Avenue.` },
     { k: 'Decades', t: 'Regulars become family.', b: 'The same faces come back every few weeks. Clients write about coming back for seven years and more, and about travelling in from Queens and Long Island to keep their barber.' },
@@ -234,15 +237,11 @@ export function GalleryPage() {
   const { data: s } = useSettings();
   const barbers = useListBarbers();
   usePageMeta("Gallery | David's Barber Shop", 'The shop, the tools and the work at David\u2019s Barber Shop on the Upper East Side.');
+  // Only photos taken in the shop. Styled media/ shots are mood backgrounds, not the shop.
   const shop = [
-    { src: mediaUrl('interior.jpg'), alt: 'Chairs and mirrors' },
     { src: aboutStorefront, alt: 'Storefront on East 84th Street' },
-    { src: mediaUrl('tools.jpg'), alt: 'Straight razor and brush' },
     { src: aboutChairs, alt: 'A busy afternoon in the shop' },
-    { src: mediaUrl('towel.jpg'), alt: 'Hot towel' },
-    { src: mediaUrl('clippers.jpg'), alt: 'Clippers and shears' },
     { src: aboutCut, alt: 'A cut in progress' },
-    { src: mediaUrl('pole.jpg'), alt: 'Barber pole at dusk' },
   ];
   const work = (barbers.data ?? []).flatMap((b) => b.galleryImages.map((g) => ({ src: assetUrl(g)!, alt: `Cut by ${b.name}`, by: b.name, slug: b.slug })));
   return (
@@ -250,10 +249,10 @@ export function GalleryPage() {
       <PageHero eyebrow="Gallery" title={<>The shop <span className="italic text-gold">&amp; the work.</span></>} />
       <section className="mx-auto max-w-7xl px-5 lg:px-8 py-20">
         <Eyebrow>The space</Eyebrow>
-        <div className="mt-10 columns-1 sm:columns-2 lg:columns-3 gap-5 [&>*]:mb-5">
+        <div className="mt-10 grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {shop.map((g, i) => (
             <Reveal key={g.alt} delay={(i % 3) * 90} className="group relative overflow-hidden">
-              <img src={g.src} alt={g.alt} className="w-full transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" />
+              <img src={g.src} alt={g.alt} className="aspect-[4/5] w-full object-cover transition-transform duration-700 group-hover:scale-[1.03]" loading="lazy" />
               <span className="absolute bottom-3 left-3 bg-ink/80 px-2.5 py-1 text-[11px] uppercase tracking-[0.2em] text-bone/80 opacity-0 group-hover:opacity-100 transition-opacity">{g.alt}</span>
             </Reveal>
           ))}
@@ -288,11 +287,11 @@ export function GalleryPage() {
 /* ================= /visit ================= */
 export function VisitPage() {
   const { data: s, isLoading, isError, refetch } = useSettings();
-  usePageMeta("Visit | Hours & Directions | David's Barber Shop", s ? `${fullAddress(s)}. ${closedDaysLine(s) ?? ''} Call ${formatPhone(s.phone)}.` : 'Hours, directions and phone for David\u2019s Barber Shop.');
+  usePageMeta("Visit | Hours & Directions | David's Barber Shop", s ? [fullAddress(s), closedDaysLine(s), `Call ${formatPhone(s.phone)}`].filter(Boolean).join('. ') + '.' : 'Hours, directions and phone for David\u2019s Barber Shop.');
   useLocalBusinessJsonLd(s);
   return (
     <PublicLayout>
-      <PageHero eyebrow="Visit" title={<>Find the <span className="italic text-gold">chair.</span></>} image={mediaUrl('pole.jpg')} />
+      <PageHero eyebrow="Visit" title={<>Find the <span className="italic text-gold">chair.</span></>} image={aboutStorefront} />
       <section className="mx-auto max-w-7xl px-5 lg:px-8 py-20">
         {isLoading ? <div className="grid gap-10 lg:grid-cols-2"><SkeletonBlock className="h-96" /><SkeletonLines n={10} /></div>
           : isError || !s ? <ErrorState onRetry={() => refetch()} />
@@ -324,7 +323,7 @@ export function VisitPage() {
                   <CallLink settings={s} variant="bare" testId="link-visit-phone" className="flex items-center gap-3 font-mono text-2xl text-bone hover:text-gold"><Phone className="h-5 w-5 text-gold" />{formatPhone(s.phone)}</CallLink>
                   <a href={`mailto:${s.email}`} className="flex items-center gap-3 text-muted-foreground hover:text-gold" data-testid="link-visit-email"><Mail className="h-4 w-4 text-gold" />{s.email}</a>
                 </div>
-                <div className="flex flex-wrap gap-3"><BookButton settings={s} size="lg" testId="button-visit-page-book" /><CallLink settings={s} size="lg" testId="link-visit-page-call" /></div>
+                <div className="flex flex-col sm:flex-row gap-3"><BookButton settings={s} size="lg" testId="button-visit-page-book" /><CallLink settings={s} size="lg" testId="link-visit-page-call" /></div>
               </div>
             </div>
           )}
@@ -340,7 +339,7 @@ export function PrivacyPage() {
   const email = s?.email;
   return (
     <PublicLayout>
-      <PageHero eyebrow="Privacy" title="Privacy policy" intro="Plain language, no surprises." />
+      <PageHero eyebrow="Privacy" title={<>Privacy <span className="italic text-gold">policy.</span></>} intro="Plain language, no surprises." />
       <section className="mx-auto max-w-3xl px-5 lg:px-8 py-16 prose prose-invert prose-code:before:content-none prose-code:after:content-none prose-headings:font-display prose-headings:text-bone prose-headings:font-normal prose-p:text-bone/75 prose-li:text-bone/75 prose-a:text-gold prose-strong:text-bone">
         <h2>What we collect</h2>
         <p>This site does not ask for your name, email or payment details. When you tap a <strong>Call</strong> or <strong>Book</strong> button, or open one of our ad landing pages, we record a first-party event: the type of click, the page path, which barber or landing page it relates to, and an anonymous random visitor ID stored in your browser&rsquo;s local storage.</p>
@@ -367,7 +366,7 @@ export function PrivacyPage() {
 /* ================= 404 ================= */
 export function NotFoundPage({ message }: { message?: string }) {
   const { data: s } = useSettings();
-  usePageMeta("Not found | David's Barber Shop", 'This page could not be found.');
+  usePageMeta("Not found | David's Barber Shop", 'This page could not be found.', { noindex: true });
   return (
     <PublicLayout>
       <section className="relative overflow-hidden tile-floor min-h-[70dvh] flex items-center">
@@ -376,8 +375,8 @@ export function NotFoundPage({ message }: { message?: string }) {
           <h1 className="mt-6 font-display text-6xl md:text-8xl text-bone leading-[0.9]">Missed a <span className="italic text-gold">spot.</span></h1>
           <p className="mt-6 text-bone/70">{message ?? 'That page is not here. The chairs still are.'}</p>
           <div className="mt-10 flex flex-col sm:flex-row justify-center gap-3">
-            <Link href="/" className={cn(ui.btnBase, ui.btnSizes.lg, ui.btnVariants.outline)} data-testid="link-404-home"><ArrowLeft className="h-4 w-4" /> Back to the shop</Link>
             <BookButton settings={s} size="lg" testId="button-404-book" />
+            <Link href="/" className={cn(ui.btnBase, ui.btnSizes.lg, ui.btnVariants.outline)} data-testid="link-404-home"><ArrowLeft className="h-4 w-4" /> Back to the shop</Link>
           </div>
         </div>
       </section>

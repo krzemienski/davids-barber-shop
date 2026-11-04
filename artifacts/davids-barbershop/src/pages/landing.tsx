@@ -27,6 +27,14 @@ export default function LandingPage() {
   );
 }
 
+/** Brand heading pattern: plain words, then the last sentence (or last word) in gold italic. */
+function AccentHeadline({ text }: { text: string }) {
+  const t = text.trim();
+  const sentences = t.split(/(?<=[.!?])\s+/);
+  const tail = sentences.length > 1 ? sentences[sentences.length - 1]! : t.slice(t.lastIndexOf(' ') + 1);
+  return <>{t.slice(0, t.length - tail.length)}<span className="italic font-normal text-gold">{tail}</span></>;
+}
+
 function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' | 'B' }) {
   const { data: s } = useSettings();
   const testimonials = useListTestimonials();
@@ -42,7 +50,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
   const headline = variant === 'B' && page.variantBHeadline ? page.variantBHeadline : page.headline;
   const sub = variant === 'B' && page.variantBHeadline ? (page.variantBSubheadline ?? page.subheadline) : page.subheadline;
   const barber = page.kind === 'barber' ? page.barber : null;
-  usePageMeta(`${headline} | David's Barber Shop`, sub || "Book at David's Barber Shop on the Upper East Side.", { noindex: true });
+  usePageMeta(`${headline} | David's Barber Shop`, sub || "Book at David's Barber Shop on the Upper East Side.", { noindex: true, image: barber?.photoUrl });
 
   const reviews = (testimonials.data ?? []).filter((t) => !barber || !t.barberName || t.barberName.toLowerCase().includes(barber.name.split(' ')[0]!.toLowerCase())).slice(0, 3);
   const topServices = [...(services.data ?? [])].sort((a, b) => a.displayOrder - b.displayOrder).slice(0, 4);
@@ -53,7 +61,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
       <header className="relative z-30">
         <div className="mx-auto flex h-[72px] max-w-7xl items-center justify-between px-5 lg:px-8">
           <Wordmark small />
-          {s && <CallLink settings={s} variant="ghost" size="sm" testId="link-landing-header-call" className="font-mono text-[13px]" />}
+          {s && <CallLink settings={s} variant="ghost" size="sm" testId="link-landing-header-call" className="hidden sm:inline-flex font-mono text-[13px]" />}
         </div>
       </header>
 
@@ -61,7 +69,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
         {!barber && <HeroVideo />}
         {barber && (
           <div className="absolute inset-0 z-0">
-            <div className="absolute inset-y-0 right-0 w-full md:w-[52%] opacity-50 md:opacity-100"><BarberPortrait barber={barber} /></div>
+            <div className={cn('absolute inset-y-0 right-0 w-full md:w-[52%] opacity-50 md:opacity-100', !barber.photoUrl && 'hidden md:block')}><BarberPortrait barber={barber} /></div>
             <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/90 md:via-ink/70 to-ink/20" />
             <div className="absolute inset-0 bg-gradient-to-t from-ink via-transparent to-transparent" />
           </div>
@@ -69,7 +77,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
         <div className="relative z-10 mx-auto w-full max-w-7xl px-5 lg:px-8 pt-28 pb-16">
           <div className="max-w-2xl">
             <div className="rise"><Eyebrow>{barber ? `${barber.title} · ${s ? `Since ${s.foundedYear}` : 'Upper East Side'}` : 'Upper East Side · East 84th St'}</Eyebrow></div>
-            <h1 className="rise mt-6 font-display text-[clamp(2.75rem,7.5vw,6rem)] font-semibold leading-[0.92] text-bone" style={{ animationDelay: '120ms' }} data-testid="text-landing-headline">{headline}</h1>
+            <h1 className="rise mt-6 font-display text-[clamp(2.75rem,7.5vw,6rem)] font-semibold leading-[0.92] text-bone" style={{ animationDelay: '120ms' }} data-testid="text-landing-headline"><AccentHeadline text={headline} /></h1>
             {sub && <p className="rise mt-6 text-lg md:text-xl text-bone/80 leading-relaxed" style={{ animationDelay: '220ms' }} data-testid="text-landing-subheadline">{sub}</p>}
             {s && (
               <div className="rise mt-8 flex items-baseline gap-4" style={{ animationDelay: '300ms' }}>

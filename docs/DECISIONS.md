@@ -71,6 +71,17 @@ Why: the old site was one page; fragments never reach the server, so a server-si
 
 **Ad landing pages (`/l/*`), sign-in and admin are `noindex` and disallowed in robots.txt.** `BarberShop`/`HairSalon` JSON-LD is on the home and visit pages. `sitemap.xml` lists the public pages under `https://davidsbarbershop84.com` (the intended domain after DNS cutover).
 
+**Share image is the hero still at an absolute URL; JSON-LD `image` is the real storefront** (dated 2026-11-03).
+Why: scrapers ignore relative `og:image` paths, and the business image Google shows must be the actual shop. Barber profiles are not in `sitemap.xml` while the roster is unconfirmed; `/barbers` links to them.
+
+## Content and imagery
+
+**Only real shop photos are presented as the shop** (dated 2026-11-03). Styled `public/media/` images are background mood only, with `alt=""`.
+Why: the gallery captioned a wood-panelled interior and a brownstone pole as the shop; the real shop has white walls and a red sign. That is an invented fact.
+
+**Copy corrections to seeded rows are applied only while the row still holds the exact old text.**
+Why: same rule as the Maps link: fix what we wrote, never overwrite what the owner edited.
+
 ## Verification approach
 
 Verified by driving the real app in a browser and calling the real API (sign-in with a real Clerk test account, clicking buttons, reading the database rows they created), not by test scripts — per the owner's standing instruction. All test data was deleted afterwards.

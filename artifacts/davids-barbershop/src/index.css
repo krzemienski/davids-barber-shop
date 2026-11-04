@@ -52,7 +52,9 @@
 
   --color-gold: hsl(var(--gold));
   --color-brass: hsl(var(--brass));
+  --color-gold-hover: hsl(var(--gold-hover));
   --color-oxblood: hsl(var(--oxblood));
+  --color-oxblood-text: hsl(var(--oxblood-text));
   --color-bone: hsl(var(--bone));
   --color-ink: hsl(var(--ink));
 
@@ -78,7 +80,9 @@
   --ink: 30 12% 4.5%;
   --gold: 39 46% 59%;      /* #C8A464 */
   --brass: 51 79% 43%;     /* #C3A617 */
+  --gold-hover: 42 60% 68%; /* #D9BC81, gold button hover */
   --oxblood: 354 58% 36%;
+  --oxblood-text: 354 60% 62%; /* #DB6A75, oxblood as small text on ink (true oxblood is ~2.4:1) */
   --bone: 40 33% 89%;
 
   --background: 30 12% 5%;

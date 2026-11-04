@@ -1,9 +1,15 @@
 import { useEffect } from 'react';
 import type { SiteSettings } from '@workspace/api-client-react';
-import { basePath, mapsListingUrl } from './format';
+import { assetUrl, basePath, mapsListingUrl, mediaUrl } from './format';
 
-export function usePageMeta(title: string, description: string, opts: { noindex?: boolean } = {}) {
+const DEFAULT_SHARE_IMAGE = 'hero-poster.jpg';
+
+const absolute = (path: string) => new URL(path, window.location.origin).toString();
+
+/** Title, description, robots and share tags for the current page. `image` is a media/ file name or an uploaded asset URL. */
+export function usePageMeta(title: string, description: string, opts: { noindex?: boolean; image?: string | null } = {}) {
   const { noindex = false } = opts;
+  const image = opts.image ? assetUrl(opts.image) ?? opts.image : mediaUrl(DEFAULT_SHARE_IMAGE);
   useEffect(() => {
     let robots = document.querySelector('meta[name="robots"]');
     if (!robots) {
@@ -22,20 +28,25 @@ export function usePageMeta(title: string, description: string, opts: { noindex?
       document.head.appendChild(m);
     }
     m.setAttribute('content', description);
-    const og = [
-      ['og:title', title],
-      ['og:description', description],
+    const tags: [string, string, string][] = [
+      ['property', 'og:title', title],
+      ['property', 'og:description', description],
+      ['property', 'og:url', window.location.href.split(/[?#]/)[0]!],
+      ['property', 'og:image', absolute(image)],
+      ['name', 'twitter:title', title],
+      ['name', 'twitter:description', description],
+      ['name', 'twitter:image', absolute(image)],
     ];
-    og.forEach(([p, c]) => {
-      let el = document.querySelector(`meta[property="${p}"]`);
+    tags.forEach(([attr, key, content]) => {
+      let el = document.querySelector(`meta[${attr}="${key}"]`);
       if (!el) {
         el = document.createElement('meta');
-        el.setAttribute('property', p);
+        el.setAttribute(attr, key);
         document.head.appendChild(el);
       }
-      el.setAttribute('content', c);
+      el.setAttribute('content', content);
     });
-  }, [title, description]);
+  }, [title, description, image]);
 }
 
 const DAY_MAP: Record<string, string> = {
@@ -54,7 +65,7 @@ export function useLocalBusinessJsonLd(s: SiteSettings | undefined) {
       telephone: s.phone,
       email: s.email,
       url: `${origin}${basePath}/`,
-      image: `${origin}${basePath}/media/interior.jpg`,
+      image: absolute(mediaUrl('storefront.jpg')),
       logo: `${origin}${basePath}/logo.svg`,
       address: {
         '@type': 'PostalAddress',
@@ -65,7 +76,7 @@ export function useLocalBusinessJsonLd(s: SiteSettings | undefined) {
         addressCountry: 'US',
       },
       hasMap: mapsListingUrl(s),
-      sameAs: [s.instagramUrl].filter(Boolean),
+      sameAs: [s.booksyBusinessUrl, s.instagramUrl].filter(Boolean),
       priceRange: '$',
       openingHours: s.hours
         .filter((h) => !h.closed && h.open && h.close)
