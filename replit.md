@@ -32,7 +32,7 @@ Website for David's Barber Shop (233 E 84th St, Upper East Side, since 1972) bui
 - Admin access = Clerk sign-in + DB allowlist with owner/editor roles. `ADMIN_BOOTSTRAP_EMAILS` (shared env var) seeds the first owner only while the staff table is empty.
 - Replit Analytics custom events go through `trackEvent` in `src/lib/analytics.ts`; every `useTracker` event is mirrored there with `placement` (derived from the button's testId). Don't call `window.umami` directly.
 - Money in cents. Unconsented notable clients and "From the wall" entries without permission on file are filtered out in the public API.
-- Google listing photos (Gallery) are fetched live server-side with `GOOGLE_MAPS_API_KEY` and streamed through `/api/google/photos/media`; never stored or cached (only the Place ID is kept in site settings).
+- Google listing photos (Gallery) are fetched live server-side with `GOOGLE_API_KEY` and streamed through `/api/google/photos/media`; never stored or cached (only the Place ID is kept in site settings).
 - See `docs/DECISIONS.md` for the full list and reasons.
 
 ## Product

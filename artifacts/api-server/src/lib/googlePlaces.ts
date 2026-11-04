@@ -35,7 +35,7 @@ function spend(kind: Kind): boolean {
   return true;
 }
 
-export const googleKey = (): string | null => process.env.GOOGLE_MAPS_API_KEY?.trim() || null;
+export const googleKey = (): string | null => process.env.GOOGLE_API_KEY?.trim() || null;
 
 function cidOf(url: string | null | undefined): string | null {
   const m = url?.match(/[?&]cid=(\d+)/);

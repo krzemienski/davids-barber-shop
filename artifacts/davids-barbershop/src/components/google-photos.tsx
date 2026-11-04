@@ -35,7 +35,7 @@ export function GoogleListingStrip() {
             </a>
           )}
         </div>
-        <ul className="mt-10 -mx-5 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-4 lg:mx-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-0">
+        <ul className="mt-10 -mx-5 flex snap-x snap-mandatory scroll-px-5 gap-4 overflow-x-auto px-5 pb-4 lg:mx-0 lg:scroll-px-0 lg:grid lg:grid-cols-3 lg:overflow-visible lg:px-0">
           {visible.map(({ p, i }) => {
             const a = p.authorAttributions[0];
             return (

@@ -98,7 +98,7 @@ Each landing page lives at `/l/<slug>`.
 
 ### Google listing photos (Gallery)
 
-The Gallery shows up to six photos live from the shop's Google listing, each credited to the person who posted it, with a "See all on Google" link. They are not downloaded or saved; Google's terms forbid that, and many are customers' own photos. To change which photos appear, manage them on the Google Business Profile. The strip needs the `GOOGLE_MAPS_API_KEY` secret (Google Maps Platform, Places API (New) enabled); without it, or if Google is down, the strip simply does not appear.
+The Gallery shows up to six photos live from the shop's Google listing, each credited to the person who posted it, with a "See all on Google" link. They are not downloaded or saved; Google's terms forbid that, and many are customers' own photos. To change which photos appear, manage them on the Google Business Profile. The strip needs the `GOOGLE_API_KEY` secret (Google Maps Platform, Places API (New) enabled); without it, or if Google is down, the strip simply does not appear.
 
 ### Staff access (owners only)
 
