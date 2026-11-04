@@ -6,4 +6,4 @@ Artifacts resolve `@workspace/*` lib types through project references, i.e. the 
 
 **Why:** a whole batch of "missing field" errors in the barbershop site turned out to be stale `dist/`, not an outdated spec; regenerating changed nothing.
 
-**How to apply:** if type errors disagree with `lib/api-client-react/src/generated`, run `pnpm run typecheck:libs` (tsc --build) first. The barbershop typecheck script now builds its referenced libs itself; other artifacts' scripts still don't.
+**How to apply:** if type errors disagree with `lib/api-client-react/src/generated`, run `pnpm run typecheck:libs` (tsc --build) first. Artifact typecheck scripts that reference libs (barbershop, api-server) build those libs first; keep that pattern when an artifact gains a new lib reference. The registered `typecheck` validation runs the root `pnpm run typecheck`.
