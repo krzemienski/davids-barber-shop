@@ -1,4 +1,4 @@
-import { and, count, eq, isNull } from "drizzle-orm";
+import { and, count, eq, inArray, isNull } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import {
   adminUsersTable,
@@ -114,6 +114,25 @@ const OLD_OFFER_HEADLINE = "Manhattan quality. $30 a cut.";
 const OLD_DAVID_SPECIALTIES = ["Classic cuts", "Royal shave"];
 const DAVID_SPECIALTIES = ["Classic cuts"];
 
+// The roster as on Booksy listing 1663005; the owner confirmed on 2026-11-03 that only these three work at the shop.
+// Bio, photo and specialties stay empty until the owner supplies them. booksyStafferId opens Booksy on that barber.
+const ROSTER = [
+  { slug: "michael", name: "Michael", booksyStafferId: 1582201 },
+  { slug: "russel", name: "Russel", booksyStafferId: 1869365 },
+  { slug: "alex", name: "Alex", booksyStafferId: 1869419 },
+];
+// The first roster, copied from the old website.
+const OLD_ROSTER_SLUGS = ["david", "sean"];
+const BARBER_SUBHEADLINE = "Pick a time on Booksy, or call the shop and we will fit you in.";
+const barberLandingPage = (b: { id: number; slug: string; name: string }) => ({
+  slug: `book-${b.slug}`,
+  kind: "barber" as const,
+  barberId: b.id,
+  headline: `Book with ${b.name}.`,
+  subheadline: BARBER_SUBHEADLINE,
+  variantBHeadline: barberBHeadline(b.name),
+});
+
 // Landing pages for the ad creative kit (docs/ads/AD_CREATIVE.md). Each is added only while its slug is
 // missing, so a fresh or production database gets them too. To retire one, switch it off in the admin;
 // a deleted kit page is added back on the next restart.
@@ -204,24 +223,7 @@ export async function seedDatabase(): Promise<void> {
   if (await isEmpty(barbersTable)) {
     const inserted = await db
       .insert(barbersTable)
-      .values([
-        {
-          slug: "david",
-          name: "David",
-          title: "Owner",
-          bio: "The David in David's Barber Shop. Regulars have been sitting in his chair on East 84th Street for years.",
-          specialties: DAVID_SPECIALTIES,
-          displayOrder: 0,
-        },
-        {
-          slug: "sean",
-          name: "Sean",
-          title: "Barber",
-          bio: SEAN_BIO,
-          specialties: ["Fades", "Scissor cuts", "Beard work"],
-          displayOrder: 1,
-        },
-      ])
+      .values(ROSTER.map((b, i) => ({ ...b, displayOrder: i })))
       .returning();
     logger.info("Seeded barbers");
 
@@ -235,20 +237,14 @@ export async function seedDatabase(): Promise<void> {
           subheadline: OFFER_SUBHEADLINE,
           variantBHeadline: OFFER_B_HEADLINE,
         },
-        ...inserted.map((b) => ({
-          slug: `book-${b.slug}`,
-          kind: "barber" as const,
-          barberId: b.id,
-          headline: `Book with ${b.name}.`,
-          subheadline: "Pick a time on Booksy, or call the shop and we will fit you in.",
-          variantBHeadline: barberBHeadline(b.name),
-        })),
+        ...inserted.map(barberLandingPage),
       ]);
       logger.info("Seeded landing pages");
     }
   }
 
   await seedAdKitLandingPages();
+  await alignRosterWithBooksy();
 
   const bootstrap = (process.env.ADMIN_BOOTSTRAP_EMAILS ?? "")
     .split(",")
@@ -298,6 +294,33 @@ async function alignMenuWithBooksy(): Promise<void> {
     specialties = 1;
   }
   if (price.length + offer.length + specialties > 0) logger.info("Moved the haircut offer to the Booksy price ($35)");
+}
+
+// Moves a database still showing the old website's roster (David and Sean, both active) to the Booksy roster.
+// The old barbers and their landing pages are switched off, not deleted, so past bookings and events keep their
+// barber. Runs only while exactly the old roster is active, so admin edits are never overwritten.
+async function alignRosterWithBooksy(): Promise<void> {
+  const active = await db.select({ slug: barbersTable.slug }).from(barbersTable).where(eq(barbersTable.active, true));
+  const untouched = active.length === OLD_ROSTER_SLUGS.length && OLD_ROSTER_SLUGS.every((s) => active.some((a) => a.slug === s));
+  if (!untouched) return;
+  await db.transaction(async (tx) => {
+    const old = await tx
+      .update(barbersTable)
+      .set({ active: false, updatedAt: new Date() })
+      .where(inArray(barbersTable.slug, OLD_ROSTER_SLUGS))
+      .returning({ id: barbersTable.id });
+    await tx
+      .update(landingPagesTable)
+      .set({ active: false, updatedAt: new Date() })
+      .where(and(eq(landingPagesTable.kind, "barber"), inArray(landingPagesTable.barberId, old.map((o) => o.id))));
+    const inserted = await tx
+      .insert(barbersTable)
+      .values(ROSTER.map((b, i) => ({ ...b, displayOrder: i })))
+      .onConflictDoNothing({ target: barbersTable.slug })
+      .returning();
+    if (inserted.length > 0) await tx.insert(landingPagesTable).values(inserted.map(barberLandingPage)).onConflictDoNothing();
+  });
+  logger.info("Switched the roster to the Booksy barbers (Michael, Russel, Alex)");
 }
 
 async function seedAdKitLandingPages(): Promise<void> {

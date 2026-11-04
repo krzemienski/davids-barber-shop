@@ -52,7 +52,7 @@ export function BarberProfilePage() {
   const b = q.data;
   usePageMeta(
     b ? `${b.name}, ${b.title} | David's Barber Shop` : "Barber | David's Barber Shop",
-    b ? `Book with ${b.name} at David\u2019s Barber Shop on the Upper East Side. ${clip(b.bio, 120)}` : 'Barber profile at David\u2019s Barber Shop.',
+    b ? `Book with ${b.name} at David\u2019s Barber Shop on the Upper East Side. ${clip(b.bio, 120)}`.trim() : 'Barber profile at David\u2019s Barber Shop.',
     { image: b?.photoUrl },
   );
 
@@ -96,7 +96,7 @@ export function BarberProfilePage() {
                   <CallLink settings={s} size="lg" barber={b} testId="link-barber-call" />
                 </div>
                 <BooksyBarberNote settings={s} barber={b} className="mt-3" />
-                <p className="rise mt-10 whitespace-pre-line text-lg leading-relaxed text-bone/80 max-w-2xl" style={{ animationDelay: '320ms' }} data-testid="text-barber-bio">{b.bio}</p>
+                {b.bio && <p className="rise mt-10 whitespace-pre-line text-lg leading-relaxed text-bone/80 max-w-2xl" style={{ animationDelay: '320ms' }} data-testid="text-barber-bio">{b.bio}</p>}
                 {b.specialties.length > 0 && (
                   <div className="mt-10">
                     <h2 className="text-[11px] uppercase tracking-[0.3em] text-muted-foreground">Specialties</h2>

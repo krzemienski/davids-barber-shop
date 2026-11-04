@@ -8,19 +8,20 @@ Every character count below was checked against the platform limit (Google: head
 
 | Item | Status | Clears when |
 | --- | --- | --- |
-| Every $35 ad (Google shop-wide group, Meta $35 set) | Price cleared 2026-11-03: the owner confirmed Booksy's $35, and the site, landing pages and this copy now say $35 | — (the holds below on hours and photos still apply) |
-| UES barber group and Meta heritage set | Price cleared: their landing page shows $35, the same as Booksy | — (the holds below on hours and photos still apply) |
+| Every $35 ad (Google shop-wide group, Meta $35 set) | Price cleared 2026-11-03: the owner confirmed Booksy's $35, and the site, landing pages and this copy now say $35 | — (the photo hold below still applies) |
+| UES barber group and Meta heritage set | Price cleared: their landing page shows $35, the same as Booksy | — (the photo hold below still applies) |
 | Hot towel shave group | **Retired:** Booksy has no shave service, and the site's menu now matches Booksy. `/l/hot-towel-shave` is switched off | Only if the shop adds a shave on Booksy: add it in Admin → Services with its Booksy service ID, switch the page back on and rewrite this group |
-| Barber groups (Sean, David) | Blocked: Booksy's public listing shows Michael, Russel and Alex | The barber can be chosen on Booksy and their Booksy staff ID is entered on their admin profile |
-| Michael, Russel, Alex | No ad group | Each has a site profile (photo, bio, specialties); then copy the Sean group pattern |
+| Barber group: Michael | **Cleared 2026-11-03:** the owner confirmed the roster is Michael, Russel and Alex. Michael has a site profile and Book opens Booksy on him | — |
+| Barber groups: Russel, Alex | Not built yet: Booksy lists Russel (staff ID 1869365) and Alex (staff ID 1869419), but no services are assigned to them, so neither can be booked online (checked in the Booksy widget 2026-11-03) | The owner assigns them services in Booksy Biz; then copy the Michael group |
+| Barber groups: Sean, David | **Retired:** they no longer work at the shop; their profiles and `/l/book-sean`, `/l/book-david` are switched off | — |
 | Price asset | Ready: every item matches Booksy (checked 2026-11-03) | — |
-| Opening hours in ads ("Mon–Fri 8:30am–7pm", "Open Sundays 9am–6pm", ad schedule, call schedule) | Hold: Booksy shows Mon and Fri from 9:00, Tue–Thu from 9:30 and Fri until 4:30; the site says 8:30–7 on weekdays | Owner confirms the real hours, Site settings and Booksy agree, and these lines are re-checked |
+| Opening hours in ads ("Mon–Fri 8:30am–7pm", "Open Sundays 9am–6pm", ad schedule, call schedule) | **Cleared 2026-11-03:** approved hours are the Google listing's (Mon–Fri 8:30am–7pm, Sat closed, Sun 9am–6pm, read through Google Places). Site settings already match, and every hours line here was re-checked against them | — Booksy's own hours (Mon and Fri from 9:00, Tue–Thu from 9:30, Fri until 4:30) are shorter; the owner should update them in Booksy so online booking offers the same times |
 | "As seen on FOX 5 Good Day New York" | Off | Owner confirms it is accurate to state; then fill *TV or press credit* in Site settings (text only, no logo) and add the reserve headline |
 | Comparison claims (e.g. "vs. $45 median", "without the UES price") | Off; none in this kit | Owner approves the claim and the source note is filled in |
 | "Walk-Ins Welcome" callout | Hold | Owner confirms (the shop window sign says it) |
 | Photos showing a client or barber | Hold | Owner confirms the people pictured agreed to appear in ads |
 
-Ready now, once the account exists: sitelinks, callouts (except Walk-Ins and the hours lines), structured snippet, price asset, location asset, logos. The call asset waits only for its schedule (opening hours).
+Ready now, once the account exists: sitelinks, callouts (except Walk-Ins), the hours headlines and descriptions, structured snippet, price asset, location asset, call asset (scheduled Mon–Fri 8:30am–7pm and Sun 9am–6pm), logos.
 
 ## Rules this kit follows
 
@@ -42,8 +43,7 @@ Ready now, once the account exists: sitelinks, callouts (except Walk-Ins and the
 | --- | --- | --- | --- | --- | --- |
 | Google · Shop-wide $35 cut | A classic cut for $35 at a real Upper East Side shop | Since 1972 · father-and-son · prices posted on the site | `/l/35-dollar-cut` | Manhattan quality. $35 a cut. | A real Upper East Side barber. Since 1972. |
 | Google · Barber / Upper East Side searches | The neighbourhood barber on East 84th Street | Since 1972 · father-and-son · between Second and Third Avenue | `/l/upper-east-side-barber` (new) | Your Upper East Side barber. Since 1972. | The barber on East 84th Street. Since 1972. |
-| Google · Barber: Sean | Book with Sean | Sean's specialties and reviews on the site | `/l/book-sean` | Book with Sean. | Your next cut, with Sean. |
-| Google · Barber: David | Book with David, the David in David's | Owner · since 1972 shop · classic cuts | `/l/book-david` | Book with David. | Your next cut, with David. |
+| Google · Barber: Michael | Book with Michael | Choose Michael on Booksy · since 1972 shop · hours | `/l/book-michael` | Book with Michael. | Your next cut, with Michael. |
 | Meta · Neighbourhood · $35 cut | Manhattan quality. $35 a cut. | Since 1972 · father-and-son | `/l/35-dollar-cut` | Manhattan quality. $35 a cut. | A real Upper East Side barber. Since 1972. |
 | Meta · Neighbourhood · heritage (no price in the ad) | Your Upper East Side barber | Since 1972 · father-and-son | `/l/upper-east-side-barber` | Your Upper East Side barber. Since 1972. | The barber on East 84th Street. Since 1972. |
 
@@ -62,7 +62,7 @@ Campaign `search-ues`: ~1 mile around 233 E 84th St; ad schedule Mon–Fri 8:30a
 
 ### 1. Shop-wide $35 cut
 
-**Status:** Price matches Booksy (Haircut $35). Hours headlines on hold (see Status).
+**Status:** Price matches Booksy (Haircut $35). Hours lines match the approved Google listing hours.
 
 - **Keywords:** `[mens haircut upper east side]`, `"haircut upper east side"`, `"mens haircut ues"`, `"haircut 10028"`, `"affordable haircut upper east side"`, `"35 dollar haircut nyc"`
 - **Final URL:** `https://davidsbarbershop84.com/l/35-dollar-cut`
@@ -99,7 +99,7 @@ Responsive search ad — 15 headlines, 4 descriptions:
 
 ### 2. Barber / Upper East Side searches
 
-**Status:** Price matches Booksy (the landing page shows $35). Hours lines on hold (see Status).
+**Status:** Price matches Booksy (the landing page shows $35). Hours lines match the approved Google listing hours.
 
 - **Keywords:** `[barber upper east side]`, `"barbershop upper east side"`, `"barber ues"`, `"barber 10028"`, `"barber yorkville"`, `"barbershop near me"`, `"fade upper east side"`
 - **Final URL:** `https://davidsbarbershop84.com/l/upper-east-side-barber`
@@ -138,73 +138,45 @@ Responsive search ad — 15 headlines, 4 descriptions:
 
 Booksy has no shave service, and on 2026-11-03 the owner confirmed Booksy's menu is the shop's menu, so this group is not run and `/l/hot-towel-shave` is switched off. The old copy is in this file's git history if a shave is ever added to Booksy.
 
-### 4. Barber: Sean
+### 4. Barber: Michael
 
-**Status:** Blocked until Sean can be chosen on Booksy (Booksy's public listing shows Michael, Russel and Alex).
+**Status:** Ready to load once the ad account exists. Michael is on the site (`/barbers/michael`), and Book opens Booksy on him (staff ID 1582201, checked in the widget 2026-11-03). Price and hours match. No photo, bio or specialties yet, so the copy states only shop facts.
 
-- **Keywords:** `"sean barber upper east side"`, `"sean davids barber shop"`, `"barber sean nyc"`
-- **Final URL:** `https://davidsbarbershop84.com/l/book-sean`
-- **Final URL suffix:** `utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-sean&utm_term={keyword}`
-- **Landing page:** A "Book with Sean." / B "Your next cut, with Sean."; subheadline "Pick a time on Booksy, or call the shop and we will fit you in."; button "Book with Sean".
-- **Display path:** `davidsbarbershop84.com/barbers/sean`
-
-Responsive search ad — 12 headlines, 4 descriptions:
-
-| # | Headline | Chars | Note |
-| ---: | --- | ---: | --- |
-| 1 | Book With Sean | 14 | Pin 1 · matches landing A |
-| 2 | Your Next Cut, With Sean | 24 | Pin 1 · matches landing B |
-| 3 | Sean at David's Barber Shop | 27 |  |
-| 4 | Fades, Scissor Cuts, Beards | 27 |  |
-| 5 | East 84th St, Since 1972 | 24 |  |
-| 6 | Book Online or Call the Shop | 28 |  |
-| 7 | Choose Sean on Booksy | 21 |  |
-| 8 | Father-and-Son Barbershop | 25 |  |
-| 9 | Open Sundays 9am–6pm | 20 |  |
-| 10 | Between 2nd and 3rd Avenue | 26 |  |
-| 11 | David's Barber Shop | 19 |  |
-| 12 | Mon–Fri 8:30am–7pm | 18 |  |
-
-| # | Description | Chars |
-| ---: | --- | ---: |
-| 1 | Sean does fades, scissor cuts and beard work at David's Barber Shop on East 84th St. | 84 |
-| 2 | Pick a time on Booksy and choose Sean, or call the shop and we will fit you in. | 79 |
-| 3 | Clients travel in from Queens and Long Island to keep their barber. | 67 |
-| 4 | Open Monday to Friday 8:30am–7pm and Sunday 9am–6pm. Closed Saturdays. | 70 |
-
-### 5. Barber: David
-
-**Status:** Blocked until David can be chosen on Booksy (Booksy's public listing shows Michael, Russel and Alex).
-
-- **Keywords:** `"david barber upper east side"`, `"davids barber shop"`, `"david's barber shop 84th street"`
-- **Final URL:** `https://davidsbarbershop84.com/l/book-david`
-- **Final URL suffix:** `utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-david&utm_term={keyword}`
-- **Landing page:** A "Book with David." / B "Your next cut, with David."; subheadline "Pick a time on Booksy, or call the shop and we will fit you in."; button "Book with David".
-- **Display path:** `davidsbarbershop84.com/barbers/david`
+- **Keywords:** `"michael barber upper east side"`, `"michael davids barber shop"`, `"barber michael nyc"`
+- **Final URL:** `https://davidsbarbershop84.com/l/book-michael`
+- **Final URL suffix:** `utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-michael&utm_term={keyword}`
+- **Landing page:** A "Book with Michael." / B "Your next cut, with Michael."; subheadline "Pick a time on Booksy, or call the shop and we will fit you in."; button "Book with Michael".
+- **Display path:** `davidsbarbershop84.com/barbers/michael`
 
 Responsive search ad — 12 headlines, 4 descriptions:
 
 | # | Headline | Chars | Note |
 | ---: | --- | ---: | --- |
-| 1 | Book With David | 15 | Pin 1 · matches landing A |
-| 2 | Your Next Cut, With David | 25 | Pin 1 · matches landing B |
-| 3 | The David in David's | 20 |  |
-| 4 | Classic Cuts on East 84th | 25 |  |
-| 5 | East 84th St, Since 1972 | 24 |  |
-| 6 | Choose David on Booksy | 22 |  |
+| 1 | Book With Michael | 17 | Pin 1 · matches landing A |
+| 2 | Your Next Cut, With Michael | 27 | Pin 1 · matches landing B |
+| 3 | Michael at David's Barber Shop | 30 |  |
+| 4 | East 84th St, Since 1972 | 24 |  |
+| 5 | Book Online or Call the Shop | 28 |  |
+| 6 | Choose Michael on Booksy | 24 |  |
 | 7 | Father-and-Son Barbershop | 25 |  |
-| 8 | Book Online or Call the Shop | 28 |  |
-| 9 | Open Sundays 9am–6pm | 20 |  |
-| 10 | Between 2nd and 3rd Avenue | 26 |  |
-| 11 | David's Barber Shop | 19 |  |
-| 12 | Mon–Fri 8:30am–7pm | 18 |  |
+| 8 | Open Sundays 9am–6pm | 20 |  |
+| 9 | Between 2nd and 3rd Avenue | 26 |  |
+| 10 | David's Barber Shop | 19 |  |
+| 11 | Mon–Fri 8:30am–7pm | 18 |  |
+| 12 | Haircuts $35 on East 84th | 25 |  |
 
 | # | Description | Chars |
 | ---: | --- | ---: |
-| 1 | The David in David's Barber Shop. Classic cuts on East 84th Street, since 1972. | 79 |
-| 2 | Pick a time on Booksy and choose David, or call the shop and we will fit you in. | 80 |
+| 1 | Book a cut with Michael at David's Barber Shop on East 84th Street, open since 1972. | 84 |
+| 2 | Pick a time with Michael on Booksy, or call the shop and we will fit you in. | 76 |
 | 3 | A father-and-son barbershop on the Upper East Side, cutting hair since 1972. | 76 |
 | 4 | Open Monday to Friday 8:30am–7pm and Sunday 9am–6pm. Closed Saturdays. | 70 |
+
+### 5. Barbers: Russel and Alex
+
+**Status:** Not built yet: Booksy lists Russel (staff ID 1869365) and Alex (staff ID 1869419), but no services are assigned to them, so neither can be booked online (checked in the Booksy widget 2026-11-03). The owner confirmed on 2026-11-03 that Michael, Russel and Alex are the shop's barbers; David and Sean no longer work there, and their groups and landing pages are retired.
+
+Clears when the owner assigns services to Russel and Alex in Booksy Biz and the widget lists their services. Then copy the Michael group with the name swapped (all lines fit: "Russel at David's Barber Shop" is 29 characters, "Alex at David's Barber Shop" 27, "Your Next Cut, With Russel" 26), final URLs `/l/book-russel` and `/l/book-alex`, and `utm_content=rsa-barber-russel` / `rsa-barber-alex`.
 
 **Reserve headline (do not upload yet):**
 
@@ -302,7 +274,7 @@ Objective Traffic (or Leads with a website destination); ~1–2 miles around the
 
 ### Ad set `meta-ues-heritage` — Neighbourhood · heritage (no price in the ad)
 
-**Status:** Price matches Booksy (the landing page shows $35). "Open Sundays" waits for the hours check; photo consent still on hold.  
+**Status:** Price matches Booksy (the landing page shows $35). "Open Sundays" matches the approved hours; photo consent still on hold.  
 **Landing page:** `/l/upper-east-side-barber` · **CTA button:** Book Now
 
 | Field | Copy | Chars |
@@ -327,8 +299,7 @@ Checked 2026-11-04 on the development site, each URL in a fresh browser with its
 | --- | --- |
 | Google · Shop-wide $35 cut | `/l/35-dollar-cut?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-35-cut&utm_term=mens+haircut+upper+east+side` |
 | Google · Barber / Upper East Side searches | `/l/upper-east-side-barber?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-ues-barber&utm_term=barber+upper+east+side` |
-| Google · Barber: Sean | `/l/book-sean?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-sean&utm_term=sean+barber+upper+east+side` |
-| Google · Barber: David | `/l/book-david?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-david&utm_term=david+barber+upper+east+side` |
+| Google · Barber: Michael | `/l/book-michael?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-michael&utm_term=michael+barber+upper+east+side` |
 | Meta · Neighbourhood · $35 cut | `/l/35-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-35-cut&utm_content=feed-1x1-shopfloor` |
 | Meta · Neighbourhood · heritage (no price in the ad) | `/l/upper-east-side-barber?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-heritage&utm_content=feed-1x1-chair` |
 

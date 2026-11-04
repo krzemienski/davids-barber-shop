@@ -7,11 +7,11 @@ Goal: paid traffic → landing page → Booksy booking at **≤ $60 cost per con
 ## Before spending a dollar (launch blockers)
 
 1. **The advertised price must be bookable.** Cleared 2026-11-03: the owner confirmed Booksy's menu, so the site, landing pages and ad copy say Haircut $35, the same as Booksy listing 1663005. If the price changes, change Booksy, Admin → Services, the Site settings offer price and the ad copy together.
-2. **Roster must match Booksy.** The site lists David and Sean; Booksy's public listing currently shows **Michael, Russel and Alex**. Barber ads only make sense for barbers a client can actually select on Booksy.
+2. **Roster must match Booksy.** Cleared 2026-11-03: the owner confirmed the barbers are **Michael, Russel and Alex**, the same as Booksy. The site shows them; David and Sean and their landing pages are switched off. Barber ads only run for barbers a client can actually select on Booksy: Michael can be (Book opens on him); Russel and Alex have no services assigned on Booksy yet, so their ad groups wait until the owner adds them.
 3. **Comparison claim:** only turn on "vs. $45 median at nearby UES shops" after the owner approves it; keep the source note filled in (it shows as a footnote). Re-check prices every 6 months.
 4. **Owners added** under Staff access (at least two).
 5. **Pixel/tag IDs and a consent banner** — see "Platform tags" below; not needed to launch with Google's offline import, needed before adding Meta Pixel or a Google tag.
-6. **Opening hours.** Booksy shows Mon and Fri from 9:00, Tue–Thu from 9:30 and Fri until 4:30; the site says 8:30–7 on weekdays. Ad lines that state hours, the ad schedule and the call schedule wait until the owner confirms the hours.
+6. **Opening hours.** Cleared 2026-11-03: the approved hours are the Google listing's — Mon–Fri 8:30am–7pm, Sat closed, Sun 9am–6pm — and Site settings match. Ad lines that state hours, the ad schedule and the call schedule use them. Booksy still shows shorter hours (Mon and Fri from 9:00, Tue–Thu from 9:30, Fri until 4:30); the owner should update Booksy so online booking offers the same times.
 7. **Price asset:** every price item must match Booksy. It does as of 2026-11-03 (Haircut $35, Haircut & beard $55, Line up $20, Beard $20, Beard trim $20).
 8. **Photo consent:** the owner confirms that the barber and clients in the ad photos agreed to appear, and supplies full-size originals.
 9. **"As seen on FOX 5 Good Day New York":** off until the owner confirms it is accurate. Then fill *TV or press credit* in Site settings (it shows as text on the home and landing pages) and add the reserve headline.
@@ -38,10 +38,12 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
 
   | Ad group | Landing page | Status |
   | --- | --- | --- |
-  | Shop-wide $35 cut | `/l/35-dollar-cut` | price matches Booksy; hours lines and photo consent on hold |
-  | Barber / UES searches | `/l/upper-east-side-barber` | price matches Booksy; hours lines on hold |
+  | Shop-wide $35 cut | `/l/35-dollar-cut` | price and hours match; photo consent on hold |
+  | Barber / UES searches | `/l/upper-east-side-barber` | price and hours match |
   | Hot towel shave | — | retired: Booksy has no shave, page switched off |
-  | Barber: Sean, Barber: David | `/l/book-sean`, `/l/book-david` | blocked until the barber is on Booksy |
+  | Barber: Michael | `/l/book-michael` | ready |
+  | Barber: Russel, Barber: Alex | `/l/book-russel`, `/l/book-alex` | wait until Booksy lists services for them |
+  | Barber: Sean, Barber: David | — | retired: no longer at the shop, pages switched off |
 
   New barbers get an ad group only after they have a site profile and can be chosen on Booksy.
 - Keywords and negatives per ad group: see `docs/ads/AD_CREATIVE.md`.

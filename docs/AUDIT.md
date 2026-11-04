@@ -17,11 +17,11 @@ Read in the browser at `https://www.google.com/maps?cid=3355011163649612090` and
 | Website | davidsbarbershop84.com | sitemap and robots use davidsbarbershop84.com | Yes |
 | Map link | CID 3355011163649612090 | every map link uses this CID | Yes |
 | Rating | 4.7 (773 reviews) | not shown as a number on the site | n/a |
-| Hours, Tuesday | 8:30 AM–7 PM | 8:30 AM–7 PM | Yes |
-| Hours, Wednesday | opens 8:30 AM | 8:30 AM–7 PM | Opening time matches |
-| Hours, other days | **not readable** (see below) | Mon–Fri 8:30–7, Sat closed, Sun 9–6 | **Unverified** |
+| Hours, Mon–Fri | 8:30 AM–7 PM | 8:30 AM–7 PM | Yes |
+| Hours, Saturday | Closed | Closed | Yes |
+| Hours, Sunday | 9 AM–6 PM | 9 AM–6 PM | Yes |
 
-**Hours limitation.** The Google Maps API key is refused for this project. Places API (New) returns 403, the legacy Places API is not enabled, and Geocoding is not activated. The Google Maps connector can only search documentation, not place data. Signed out, Google Maps shows only today's row, and Google Search showed a captcha (`generated-artifacts/audit/google-search-panel.png`, not committed). So only Tuesday and Wednesday's opening time were confirmed against Google. "Closed Saturdays" matches Booksy, but it is **not** confirmed against Google. Hours were not changed. Task #4 (Google listing photos) unblocks the same API access. Once it works, the full week can be read with one Place Details call.
+**Hours limitation.** The Google Maps API key is refused for this project. Places API (New) returns 403, the legacy Places API is not enabled, and Geocoding is not activated. The Google Maps connector can only search documentation, not place data. Signed out, Google Maps shows only today's row, and Google Search showed a captcha (`generated-artifacts/audit/google-search-panel.png`, not committed). So only Tuesday and Wednesday's opening time were confirmed against Google at the time of the audit. **Update 2026-11-03:** with the working Places key, the full week was read from the listing (regularOpeningHours): Mon–Fri 8:30 AM–7 PM, Saturday closed, Sunday 9 AM–6 PM. The table above shows that reading; every day matches the site.
 
 ### Booksy listing 1663005
 Read in the browser. Screenshots: `audit/source-booksy-listing.jpg`, `audit/source-booksy-hours.jpg`.
@@ -40,7 +40,7 @@ Read in the browser. Screenshots: `audit/source-booksy-listing.jpg`, `audit/sour
 
 None of these were changed during the audit. They are owner decisions (see section 4).
 
-**Update 2026-11-03:** the owner confirmed Booksy's menu and prices are correct. The site's services, durations and offer price now match Booksy exactly (the four services not on Booksy were removed). Staff and hours are still as above, awaiting the owner.
+**Update 2026-11-03:** the owner confirmed Booksy's menu and prices are correct. The site's services, durations and offer price now match Booksy exactly (the four services not on Booksy were removed). **Staff, 2026-11-03:** the owner confirmed Booksy's roster (Michael, Russel, Alex); the site now matches. **Hours, 2026-11-03:** the approved hours are the Google listing's (Mon–Fri 8:30–7, Sat closed, Sun 9–6), which the site already shows. Booksy's shorter weekday hours are for the owner to update in Booksy.
 
 ## 2. Page by page
 
@@ -74,7 +74,7 @@ Site-wide:
   - Address, phone and map link match Google. The hours are the site hours, which match Google on the days that could be read.
   - `image` now points to the real storefront (`/media/storefront.jpg`) instead of the non-shop interior.
   - `sameAs` now includes the Booksy listing.
-- **Sitemap:** Lists the seven indexable pages. Barber profiles are left out on purpose: the roster is unconfirmed (Booksy shows different staff), and the profiles are linked from `/barbers`. Landing pages stay `noindex` and are disallowed in robots.txt.
+- **Sitemap:** Lists the seven indexable pages. Barber profiles were left out while the roster was unconfirmed; since 2026-11-03 the sitemap lists `/barbers/michael`, `/barbers/russel` and `/barbers/alex`. Landing pages stay `noindex` and are disallowed in robots.txt.
 - **Alt text:** All content images have descriptive alt text. Decorative backgrounds use `alt=""`.
 - **Copy rules:** No ethnic or religious descriptors were found. No player names appear (all wall entries are unpublished drafts). Reviews are verbatim, and "Best barbershop in NYC" appears only inside customer quotes.
 
@@ -104,8 +104,8 @@ Both have been applied in development; production picks them up on its next star
 
 1. **Haircut price:** $30 on the site, $35 on Booksy (the old site said $25). Ads should not run until they match. **Resolved 2026-11-03:** owner confirmed $35; site updated.
 2. **Menu:** Booksy lists Beard $20, Haircut & beard $55, Line up $20 and Beard trim $20. The site lists Beard Trim $15, plus four services that are not on Booksy. The haircut duration also differs (30 vs 25 min). **Resolved 2026-11-03:** the site's menu is now Booksy's.
-3. **Roster:** the site shows David and Sean; Booksy now lists Michael, Russel and Alex. Confirm who works there, and whether David is the owner.
-4. **Hours:** Booksy says Tue–Thu open 9:30 and Fri close 4:30; the site says 8:30–7 on weekdays. Google confirms 8:30–7 on Tuesday and an 8:30 opening on Wednesday. The rest of the week is unverified against Google.
+3. **Roster:** the site shows David and Sean; Booksy now lists Michael, Russel and Alex. Confirm who works there, and whether David is the owner. **Resolved 2026-11-03:** the owner confirmed only Michael, Russel and Alex work there. The site now shows those three (Booksy staff IDs 1582201, 1869365, 1869419); David and Sean, and `/l/book-david`, `/l/book-sean`, are switched off, not deleted, so past bookings keep their barber. Booksy has no services assigned to Russel or Alex yet, so they cannot be booked online until the owner adds them.
+4. **Hours:** Booksy says Tue–Thu open 9:30 and Fri close 4:30; the site says 8:30–7 on weekdays. Google confirms 8:30–7 on Tuesday and an 8:30 opening on Wednesday. The rest of the week is unverified against Google. **Resolved 2026-11-03:** the approved hours are the Google listing's, read in full through Places: Mon–Fri 8:30–7, Sat closed, Sun 9–6. The site already matched, so nothing on the site changed; the owner should update Booksy to the same hours.
 5. **Founding year:** 1972, versus the "84" in the domain (likely the street, East 84th; owner to confirm).
 6. **Email:** the site uses info@davidsbarbershop.com, a different domain from davidsbarbershop84.com. The Google listing has no email, so this could not be checked. Confirm the address receives mail.
 7. **Photos:**
@@ -116,7 +116,7 @@ Both have been applied in development; production picks them up on its next star
 
 ## 5. Not done / limits
 
-- Hours for Mon, Thu, Fri, Sat and Sun were not confirmed against Google (see 1).
+- Hours for Mon, Thu, Fri, Sat and Sun were not confirmed against Google during the audit; done 2026-11-03 through Places (see 1).
 - `og:image` in the static HTML points to `https://davidsbarbershop84.com/media/hero-poster.jpg`. Link previews will show it only after the DNS cutover; until then that domain serves the old site.
 - Admin screens (outside this audit) still use a few raw HSL colours for success and danger text.
 - `pnpm run typecheck` passes for the site and API. The `hero-loop` video artifact fails typecheck on its own (missing DOM lib); this predates the audit and was not changed.

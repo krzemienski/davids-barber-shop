@@ -8,7 +8,7 @@ _Last updated 2026-11-03._
 - **Home:** video hero (muted loop, pause button, still image for reduced-motion visitors), "$35 a cut", Book + Call, barbers, services preview, verbatim reviews, hours with **Closed Saturdays**.
 - **Barbers** index and **profiles** (`/barbers/<slug>`): bio, specialties, gallery, socials, reviews that mention them, "Book with X" with an honest note when the button opens the shop's Booksy page.
 - **Services & prices**, **Our Story**, **Gallery**, **Visit** (map, hours, phone, email, Closed Saturdays), **Privacy**.
-- **Ad landing pages** `/l/<slug>`: offer (`35-dollar-cut`, with A/B variant) and per-barber (`book-david`, `book-sean`).
+- **Ad landing pages** `/l/<slug>`: offer (`35-dollar-cut`, with A/B variant) and per-barber (`book-michael`, `book-russel`, `book-alex`; `book-david` and `book-sean` are switched off since the owner confirmed the roster).
 - **Mobile bottom bar** with Call and Book on every public page; click-to-call phone number in the desktop header.
 - Announcement banner (from settings), 404 page, error boundary.
 - SEO: page titles/descriptions, Open Graph tags, `BarberShop`/`HairSalon` JSON-LD, `robots.txt`, `sitemap.xml`, `noindex` on landing pages and sign-in, redirects from the old site's `#anchors`.
@@ -47,12 +47,12 @@ All test data (events, bookings, test barber/service, test staff account) was re
 
 ## Brand and content audit (2026-11-03)
 
-Every public page and landing page (A and B) checked at 1280 px and 402 px against the brand guide, the Google listing and Booksy. Fixes, before/after images and the owner list are in `docs/AUDIT.md`. Google hours could be confirmed only for Tuesday and Wednesday's opening (API key refused, signed-out Maps shows today only).
+Every public page and landing page (A and B) checked at 1280 px and 402 px against the brand guide, the Google listing and Booksy. Fixes, before/after images and the owner list are in `docs/AUDIT.md`. Google hours could be confirmed only for Tuesday and Wednesday's opening at the time (API key refused, signed-out Maps shows today only); the full week was read through Places on 2026-11-03 and matches the site.
 
 ## Open items — need the owner
 
-1. **Hours:** Booksy has Mon and Fri from 9:00, Tue–Thu from 9:30 and Fri until 4:30; the site says 8:30–7 on weekdays (Google confirms 8:30–7 on Tuesday and an 8:30 opening on Wednesday). Confirm the real hours and make Booksy and Google agree.
-2. **Roster:** site shows David and Sean; Booksy now lists Michael, Russel and Alex. Confirm who is bookable, send photos and any per-barber Booksy links.
+1. **Hours — settled 2026-11-03:** the approved hours are the Google listing's: Mon–Fri 8:30am–7pm, Sat closed, Sun 9am–6pm. The site and ad kit use them. Remaining owner step: change Booksy (Mon and Fri from 9:00, Tue–Thu from 9:30, Fri until 4:30) to the same hours.
+2. **Roster — settled 2026-11-03:** the barbers are Michael, Russel and Alex; the site shows them with their Booksy staff IDs, and David and Sean are switched off. Still needed from the owner: assign services to Russel and Alex in Booksy (they cannot be booked online yet), and photos and short bios for all three.
 3. **Owner emails** (at least two) for `ADMIN_BOOTSTRAP_EMAILS`.
 4. **Approve or reject** the "$45 median at nearby UES shops" comparison.
 5. **Brand sign-off**, branding photo, vinyl measurements; 1972 vs the "84" in the domain.
@@ -60,6 +60,6 @@ Every public page and landing page (A and B) checked at 1280 px and 402 px again
 7. **Booksy Biz and ad account access, pixel IDs** → then add consent banner + tags.
 8. **Explicit go-ahead needed for:** DNS cutover, publishing celebrity names, a live test booking, any ad budget change.
 9. Send the Booksy partner-API request drafted in `docs/research/booksy-and-tracking.md`.
-10. **Menu and hours differ from Booksy** (Beard Trim $15 vs $20; Booksy weekday hours 9:30 Tue–Thu, Fri to 4:30). Confirm which is right.
+10. **Menu and hours differ from Booksy** — settled: menu = Booksy (2026-11-03); hours = Google listing (2026-11-03), so Booksy's hours need updating by the owner.
 11. **Real shop photos:** only three small ones exist; the styled images are no longer presented as the shop.
 12. **Email** info@davidsbarbershop.com: confirm it receives mail (different domain from davidsbarbershop84.com).

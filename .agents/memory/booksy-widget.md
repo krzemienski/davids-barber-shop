@@ -5,6 +5,7 @@ description: Verified behavior of Booksy's website widget (undocumented params, 
 - No owner-generated API key exists; the partner API (docs.booksy.com, 401) is Booksy-granted only. The embed needs only public IDs (business 1663005, confirmed by the owner's Booksy embed snippet on 2026-11-03; staffer; variant).
 - The widget iframe `booksy.com/widget-2021/index.html` is frameable; the profile page is not (XFO DENY).
 - Undocumented `stafferId` / `variantId` params work (hand-tested 2026-10-27); they can change without notice, so keep the plain Booksy link as a fallback.
+- A real staffer with no services assigned in Booksy also gives an empty list under `stafferId` (seen for Russel and Alex, 2026-11-03), the same as an invalid ID does. Staff IDs and names are in the public listing HTML's embedded data.
 - postMessage `close.appointmentCompleted` is the only browser-side "booked" signal. `logged-in` carries a customer access token: never log it.
 
 **Why:** the official docs say none of this; it came from reading Booksy's widget bundle and live browser tests, which took several attempts.
