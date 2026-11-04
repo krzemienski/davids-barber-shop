@@ -207,11 +207,11 @@ function BarberForm({ barber, nextOrder, onClose, onSaved }: { barber: Barber | 
           {f.notableClients.length > 0 && (
             <ul className="mt-3 space-y-2">
               {f.notableClients.map((c, i) => (
-                <li key={i} className={cn('grid gap-2 sm:grid-cols-[1fr_1fr_auto_auto] items-center border-l-2 pl-3', c.consent ? 'border-[hsl(140_35%_50%)]' : 'border-oxblood')}>
+                <li key={i} className={cn('grid gap-2 sm:grid-cols-[1fr_1fr_auto_auto] items-center border-l-2 pl-3', c.consent ? 'border-success' : 'border-oxblood')}>
                   <input className="field" placeholder="Name" value={c.name} onChange={(e) => set('notableClients', f.notableClients.map((x, j) => j === i ? { ...x, name: e.target.value } : x))} data-testid={`input-client-name-${i}`} />
                   <input className="field" placeholder="Note (optional)" value={c.note ?? ''} onChange={(e) => set('notableClients', f.notableClients.map((x, j) => j === i ? { ...x, note: e.target.value } : x))} data-testid={`input-client-note-${i}`} />
                   <Toggle checked={c.consent} onChange={(v) => set('notableClients', f.notableClients.map((x, j) => j === i ? { ...x, consent: v } : x))}
-                    label={c.consent ? <span className="text-xs text-[hsl(140_35%_65%)]">Consent on file</span> : <span className="flex items-center gap-1 text-xs text-[hsl(354_70%_68%)]"><EyeOff className="h-3 w-3" /> Never shown</span>} testId={`switch-consent-${i}`} />
+                    label={c.consent ? <span className="text-xs text-success-text">Consent on file</span> : <span className="flex items-center gap-1 text-xs text-oxblood-text"><EyeOff className="h-3 w-3" /> Never shown</span>} testId={`switch-consent-${i}`} />
                   <button type="button" onClick={() => set('notableClients', f.notableClients.filter((_, j) => j !== i))} className="p-1 text-muted-foreground hover:text-bone" aria-label="Remove client" data-testid={`button-remove-client-${i}`}><X className="h-4 w-4" /></button>
                 </li>
               ))}

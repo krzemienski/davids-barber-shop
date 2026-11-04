@@ -479,7 +479,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
           {hours.map((h, i) => (
             <li key={h.day} className="grid grid-cols-[110px_1fr] sm:grid-cols-[140px_auto_1fr] items-center gap-4 px-5 py-2.5" data-testid={`row-hours-${h.day}`}>
               <span className="text-sm text-bone">{h.day}</span>
-              <Toggle checked={!h.closed} onChange={(v) => setH(i, v ? { closed: false, open: h.open ?? '09:00', close: h.close ?? '19:00' } : { closed: true })} label={<span className={cn('text-xs w-12', h.closed && 'text-[hsl(354_70%_68%)]')}>{h.closed ? 'Closed' : 'Open'}</span>} testId={`switch-open-${h.day}`} />
+              <Toggle checked={!h.closed} onChange={(v) => setH(i, v ? { closed: false, open: h.open ?? '09:00', close: h.close ?? '19:00' } : { closed: true })} label={<span className={cn('text-xs w-12', h.closed && 'text-oxblood-text')}>{h.closed ? 'Closed' : 'Open'}</span>} testId={`switch-open-${h.day}`} />
               {!h.closed && (
                 <div className="col-span-2 sm:col-span-1 flex items-center gap-2">
                   <input type="time" className="field w-32 font-mono" value={h.open ?? ''} onChange={(e) => setH(i, { open: e.target.value })} data-testid={`input-open-${h.day}`} />

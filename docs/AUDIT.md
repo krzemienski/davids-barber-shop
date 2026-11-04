@@ -118,6 +118,6 @@ Both have been applied in development; production picks them up on its next star
 
 - Hours for Mon, Thu, Fri, Sat and Sun were not confirmed against Google during the audit; done 2026-11-03 through Places (see 1).
 - `og:image` in the static HTML points to `https://davidsbarbershop84.com/media/hero-poster.jpg`. Link previews will show it only after the DNS cutover; until then that domain serves the old site.
-- Admin screens (outside this audit) still use a few raw HSL colours for success and danger text.
+- Admin screens (outside this audit) used a few raw HSL colours for success and danger text; done 2026-11-04. They now use `success`, `success-text` and `oxblood-text` (see the brand guide).
 - `pnpm run typecheck` passes for the site and API. The `hero-loop` video artifact fails typecheck on its own (missing DOM lib); this predates the audit and was not changed.
 - The 24 `landing_view` events created by opening landing pages during the audit were deleted.

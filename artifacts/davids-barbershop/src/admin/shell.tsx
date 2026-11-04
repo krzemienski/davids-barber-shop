@@ -69,7 +69,7 @@ export function AdminGate({ children, ownerOnly }: { children: ReactNode; ownerO
     const notStaff = errorStatus(me.error) === 403;
     return (
       <GateFrame>
-        <ShieldAlert className="h-6 w-6 text-[hsl(354_60%_62%)]" />
+        <ShieldAlert className="h-6 w-6 text-oxblood-text" />
         <h1 className="mt-4 font-display text-3xl text-bone">{notStaff ? 'No staff access' : 'Owners only'}</h1>
         <p className="mt-2 text-sm text-muted-foreground" data-testid="text-no-access">
           {notStaff
@@ -214,7 +214,7 @@ export function ConfirmDelete({ what, onConfirm, testId }: { what: string; onCon
   return (
     <AlertDialog>
       <AlertDialogTrigger asChild>
-        <button className="p-1.5 text-muted-foreground hover:text-[hsl(354_60%_62%)] transition-colors" aria-label={`Delete ${what}`} data-testid={testId}><Trash2 className="h-4 w-4" /></button>
+        <button className="p-1.5 text-muted-foreground hover:text-oxblood-text transition-colors" aria-label={`Delete ${what}`} data-testid={testId}><Trash2 className="h-4 w-4" /></button>
       </AlertDialogTrigger>
       <AlertDialogContent className="border-gold/25 bg-card rounded-sm">
         <AlertDialogHeader>
@@ -233,8 +233,8 @@ export function ConfirmDelete({ what, onConfirm, testId }: { what: string; onCon
 export function Pill({ children, tone = 'muted' }: { children: ReactNode; tone?: 'gold' | 'red' | 'green' | 'muted' }) {
   const t = {
     gold: 'border-gold/40 text-gold bg-gold/10',
-    red: 'border-[hsl(354_60%_50%/0.5)] text-[hsl(354_70%_68%)] bg-oxblood/20',
-    green: 'border-[hsl(140_30%_45%/0.5)] text-[hsl(140_35%_65%)] bg-[hsl(140_30%_30%/0.15)]',
+    red: 'border-destructive/50 text-oxblood-text bg-oxblood/20',
+    green: 'border-success/50 text-success-text bg-success/10',
     muted: 'border-border text-muted-foreground',
   }[tone];
   return <span className={cn('inline-flex items-center rounded-sm border px-1.5 py-0.5 text-[10.5px] font-medium uppercase tracking-wider whitespace-nowrap', t)}>{children}</span>;

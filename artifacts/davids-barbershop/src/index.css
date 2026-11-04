@@ -55,6 +55,8 @@
   --color-gold-hover: hsl(var(--gold-hover));
   --color-oxblood: hsl(var(--oxblood));
   --color-oxblood-text: hsl(var(--oxblood-text));
+  --color-success: hsl(var(--success));
+  --color-success-text: hsl(var(--success-text));
   --color-bone: hsl(var(--bone));
   --color-ink: hsl(var(--ink));
 
@@ -84,6 +86,8 @@
   --oxblood: 354 58% 36%;
   --oxblood-text: 354 60% 62%; /* #DB6A75, oxblood as small text on ink (true oxblood is ~2.4:1) */
   --bone: 40 33% 89%;
+  --success: 140 35% 50%;      /* #53AD71, admin success fills, borders, live dot */
+  --success-text: 140 35% 65%; /* #87C59B, admin success text on card/ink (~9:1) */
 
   --background: 30 12% 5%;
   --foreground: 40 30% 89%;

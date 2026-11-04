@@ -156,9 +156,9 @@ function WallForm({ entry, nextOrder, onClose, onSaved }: { entry: WallEntry | n
           <Field label="People in the photo" hint="Comma separated. Shown only with permission."><input className="field" value={f.people} onChange={(e) => set('people', e.target.value)} data-testid="input-wall-people" /></Field>
           <Field label="TV or press credit" hint={'Shown as text: "As seen on …". No logos.'}><input className="field" maxLength={120} value={f.pressOutlet} onChange={(e) => set('pressOutlet', e.target.value)} placeholder="FOX 5 Good Day New York" data-testid="input-wall-press" /></Field>
         </div>
-        <div className={cn('border-l-2 px-4 py-3', f.permissionOnFile ? 'border-[hsl(140_35%_50%)] bg-[hsl(140_35%_50%)]/5' : 'border-oxblood bg-oxblood/10')}>
+        <div className={cn('border-l-2 px-4 py-3', f.permissionOnFile ? 'border-success bg-success/5' : 'border-oxblood bg-oxblood/10')}>
           <Toggle checked={f.permissionOnFile} onChange={(v) => set('permissionOnFile', v)} testId="switch-wall-permission"
-            label={f.permissionOnFile ? <span className="text-xs text-[hsl(140_35%_65%)]">Permission on file: shown on the site</span> : <span className="flex items-center gap-1 text-xs text-[hsl(354_70%_68%)]"><EyeOff className="h-3 w-3" /> No permission yet: never shown</span>} />
+            label={f.permissionOnFile ? <span className="text-xs text-success-text">Permission on file: shown on the site</span> : <span className="flex items-center gap-1 text-xs text-oxblood-text"><EyeOff className="h-3 w-3" /> No permission yet: never shown</span>} />
           <p className="mt-2 text-[11px] text-muted-foreground">New York law requires written consent to use a person&rsquo;s name or photo to promote a business. Turn this on only once it is on file.</p>
         </div>
         <div className="flex justify-end gap-2 border-t border-border pt-4">

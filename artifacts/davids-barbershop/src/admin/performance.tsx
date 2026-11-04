@@ -56,7 +56,7 @@ export default function PerformancePage() {
         <div className="space-y-6">
           <div className="grid gap-px bg-card-border border border-card-border grid-cols-2 lg:grid-cols-7">
             {[
-              ['Cost / booking', r.totals.costPerBookingCents != null ? money(r.totals.costPerBookingCents, { cents: true }) : '—', r.totals.costPerBookingCents != null ? (r.totals.costPerBookingCents <= target ? 'text-[hsl(140_35%_65%)]' : 'text-[hsl(354_70%_68%)]') : ''],
+              ['Cost / booking', r.totals.costPerBookingCents != null ? money(r.totals.costPerBookingCents, { cents: true }) : '—', r.totals.costPerBookingCents != null ? (r.totals.costPerBookingCents <= target ? 'text-success-text' : 'text-oxblood-text') : ''],
               ['Spend', money(r.totals.spendCents, { cents: true }), ''],
               ['Bookings', String(r.totals.bookings), 'text-gold'],
               ['Booked on site', String(r.totals.siteBookings), ''],
@@ -86,7 +86,7 @@ export default function PerformancePage() {
                           <div className="flex items-center gap-3">
                             <span className="w-16 font-mono text-[13px]">{b.costPerBookingCents != null ? money(b.costPerBookingCents, { cents: true }) : '—'}</span>
                             <div className="relative h-1.5 flex-1 bg-muted">
-                              <div className={cn('absolute inset-y-0 left-0', b.status === 'on_target' ? 'bg-[hsl(140_35%_50%)]' : 'bg-oxblood')} style={{ width: `${pct}%` }} />
+                              <div className={cn('absolute inset-y-0 left-0', b.status === 'on_target' ? 'bg-success' : 'bg-oxblood')} style={{ width: `${pct}%` }} />
                               <div className="absolute -top-1 -bottom-1 w-px bg-gold" style={{ left: `${tPct}%` }} title="Target" />
                             </div>
                           </div>
@@ -131,7 +131,7 @@ export default function PerformancePage() {
                 </TableWrap>
               )}
             </Panel>
-            <Panel title="Live events" className="xl:col-span-2" actions={<span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-[hsl(140_40%_55%)] animate-pulse" />30s</span>}>
+            <Panel title="Live events" className="xl:col-span-2" actions={<span className="flex items-center gap-1.5 text-[10px] text-muted-foreground"><span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />30s</span>}>
               {events.isLoading ? <div className="p-5 space-y-2">{Array.from({ length: 6 }).map((_, i) => <SkeletonBlock key={i} className="h-8" />)}</div>
                 : !events.data?.length ? <AdminEmpty title="Quiet so far" body="Call, book and landing events show up here." />
                 : (

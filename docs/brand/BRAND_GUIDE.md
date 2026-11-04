@@ -30,8 +30,10 @@ Dark, warm shop interior: black-brown base, brass and gold fittings, oxblood lea
 | Bright gold / brass | `#C3A617` | Small highlights only (chart accent, hover glints). Never body text. |
 | Oxblood | `#912731` | "Closed Saturdays" panels and borders, warnings, the red stripe in the pole rule |
 | Oxblood text | `#DB6A75` | Oxblood as small text on ink (e.g. "Closed Saturdays" in hours tables). True oxblood on ink is ~2.4:1, too low for text. |
+| Success | `#53AD71` | Admin only: "on target" bars, live dot, consent/permission borders and pill borders. Not for text. |
+| Success text | `#87C59B` | Admin only: success text and pills on card or ink (~9:1). Danger text in admin uses Oxblood text (~5.5:1 on card). |
 
-Contrast: bone on ink (~16:1), gold on ink (~8:1) and ink on gold all pass WCAG AA for body text. Keep bright gold to accents, not paragraphs.
+Contrast: bone on ink (~16:1), gold on ink (~8:1) and ink on gold all pass WCAG AA for body text. The admin screens use the same tokens; no raw colour values. Keep bright gold to accents, not paragraphs.
 
 ## Type
 
