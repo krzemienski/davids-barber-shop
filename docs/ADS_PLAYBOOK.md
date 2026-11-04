@@ -6,13 +6,13 @@ Goal: paid traffic → landing page → Booksy booking at **≤ $60 cost per con
 
 ## Before spending a dollar (launch blockers)
 
-1. **The $30 price must be bookable.** The old site says Hair Cut $25; the live Booksy listing (1663005) says Haircut $35. Ads promising $30 that land on a $35 booking page will burn money and invite complaints. Owner: set Haircut to $30 on Booksy (or change the offer price in Site settings to match Booksy).
-2. **Roster must match Booksy.** The site lists David and Sean; Booksy's public listing currently shows only **Michael**. Barber ads only make sense for barbers a client can actually select on Booksy.
+1. **The advertised price must be bookable.** Cleared 2026-11-03: the owner confirmed Booksy's menu, so the site, landing pages and ad copy say Haircut $35, the same as Booksy listing 1663005. If the price changes, change Booksy, Admin → Services, the Site settings offer price and the ad copy together.
+2. **Roster must match Booksy.** The site lists David and Sean; Booksy's public listing currently shows **Michael, Russel and Alex**. Barber ads only make sense for barbers a client can actually select on Booksy.
 3. **Comparison claim:** only turn on "vs. $45 median at nearby UES shops" after the owner approves it; keep the source note filled in (it shows as a footnote). Re-check prices every 6 months.
 4. **Owners added** under Staff access (at least two).
 5. **Pixel/tag IDs and a consent banner** — see "Platform tags" below; not needed to launch with Google's offline import, needed before adding Meta Pixel or a Google tag.
-6. **Shave on Booksy.** The hot towel shave ad group needs a bookable $25 Royal Shave on Booksy, with its Booksy service ID entered on Admin → Services → Royal Shave.
-7. **Price asset:** every price item must match Booksy (today only Haircut $35 and Beard trim $20 exist there).
+6. **Opening hours.** Booksy shows Mon and Fri from 9:00, Tue–Thu from 9:30 and Fri until 4:30; the site says 8:30–7 on weekdays. Ad lines that state hours, the ad schedule and the call schedule wait until the owner confirms the hours.
+7. **Price asset:** every price item must match Booksy. It does as of 2026-11-03 (Haircut $35, Haircut & beard $55, Line up $20, Beard $20, Beard trim $20).
 8. **Photo consent:** the owner confirms that the barber and clients in the ad photos agreed to appear, and supplies full-size originals.
 9. **"As seen on FOX 5 Good Day New York":** off until the owner confirms it is accurate. Then fill *TV or press credit* in Site settings (it shows as text on the home and landing pages) and add the reserve headline.
 
@@ -38,9 +38,9 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
 
   | Ad group | Landing page | Status |
   | --- | --- | --- |
-  | Shop-wide $30 cut | `/l/30-dollar-cut` | blocked until Booksy shows $30 |
-  | Barber / UES searches | `/l/upper-east-side-barber` | blocked until Booksy shows $30 (page shows the offer) |
-  | Hot towel shave | `/l/hot-towel-shave` (service page, Royal Shave $25) | blocked until the shave is on Booksy |
+  | Shop-wide $35 cut | `/l/35-dollar-cut` | price matches Booksy; hours lines and photo consent on hold |
+  | Barber / UES searches | `/l/upper-east-side-barber` | price matches Booksy; hours lines on hold |
+  | Hot towel shave | — | retired: Booksy has no shave, page switched off |
   | Barber: Sean, Barber: David | `/l/book-sean`, `/l/book-david` | blocked until the barber is on Booksy |
 
   New barbers get an ad group only after they have a site profile and can be chosen on Booksy.
@@ -53,7 +53,7 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
 ### Meta (Facebook / Instagram)
 
 - Objective: Traffic (or Leads with a website destination); radius ~1–2 miles; men 21–55 as a starting audience.
-- Two ad sets: `meta-ues-30-cut` (price-led) → `/l/30-dollar-cut`, and `meta-ues-heritage` (no price in the ad) → `/l/upper-east-side-barber`. Each has Feed 1:1, Feed 4:5 and Stories 9:16 creative from `docs/ads/images/meta/`; copy is in `docs/ads/AD_CREATIVE.md`.
+- Two ad sets: `meta-ues-35-cut` (price-led) → `/l/35-dollar-cut`, and `meta-ues-heritage` (no price in the ad) → `/l/upper-east-side-barber`. Each has Feed 1:1, Feed 4:5 and Stories 9:16 creative from `docs/ads/images/meta/`; copy is in `docs/ads/AD_CREATIVE.md`.
 - Creative uses the shop's own photos only, with the pole rule and gold mark and no words on the image. Not the styled site media (towel, interior, tools), not Google listing photos posted by others, and no player or celebrity names or images on any platform.
 - Tag every ad URL: `?utm_source=meta&utm_medium=paid_social&utm_campaign=<name>&utm_content=<ad>`. Meta adds `fbclid` itself.
 - Booksy's own **Facebook "Book Now" integration** can attach a Meta pixel to the Booksy profile (Booksy Settings → Online Booking → Facebook). Test it in Events Manager → Test Events before relying on it; which events it sends is not documented.
@@ -75,9 +75,8 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
 - Each `/l/<slug>` can carry a B headline/subheadline (Admin → Landing pages). Visitors are split 50/50 and keep their variant.
 - Page kinds: **Offer** (leads with the Site settings offer price), **Barber** (one barber), **Service** (leads with one service's posted price and opens Booksy on that service).
 - Test one thing at a time: change the headline and leave the B subheadline blank so B reuses A's. Seeded tests:
-  - `/l/30-dollar-cut`: "Manhattan quality. $30 a cut." vs "A real Upper East Side barber. Since 1972."
+  - `/l/35-dollar-cut`: "Manhattan quality. $35 a cut." vs "A real Upper East Side barber. Since 1972."
   - `/l/upper-east-side-barber`: "Your Upper East Side barber. Since 1972." vs "The barber on East 84th Street. Since 1972."
-  - `/l/hot-towel-shave`: "Hot towel shave. Straight razor." vs "A proper shave. Hot towels, straight razor."
   - `/l/book-<barber>`: "Book with X." vs "Your next cut, with X."
 - The ad's pinned headline 1 options match A and B, so whichever variant a visitor gets, the words they clicked are on the page.
 - Landing pages and the home page carry the ads' proof points: father-and-son, since 1972, East 84th St, posted prices, Closed Saturdays, verbatim reviews, and the TV credit once confirmed.

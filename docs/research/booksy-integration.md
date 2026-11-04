@@ -19,7 +19,7 @@ There is **no API key the owner can create**, and the embed does not need one.
 
 1. **Confirm the account.** "Is https://booksy.com/en-us/1663005_davids-barbershop_barber-shop_30067_new-york-city your Booksy page?" If he would rather send something, ask for the widget code: Booksy Biz → **Business Settings** (phone: **Profile → Settings**) → **Online Booking** → **Your Website** → **Copy to clipboard**, or the **email it** option in that screen. The code contains the business ID.
 2. **Add the two other barbers as staff in the same account.** In Booksy Biz, add each as a staff member, give each the services they perform and their working hours, and make sure they are bookable online. Send their names as they should appear on the site. Their staffer IDs show up on the public page after that; nothing else is needed from them.
-3. **Fix the haircut price.** Booksy shows Haircut at **$35**; the site advertises **$30**. One of them has to change before the site goes live.
+3. **Fix the haircut price.** Done 2026-11-03: the owner confirmed Booksy's $35, and the site's menu now matches Booksy.
 4. **Optional: API access, only if automatic confirmed-booking data is wanted.** Email info.us@booksy.com or use in-app chat, using the draft request in `booksy-and-tracking.md` §1. Nothing below depends on it.
 
 No password, login, or key should be shared. None of the steps above needs one.

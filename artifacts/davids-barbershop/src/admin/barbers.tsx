@@ -163,7 +163,7 @@ function BarberForm({ barber, nextOrder, onClose, onSaved }: { barber: Barber | 
             <Field label="URL slug" hint="Leave blank to generate from name"><input className="field font-mono" value={f.slug} onChange={(e) => set('slug', e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, '-'))} data-testid="input-slug" /></Field>
             <Field label="Title"><input className="field" value={f.title} onChange={(e) => set('title', e.target.value)} placeholder="Master Barber" data-testid="input-title" /></Field>
             <Field label="Years cutting"><input type="number" min={0} className="field" value={f.yearsCutting} onChange={(e) => set('yearsCutting', e.target.value)} data-testid="input-years" /></Field>
-            <Field label="Specialties" hint="Comma separated" className="sm:col-span-2"><input className="field" value={f.specialties} onChange={(e) => set('specialties', e.target.value)} placeholder="Skin fades, Scissor cuts, Hot-towel shaves" data-testid="input-specialties" /></Field>
+            <Field label="Specialties" hint="Comma separated" className="sm:col-span-2"><input className="field" value={f.specialties} onChange={(e) => set('specialties', e.target.value)} placeholder="Skin fades, Scissor cuts, Line ups" data-testid="input-specialties" /></Field>
           </div>
         </div>
         <Field label="Bio"><textarea required rows={4} className="field" value={f.bio} onChange={(e) => set('bio', e.target.value)} data-testid="input-bio" /></Field>

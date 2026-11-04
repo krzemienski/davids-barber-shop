@@ -50,7 +50,7 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
   const headline = variant === 'B' && page.variantBHeadline ? page.variantBHeadline : page.headline;
   const sub = variant === 'B' && page.variantBHeadline ? (page.variantBSubheadline ?? page.subheadline) : page.subheadline;
   const barber = page.kind === 'barber' ? page.barber : null;
-  // A service page (e.g. the hot towel shave ad) leads with that service's posted price, not the haircut offer.
+  // A service page leads with that service's posted price, not the haircut offer.
   const service = page.kind === 'service' ? page.service : null;
   const bookLabel = barber ? `Book with ${barber.name}` : service ? `Book a ${service.name.toLowerCase()}` : 'Book your cut';
   usePageMeta(`${headline} | David's Barber Shop`, sub || "Book at David's Barber Shop on the Upper East Side.", { noindex: true, image: barber?.photoUrl });

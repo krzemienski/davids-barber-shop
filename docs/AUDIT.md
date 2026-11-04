@@ -38,7 +38,9 @@ Read in the browser. Screenshots: `audit/source-booksy-listing.jpg`, `audit/sour
 | Hours | Sun 9–6, Mon 9–7, Tue–Thu 9:30–7, Fri 9–4:30, Sat closed | Mon–Fri 8:30–7, Sat closed, Sun 9–6 |
 | Rating | 5.0 (1 review, for Michael) | — |
 
-None of these were changed. They are owner decisions (see section 4).
+None of these were changed during the audit. They are owner decisions (see section 4).
+
+**Update 2026-11-03:** the owner confirmed Booksy's menu and prices are correct. The site's services, durations and offer price now match Booksy exactly (the four services not on Booksy were removed). Staff and hours are still as above, awaiting the owner.
 
 ## 2. Page by page
 
@@ -100,8 +102,8 @@ Both have been applied in development; production picks them up on its next star
 
 ## 4. Owner decisions (not changed)
 
-1. **Haircut price:** $30 on the site, $35 on Booksy (the old site said $25). Ads should not run until they match.
-2. **Menu:** Booksy lists Beard $20, Haircut & beard $55, Line up $20 and Beard trim $20. The site lists Beard Trim $15, plus four services that are not on Booksy. The haircut duration also differs (30 vs 25 min).
+1. **Haircut price:** $30 on the site, $35 on Booksy (the old site said $25). Ads should not run until they match. **Resolved 2026-11-03:** owner confirmed $35; site updated.
+2. **Menu:** Booksy lists Beard $20, Haircut & beard $55, Line up $20 and Beard trim $20. The site lists Beard Trim $15, plus four services that are not on Booksy. The haircut duration also differs (30 vs 25 min). **Resolved 2026-11-03:** the site's menu is now Booksy's.
 3. **Roster:** the site shows David and Sean; Booksy now lists Michael, Russel and Alex. Confirm who works there, and whether David is the owner.
 4. **Hours:** Booksy says Tue–Thu open 9:30 and Fri close 4:30; the site says 8:30–7 on weekdays. Google confirms 8:30–7 on Tuesday and an 8:30 opening on Wednesday. The rest of the week is unverified against Google.
 5. **Founding year:** 1972, versus the "84" in the domain (likely the street, East 84th; owner to confirm).

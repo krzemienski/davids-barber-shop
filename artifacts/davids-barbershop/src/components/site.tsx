@@ -437,7 +437,7 @@ export function ServiceRow({ s, barber }: { s: Service; barber?: Barber | null }
         <span className="font-display text-2xl text-gold" data-testid={`text-price-${s.id}`}>{money(s.priceCents)}</span>
       </div>
       <div className="mt-1 flex gap-4 text-sm text-muted-foreground">
-        {s.description && <p className="flex-1">{s.description}</p>}
+        <p className="flex-1">{s.description}</p>
         {s.durationMinutes != null && <span className="font-mono text-xs shrink-0 pt-0.5">{s.durationMinutes} min</span>}
         {bookable && booking && (
           <button

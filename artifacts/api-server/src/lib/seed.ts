@@ -27,14 +27,27 @@ const HOURS = [
   { day: "Sunday", open: "09:00", close: "18:00", closed: false },
 ];
 
+// The menu exactly as on the shop's Booksy listing 1663005 (owner confirmed Booksy is correct, 2026-11-03).
+// booksyVariantId is Booksy's service ID, which opens the booking widget on that service.
 const SERVICES = [
-  { name: "Haircut", category: "Haircuts", priceCents: 3000, durationMinutes: 30, description: "A classic cut, tailored to how you wear it." },
-  { name: "Shampoo & Cut", category: "Haircuts", priceCents: 3000, durationMinutes: 40, description: "Shampoo, cut and finish." },
-  { name: "Crew Cut", category: "Haircuts", priceCents: 2200, durationMinutes: 25, description: "Short, clean and even all over." },
-  { name: "Long Hair Cut", category: "Haircuts", priceCents: 2800, durationMinutes: 40, description: "Shaping and length work for longer hair." },
-  { name: "Royal Shave", category: "Shaves & Beards", priceCents: 2500, durationMinutes: 30, description: "A straight-razor shave with hot towels." },
-  { name: "Beard Trim", category: "Shaves & Beards", priceCents: 1500, durationMinutes: 15, description: "Beard shaped, lined and tidied." },
+  { name: "Haircut", category: "Haircuts", priceCents: 3500, durationMinutes: 25, booksyVariantId: 19748050, description: "A classic cut, tailored to how you wear it." },
+  { name: "Beard", category: "Beards", priceCents: 2000, durationMinutes: 15, booksyVariantId: 19748051, description: "" },
+  { name: "Haircut & beard", category: "Haircuts", priceCents: 5500, durationMinutes: 45, booksyVariantId: 19748052, description: "" },
+  { name: "Line up", category: "Haircuts", priceCents: 2000, durationMinutes: 20, booksyVariantId: 19748055, description: "" },
+  { name: "Beard trim", category: "Beards", priceCents: 2000, durationMinutes: 15, booksyVariantId: 19748059, description: "" },
 ];
+const OFFER_PRICE_CENTS = 3500;
+
+// The first menu, copied from the old website. A database still holding exactly this menu gets the Booksy menu.
+const OLD_SERVICES: [name: string, priceCents: number, durationMinutes: number][] = [
+  ["Haircut", 3000, 30],
+  ["Shampoo & Cut", 3000, 40],
+  ["Crew Cut", 2200, 25],
+  ["Long Hair Cut", 2800, 40],
+  ["Royal Shave", 2500, 30],
+  ["Beard Trim", 1500, 15],
+];
+const OLD_OFFER_PRICE_CENTS = 3000;
 
 const TESTIMONIALS = [
   { author: "James D.", barberName: "Sean", quote: "David's Barber Shop provides excellent service and friendly barbers who listen to your needs. After moving to Manhattan, I thought I'd never find another barber I liked like my last one in Queens. After my first cut with Sean, I knew I had found my new go-to barbershop. Would definitely recommend to anyone who wants quality haircuts and shaves." },
@@ -93,6 +106,13 @@ const barberBHeadline = (name: string) => `Your next cut, with ${name}.`;
 // "…without the Upper East Side price" is a comparison claim; comparisons stay off until the owner approves them.
 const OLD_OFFER_B_HEADLINE = "A real Upper East Side barber, without the Upper East Side price.";
 const OFFER_B_HEADLINE = "A real Upper East Side barber. Since 1972.";
+const OFFER_SLUG = "35-dollar-cut";
+const OFFER_HEADLINE = "Manhattan quality. $35 a cut.";
+const OLD_OFFER_SLUG = "30-dollar-cut";
+const OLD_OFFER_HEADLINE = "Manhattan quality. $30 a cut.";
+// Booksy has no shave, so the shave ad page and David's "Royal shave" specialty were retired with the old menu.
+const OLD_DAVID_SPECIALTIES = ["Classic cuts", "Royal shave"];
+const DAVID_SPECIALTIES = ["Classic cuts"];
 
 // Landing pages for the ad creative kit (docs/ads/AD_CREATIVE.md). Each is added only while its slug is
 // missing, so a fresh or production database gets them too. To retire one, switch it off in the admin;
@@ -105,14 +125,6 @@ const AD_KIT_PAGES = [
     headline: "Your Upper East Side barber. Since 1972.",
     subheadline: "A father-and-son shop between Second and Third Avenue. Book online or call the shop.",
     variantBHeadline: "The barber on East 84th Street. Since 1972.",
-  },
-  {
-    slug: "hot-towel-shave",
-    kind: "service" as const,
-    serviceName: "Royal Shave",
-    headline: "Hot towel shave. Straight razor.",
-    subheadline: "A royal shave with hot towels on East 84th Street, since 1972. Book online or call the shop.",
-    variantBHeadline: "A proper shave. Hot towels, straight razor.",
   },
 ];
 
@@ -135,7 +147,7 @@ export async function seedDatabase(): Promise<void> {
       region: "NY",
       postalCode: "10028",
       hours: HOURS,
-      offerPriceCents: 3000,
+      offerPriceCents: OFFER_PRICE_CENTS,
       comparisonPriceCents: null,
       comparisonSourceNote: null,
       announcementBanner: null,
@@ -163,12 +175,12 @@ export async function seedDatabase(): Promise<void> {
   const offerB = await db
     .update(landingPagesTable)
     .set({ variantBSubheadline: null, updatedAt: new Date() })
-    .where(and(eq(landingPagesTable.slug, "30-dollar-cut"), eq(landingPagesTable.variantBSubheadline, OLD_OFFER_B_SUBHEADLINE)))
+    .where(and(eq(landingPagesTable.slug, OLD_OFFER_SLUG), eq(landingPagesTable.variantBSubheadline, OLD_OFFER_B_SUBHEADLINE)))
     .returning({ id: landingPagesTable.id });
   const offerBHead = await db
     .update(landingPagesTable)
     .set({ variantBHeadline: OFFER_B_HEADLINE, updatedAt: new Date() })
-    .where(and(eq(landingPagesTable.slug, "30-dollar-cut"), eq(landingPagesTable.variantBHeadline, OLD_OFFER_B_HEADLINE)))
+    .where(and(eq(landingPagesTable.slug, OLD_OFFER_SLUG), eq(landingPagesTable.variantBHeadline, OLD_OFFER_B_HEADLINE)))
     .returning({ id: landingPagesTable.id });
   if (bio.length + sub.length + offerB.length + offerBHead.length > 0) logger.info("Applied audited copy corrections");
 
@@ -180,6 +192,8 @@ export async function seedDatabase(): Promise<void> {
   if (await isEmpty(servicesTable)) {
     await db.insert(servicesTable).values(SERVICES.map((s, i) => ({ ...s, displayOrder: i })));
     logger.info("Seeded services");
+  } else {
+    await alignMenuWithBooksy();
   }
 
   if (await isEmpty(testimonialsTable)) {
@@ -196,7 +210,7 @@ export async function seedDatabase(): Promise<void> {
           name: "David",
           title: "Owner",
           bio: "The David in David's Barber Shop. Regulars have been sitting in his chair on East 84th Street for years.",
-          specialties: ["Classic cuts", "Royal shave"],
+          specialties: DAVID_SPECIALTIES,
           displayOrder: 0,
         },
         {
@@ -214,10 +228,10 @@ export async function seedDatabase(): Promise<void> {
     if (await isEmpty(landingPagesTable)) {
       await db.insert(landingPagesTable).values([
         {
-          slug: "30-dollar-cut",
+          slug: OFFER_SLUG,
           kind: "offer",
           barberId: null,
-          headline: "Manhattan quality. $30 a cut.",
+          headline: OFFER_HEADLINE,
           subheadline: OFFER_SUBHEADLINE,
           variantBHeadline: OFFER_B_HEADLINE,
         },
@@ -244,6 +258,46 @@ export async function seedDatabase(): Promise<void> {
     await db.insert(adminUsersTable).values(bootstrap.map((email) => ({ email, role: "owner" as const })));
     logger.info({ count: bootstrap.length }, "Bootstrapped owner accounts from ADMIN_BOOTSTRAP_EMAILS");
   }
+}
+
+// Moves a database still holding the first (old website) menu and $30 offer to the Booksy menu and $35.
+// Each step runs only while the old value is untouched, so admin edits are never overwritten.
+async function alignMenuWithBooksy(): Promise<void> {
+  const rows = await db
+    .select({ name: servicesTable.name, priceCents: servicesTable.priceCents, durationMinutes: servicesTable.durationMinutes })
+    .from(servicesTable);
+  const untouched =
+    rows.length === OLD_SERVICES.length &&
+    OLD_SERVICES.every(([name, price, mins]) => rows.some((r) => r.name === name && r.priceCents === price && r.durationMinutes === mins));
+  if (untouched) {
+    await db.transaction(async (tx) => {
+      await tx.delete(servicesTable);
+      await tx.insert(servicesTable).values(SERVICES.map((s, i) => ({ ...s, displayOrder: i })));
+      await tx
+        .update(landingPagesTable)
+        .set({ active: false, updatedAt: new Date() })
+        .where(and(eq(landingPagesTable.slug, "hot-towel-shave"), eq(landingPagesTable.kind, "service")));
+    });
+    logger.info("Replaced the old menu with the Booksy menu and switched off the shave landing page");
+  }
+
+  const price = await db
+    .update(siteSettingsTable)
+    .set({ offerPriceCents: OFFER_PRICE_CENTS, updatedAt: new Date() })
+    .where(and(eq(siteSettingsTable.id, 1), eq(siteSettingsTable.offerPriceCents, OLD_OFFER_PRICE_CENTS)))
+    .returning({ id: siteSettingsTable.id });
+  const offer = await db
+    .update(landingPagesTable)
+    .set({ slug: OFFER_SLUG, headline: OFFER_HEADLINE, updatedAt: new Date() })
+    .where(and(eq(landingPagesTable.slug, OLD_OFFER_SLUG), eq(landingPagesTable.headline, OLD_OFFER_HEADLINE)))
+    .returning({ id: landingPagesTable.id });
+  const [david] = await db.select({ id: barbersTable.id, specialties: barbersTable.specialties }).from(barbersTable).where(eq(barbersTable.slug, "david"));
+  let specialties = 0;
+  if (david && JSON.stringify(david.specialties) === JSON.stringify(OLD_DAVID_SPECIALTIES)) {
+    await db.update(barbersTable).set({ specialties: DAVID_SPECIALTIES, updatedAt: new Date() }).where(eq(barbersTable.id, david.id));
+    specialties = 1;
+  }
+  if (price.length + offer.length + specialties > 0) logger.info("Moved the haircut offer to the Booksy price ($35)");
 }
 
 async function seedAdKitLandingPages(): Promise<void> {

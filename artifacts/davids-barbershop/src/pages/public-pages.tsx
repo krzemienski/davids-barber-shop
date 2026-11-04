@@ -158,7 +158,7 @@ export function BarberProfilePage() {
 export function ServicesPage() {
   const { data: s } = useSettings();
   const services = useListServices();
-  usePageMeta("Services & Prices | David's Barber Shop", 'Haircuts, fades, shaves and beard work at David\u2019s Barber Shop on the Upper East Side. Every price posted.');
+  usePageMeta("Services & Prices | David's Barber Shop", 'Haircuts, line ups and beard work at David\u2019s Barber Shop on the Upper East Side. Every price posted.');
   const groups = services.data ? groupServices(services.data) : [];
   return (
     <PublicLayout>

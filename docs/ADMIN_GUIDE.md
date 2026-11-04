@@ -26,7 +26,7 @@ Safety rules built in: you cannot remove your own access, and the last remaining
 Booksy does not tell the website when someone actually books, so cost per booking is only real if bookings are logged here.
 
 1. Open **Bookings → Log booking**.
-2. Pick the barber, the time the booking was made, the value (defaults to $30), and the source (Google Ads, Meta Ads, Organic, Walk-in, Other).
+2. Pick the barber, the time the booking was made, the value (defaults to the offer price in Site settings), and the source (Google Ads, Meta Ads, Organic, Walk-in, Other).
 3. **gclid / fbclid / campaign:** fill these only when you can tie the booking to a specific ad click with confidence (for example the client told you the ad, and the click shows in *Live events* on the Performance page for that barber). Do **not** copy the most recent click just because it was close in time — that sends wrong data to Google. Leave it blank if unsure; the booking still counts in the report as unattributed.
 4. Tick **Repeat client** for returning clients so repeat rate is visible per barber.
 
@@ -59,7 +59,7 @@ Add one row per ad campaign: platform, optional barber and landing page, budget,
 
 ### Services
 
-Name, description, price, duration, category (groups on the Services page), order, active. Price changes show on the site immediately. Keep these in line with Booksy — a customer who sees $30 here and $35 on Booksy will not book.
+Name, description, price, duration, category (groups on the Services page), order, active. Price changes show on the site immediately. Keep these in line with Booksy — a customer who sees one price here and another on Booksy will not book. The menu was copied from Booksy on 2026-11-03, and each service carries its Booksy service ID so its Book link opens Booksy on that service. If a price changes on Booksy, change it here too (and the offer price in Site settings for the haircut).
 
 ### From the wall
 
@@ -80,14 +80,15 @@ Each landing page lives at `/l/<slug>`.
 
 - **Kind:** *offer* (shop-wide, video hero, Site settings offer price), *barber* (that barber's card and Book button) or *service* (leads with one service's posted price; Book opens Booksy on that service once the service has a Booksy service ID).
 - **Variant A / B:** fill the B headline to run an A/B test. Each visitor is assigned A or B once and keeps it. Leave B empty to show A to everyone. Change one thing at a time: leave the B subheadline empty so B reuses A's.
-- Seeded pages, all with a B headline: `/l/30-dollar-cut`, `/l/upper-east-side-barber` (offer), `/l/hot-towel-shave` (service: Royal Shave), `/l/book-david`, `/l/book-sean`. The ad that points at each one is in `docs/ads/AD_CREATIVE.md`.
-- To retire `/l/upper-east-side-barber` or `/l/hot-towel-shave`, switch it **off** rather than deleting it; a deleted one is recreated when the server restarts.
+- Seeded pages, all with a B headline: `/l/35-dollar-cut`, `/l/upper-east-side-barber` (offer), `/l/book-david`, `/l/book-sean`. The ad that points at each one is in `docs/ads/AD_CREATIVE.md`.
+- `/l/hot-towel-shave` is switched off: Booksy has no shave service. The old `/l/30-dollar-cut` link now shows "This offer has closed up shop".
+- To retire `/l/upper-east-side-barber`, switch it **off** rather than deleting it; a deleted one is recreated when the server restarts.
 - A service or barber page that is switched off, or whose service/barber is switched off, shows "This offer has closed up shop" instead of a stale promise.
 - Landing pages are hidden from search engines (`noindex`) on purpose; they exist for ads.
 
 ### Site settings
 
-- **Offer price** drives the "$30 a cut" headline everywhere.
+- **Offer price** drives the "$35 a cut" headline everywhere. Keep it equal to the Haircut price on Booksy.
 - **Comparison price + source note:** shown as "vs. $X median at nearby UES shops" with the note as a footnote. Leave it empty until the owner approves the claim. Research supporting $45 is in `docs/research/competitors.md`.
 - **Announcement banner:** a one-line strip at the top of every page (holiday hours, closures). Empty = hidden.
 - **TV or press credit:** shown as text, "As seen on …", on the home page hero and every ad landing page. Leave it empty until the owner confirms the credit is accurate to state (e.g. `FOX 5 Good Day New York`). Never a channel logo.

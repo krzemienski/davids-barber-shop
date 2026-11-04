@@ -8,18 +8,19 @@ Every character count below was checked against the platform limit (Google: head
 
 | Item | Status | Clears when |
 | --- | --- | --- |
-| Every $30 ad (Google shop-wide group, Meta $30 set) | **Blocked until Booksy shows $30** | Haircut on Booksy is $30, or the offer price in Site settings is changed to match Booksy and the copy is updated |
-| UES barber group and Meta heritage set | Blocked: their landing page shows the $30 offer price | Same as above |
-| Hot towel shave group | Blocked: Booksy has no shave service | A Royal Shave at $25 is on Booksy and its Booksy service ID is entered on Admin → Services → Royal Shave |
-| Barber groups (Sean, David) | Blocked: Booksy's public listing shows Michael, Russel and Alex; their pages also show the $30 offer | The barber can be chosen on Booksy and their Booksy staff ID is entered on their admin profile |
+| Every $35 ad (Google shop-wide group, Meta $35 set) | Price cleared 2026-11-03: the owner confirmed Booksy's $35, and the site, landing pages and this copy now say $35 | — (the holds below on hours and photos still apply) |
+| UES barber group and Meta heritage set | Price cleared: their landing page shows $35, the same as Booksy | — (the holds below on hours and photos still apply) |
+| Hot towel shave group | **Retired:** Booksy has no shave service, and the site's menu now matches Booksy. `/l/hot-towel-shave` is switched off | Only if the shop adds a shave on Booksy: add it in Admin → Services with its Booksy service ID, switch the page back on and rewrite this group |
+| Barber groups (Sean, David) | Blocked: Booksy's public listing shows Michael, Russel and Alex | The barber can be chosen on Booksy and their Booksy staff ID is entered on their admin profile |
 | Michael, Russel, Alex | No ad group | Each has a site profile (photo, bio, specialties); then copy the Sean group pattern |
-| Price asset | Blocked: only Haircut and Beard Trim exist on Booksy, at different prices | Every price item matches Booksy |
+| Price asset | Ready: every item matches Booksy (checked 2026-11-03) | — |
+| Opening hours in ads ("Mon–Fri 8:30am–7pm", "Open Sundays 9am–6pm", ad schedule, call schedule) | Hold: Booksy shows Mon and Fri from 9:00, Tue–Thu from 9:30 and Fri until 4:30; the site says 8:30–7 on weekdays | Owner confirms the real hours, Site settings and Booksy agree, and these lines are re-checked |
 | "As seen on FOX 5 Good Day New York" | Off | Owner confirms it is accurate to state; then fill *TV or press credit* in Site settings (text only, no logo) and add the reserve headline |
 | Comparison claims (e.g. "vs. $45 median", "without the UES price") | Off; none in this kit | Owner approves the claim and the source note is filled in |
 | "Walk-Ins Welcome" callout | Hold | Owner confirms (the shop window sign says it) |
 | Photos showing a client or barber | Hold | Owner confirms the people pictured agreed to appear in ads |
 
-Ready now, once the account exists: sitelinks, callouts (except Walk-Ins), structured snippets, call asset, location asset, logos.
+Ready now, once the account exists: sitelinks, callouts (except Walk-Ins and the hours lines), structured snippet, price asset, location asset, logos. The call asset waits only for its schedule (opening hours).
 
 ## Rules this kit follows
 
@@ -39,12 +40,11 @@ Ready now, once the account exists: sitelinks, callouts (except Walk-Ins), struc
 
 | Ad group / ad set | Promise | Proof point | Landing page | Landing A headline | Landing B headline (one-variable test) |
 | --- | --- | --- | --- | --- | --- |
-| Google · Shop-wide $30 cut | A classic cut for $30 at a real Upper East Side shop | Since 1972 · father-and-son · prices posted on the site | `/l/30-dollar-cut` | Manhattan quality. $30 a cut. | A real Upper East Side barber. Since 1972. |
+| Google · Shop-wide $35 cut | A classic cut for $35 at a real Upper East Side shop | Since 1972 · father-and-son · prices posted on the site | `/l/35-dollar-cut` | Manhattan quality. $35 a cut. | A real Upper East Side barber. Since 1972. |
 | Google · Barber / Upper East Side searches | The neighbourhood barber on East 84th Street | Since 1972 · father-and-son · between Second and Third Avenue | `/l/upper-east-side-barber` (new) | Your Upper East Side barber. Since 1972. | The barber on East 84th Street. Since 1972. |
-| Google · Hot towel shave | A straight-razor shave with hot towels, $25 | Royal Shave $25 posted on the site · since 1972 | `/l/hot-towel-shave` (new) | Hot towel shave. Straight razor. | A proper shave. Hot towels, straight razor. |
 | Google · Barber: Sean | Book with Sean | Sean's specialties and reviews on the site | `/l/book-sean` | Book with Sean. | Your next cut, with Sean. |
-| Google · Barber: David | Book with David, the David in David's | Owner · since 1972 shop · classic cuts and royal shaves | `/l/book-david` | Book with David. | Your next cut, with David. |
-| Meta · Neighbourhood · $30 cut | Manhattan quality. $30 a cut. | Since 1972 · father-and-son | `/l/30-dollar-cut` | Manhattan quality. $30 a cut. | A real Upper East Side barber. Since 1972. |
+| Google · Barber: David | Book with David, the David in David's | Owner · since 1972 shop · classic cuts | `/l/book-david` | Book with David. | Your next cut, with David. |
+| Meta · Neighbourhood · $35 cut | Manhattan quality. $35 a cut. | Since 1972 · father-and-son | `/l/35-dollar-cut` | Manhattan quality. $35 a cut. | A real Upper East Side barber. Since 1972. |
 | Meta · Neighbourhood · heritage (no price in the ad) | Your Upper East Side barber | Since 1972 · father-and-son | `/l/upper-east-side-barber` | Your Upper East Side barber. Since 1972. | The barber on East 84th Street. Since 1972. |
 
 Every landing page also shows: "Father & son · Since 1972 · East 84th St" (eyebrow), the address with "Closed Saturdays", the posted prices, three verbatim reviews and the opening hours. The home page carries the same points. Once the owner confirms the TV credit, both show "As seen on …" as text.
@@ -52,30 +52,31 @@ Every landing page also shows: "Father & son · Since 1972 · East 84th St" (eye
 New pages added for this kit (Admin → Landing pages; also created automatically on a fresh database):
 
 - `/l/upper-east-side-barber` — offer page for barber / UES searches and the Meta heritage set.
-- `/l/hot-towel-shave` — a new **Service** page kind: leads with the Royal Shave's own posted price ($25) and opens Booksy on that service when its Booksy service ID is set.
-- B headlines added to `/l/book-sean` and `/l/book-david`; `/l/30-dollar-cut` B now changes only the headline and no longer makes a comparison claim.
+- `/l/hot-towel-shave` — a **Service** page kind that leads with one service's posted price. Switched off on 2026-11-03 with the Royal Shave, which is not on Booksy.
+- B headlines added to `/l/book-sean` and `/l/book-david`; the offer page's B now changes only the headline and no longer makes a comparison claim.
+- The offer page moved from `/l/30-dollar-cut` to `/l/35-dollar-cut` when the price changed; the old link shows "This offer has closed up shop".
 
 ## Google Search
 
 Campaign `search-ues`: ~1 mile around 233 E 84th St; ad schedule Mon–Fri 8:30am–7pm and Sun 9am–6pm (no Saturdays). Shared negatives: `jobs`, `school`, `license`, `salon`, `women`, `kids`, `supplies`, `chair for sale`.
 
-### 1. Shop-wide $30 cut
+### 1. Shop-wide $35 cut
 
-**Status:** Blocked until Booksy shows $30 (Booksy lists Haircut at $35).
+**Status:** Price matches Booksy (Haircut $35). Hours headlines on hold (see Status).
 
-- **Keywords:** `[mens haircut upper east side]`, `"haircut upper east side"`, `"mens haircut ues"`, `"haircut 10028"`, `"affordable haircut upper east side"`, `"30 dollar haircut nyc"`
-- **Final URL:** `https://davidsbarbershop84.com/l/30-dollar-cut`
-- **Final URL suffix:** `utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-30-cut&utm_term={keyword}`
-- **Landing page:** A "Manhattan quality. $30 a cut." / B "A real Upper East Side barber. Since 1972."; subheadline "Cutting hair on East 84th Street since 1972. Book online or call the shop."; button "Book your cut".
+- **Keywords:** `[mens haircut upper east side]`, `"haircut upper east side"`, `"mens haircut ues"`, `"haircut 10028"`, `"affordable haircut upper east side"`, `"35 dollar haircut nyc"`
+- **Final URL:** `https://davidsbarbershop84.com/l/35-dollar-cut`
+- **Final URL suffix:** `utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-35-cut&utm_term={keyword}`
+- **Landing page:** A "Manhattan quality. $35 a cut." / B "A real Upper East Side barber. Since 1972."; subheadline "Cutting hair on East 84th Street since 1972. Book online or call the shop."; button "Book your cut".
 - **Display path:** `davidsbarbershop84.com/haircuts/upper-east-side`
 
 Responsive search ad — 15 headlines, 4 descriptions:
 
 | # | Headline | Chars | Note |
 | ---: | --- | ---: | --- |
-| 1 | Manhattan Quality, $30 a Cut | 28 | Pin 1 · matches landing A |
+| 1 | Manhattan Quality, $35 a Cut | 28 | Pin 1 · matches landing A |
 | 2 | A Real Upper East Side Barber | 29 | Pin 1 · matches landing B |
-| 3 | $30 Haircuts on East 84th St | 28 |  |
+| 3 | $35 Haircuts on East 84th St | 28 |  |
 | 4 | David's Barber Shop | 19 |  |
 | 5 | Upper East Side Since 1972 | 26 |  |
 | 6 | Father-and-Son Barbershop | 25 |  |
@@ -91,14 +92,14 @@ Responsive search ad — 15 headlines, 4 descriptions:
 
 | # | Description | Chars |
 | ---: | --- | ---: |
-| 1 | A classic cut is $30 at David's, a father-and-son barbershop on East 84th St since 1972. | 88 |
+| 1 | A classic cut is $35 at David's, a father-and-son barbershop on East 84th St since 1972. | 88 |
 | 2 | Book online on Booksy or call the shop. Open Sundays 9am–6pm, closed Saturdays. | 79 |
-| 3 | Classic cuts, crew cuts, shaves and beard trims, with every price posted on our site. | 85 |
+| 3 | Haircuts, line ups and beard trims, with every price posted on our site. | 72 |
 | 4 | Between Second and Third Avenue on the Upper East Side. Cutting hair since 1972. | 80 |
 
 ### 2. Barber / Upper East Side searches
 
-**Status:** Blocked until Booksy shows $30 (the landing page shows the $30 offer price).
+**Status:** Price matches Booksy (the landing page shows $35). Hours lines on hold (see Status).
 
 - **Keywords:** `[barber upper east side]`, `"barbershop upper east side"`, `"barber ues"`, `"barber 10028"`, `"barber yorkville"`, `"barbershop near me"`, `"fade upper east side"`
 - **Final URL:** `https://davidsbarbershop84.com/l/upper-east-side-barber`
@@ -124,55 +125,22 @@ Responsive search ad — 15 headlines, 4 descriptions:
 | 12 | Serving the UES and Yorkville | 29 |  |
 | 13 | Mon–Fri 8:30am–7pm | 18 |  |
 | 14 | 233 E 84th St, New York | 23 |  |
-| 15 | Royal Shaves and Beard Trims | 28 |  |
+| 15 | Line Ups and Beard Trims | 24 |  |
 
 | # | Description | Chars |
 | ---: | --- | ---: |
 | 1 | A father-and-son barbershop on East 84th Street, cutting hair since 1972. | 73 |
-| 2 | Classic cuts, fades, royal shaves and beard trims. Book online or call the shop. | 80 |
+| 2 | Classic cuts, fades, line ups and beard trims. Book online or call the shop. | 76 |
 | 3 | Open Monday to Friday 8:30am–7pm and Sunday 9am–6pm. Closed Saturdays. | 70 |
 | 4 | Between Second and Third Avenue. Regulars travel in from Queens and Long Island. | 80 |
 
-### 3. Hot towel shave
+### 3. Hot towel shave — retired
 
-**Status:** Blocked until Booksy lists a Royal Shave at $25 and its Booksy service ID is entered on the Royal Shave service in the admin.
-
-- **Keywords:** `"hot towel shave nyc"`, `[hot towel shave upper east side]`, `"straight razor shave nyc"`, `"royal shave nyc"`, `"mens shave upper east side"`
-- **Final URL:** `https://davidsbarbershop84.com/l/hot-towel-shave`
-- **Final URL suffix:** `utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-hot-towel-shave&utm_term={keyword}`
-- **Landing page:** A "Hot towel shave. Straight razor." / B "A proper shave. Hot towels, straight razor."; subheadline "A royal shave with hot towels on East 84th Street, since 1972. Book online or call the shop."; button "Book a royal shave".
-- **Display path:** `davidsbarbershop84.com/hot-towel/shave`
-
-Responsive search ad — 15 headlines, 4 descriptions:
-
-| # | Headline | Chars | Note |
-| ---: | --- | ---: | --- |
-| 1 | Hot Towel Straight-Razor Shave | 30 | Pin 1 · matches landing A |
-| 2 | A Proper Hot Towel Shave | 24 | Pin 1 · matches landing B |
-| 3 | Royal Shave $25 | 15 |  |
-| 4 | David's Barber Shop | 19 |  |
-| 5 | Hot Towels, Straight Razor | 26 |  |
-| 6 | Upper East Side Since 1972 | 26 |  |
-| 7 | Father-and-Son Barbershop | 25 |  |
-| 8 | Book Online or Call the Shop | 28 |  |
-| 9 | Beard Trims on East 84th St | 27 |  |
-| 10 | Open Sundays 9am–6pm | 20 |  |
-| 11 | Between 2nd and 3rd Avenue | 26 |  |
-| 12 | A Classic Barbershop Shave | 26 |  |
-| 13 | 233 E 84th St, New York | 23 |  |
-| 14 | Barbers Since 1972 | 18 |  |
-| 15 | Mon–Fri 8:30am–7pm | 18 |  |
-
-| # | Description | Chars |
-| ---: | --- | ---: |
-| 1 | A straight-razor shave with hot towels at David's Barber Shop on East 84th St, since 1972. | 90 |
-| 2 | Royal shave $25, as posted on our site. Book online or call the shop. | 69 |
-| 3 | Open Monday to Friday 8:30am–7pm and Sunday 9am–6pm. Closed Saturdays. | 70 |
-| 4 | A father-and-son barbershop between Second and Third Avenue on the Upper East Side. | 83 |
+Booksy has no shave service, and on 2026-11-03 the owner confirmed Booksy's menu is the shop's menu, so this group is not run and `/l/hot-towel-shave` is switched off. The old copy is in this file's git history if a shave is ever added to Booksy.
 
 ### 4. Barber: Sean
 
-**Status:** Blocked until Sean can be chosen on Booksy (Booksy's public listing shows Michael, Russel and Alex), and until Booksy shows $30 (the page shows the $30 offer price).
+**Status:** Blocked until Sean can be chosen on Booksy (Booksy's public listing shows Michael, Russel and Alex).
 
 - **Keywords:** `"sean barber upper east side"`, `"sean davids barber shop"`, `"barber sean nyc"`
 - **Final URL:** `https://davidsbarbershop84.com/l/book-sean`
@@ -206,7 +174,7 @@ Responsive search ad — 12 headlines, 4 descriptions:
 
 ### 5. Barber: David
 
-**Status:** Blocked until David can be chosen on Booksy (Booksy's public listing shows Michael, Russel and Alex), and until Booksy shows $30 (the page shows the $30 offer price).
+**Status:** Blocked until David can be chosen on Booksy (Booksy's public listing shows Michael, Russel and Alex).
 
 - **Keywords:** `"david barber upper east side"`, `"davids barber shop"`, `"david's barber shop 84th street"`
 - **Final URL:** `https://davidsbarbershop84.com/l/book-david`
@@ -221,7 +189,7 @@ Responsive search ad — 12 headlines, 4 descriptions:
 | 1 | Book With David | 15 | Pin 1 · matches landing A |
 | 2 | Your Next Cut, With David | 25 | Pin 1 · matches landing B |
 | 3 | The David in David's | 20 |  |
-| 4 | Classic Cuts and Royal Shaves | 29 |  |
+| 4 | Classic Cuts on East 84th | 25 |  |
 | 5 | East 84th St, Since 1972 | 24 |  |
 | 6 | Choose David on Booksy | 22 |  |
 | 7 | Father-and-Son Barbershop | 25 |  |
@@ -233,7 +201,7 @@ Responsive search ad — 12 headlines, 4 descriptions:
 
 | # | Description | Chars |
 | ---: | --- | ---: |
-| 1 | The David in David's Barber Shop. Classic cuts and royal shaves on East 84th Street. | 84 |
+| 1 | The David in David's Barber Shop. Classic cuts on East 84th Street, since 1972. | 79 |
 | 2 | Pick a time on Booksy and choose David, or call the shop and we will fit you in. | 80 |
 | 3 | A father-and-son barbershop on the Upper East Side, cutting hair since 1972. | 76 |
 | 4 | Open Monday to Friday 8:30am–7pm and Sunday 9am–6pm. Closed Saturdays. | 70 |
@@ -248,7 +216,7 @@ Responsive search ad — 12 headlines, 4 descriptions:
 
 | Text | Chars | Final URL | Line 1 | Chars | Line 2 | Chars |
 | --- | ---: | --- | --- | ---: | --- | ---: |
-| Services & Prices | 17 | `https://davidsbarbershop84.com/services` | Cuts, shaves and beard trims | 28 | Every price posted up front | 27 |
+| Services & Prices | 17 | `https://davidsbarbershop84.com/services` | Cuts, line ups, beard trims | 27 | Every price posted up front | 27 |
 | Our Story | 9 | `https://davidsbarbershop84.com/our-story` | Father and son since 1972 | 25 | Two generations on East 84th St | 31 |
 | Barbers | 7 | `https://davidsbarbershop84.com/barbers` | Meet the people in the chairs | 29 | Book online or call the shop | 28 |
 | Visit | 5 | `https://davidsbarbershop84.com/visit` | 233 E 84th St, 2nd–3rd Ave | 26 | Open Sundays, closed Saturdays | 30 |
@@ -270,20 +238,19 @@ Sitelinks use the same Final URL suffix as the ad group, so their clicks keep th
 
 ### Structured snippet
 
-Header **Services**: Haircut (7), Shampoo & Cut (13), Crew Cut (8), Long Hair Cut (13), Royal Shave (11), Beard Trim (10).
+Header **Services**: Haircut (7), Haircut & Beard (15), Line Up (7), Beard (5), Beard Trim (10). These are the services on Booksy.
 
-### Price asset — blocked until every item matches Booksy
+### Price asset — matches Booksy (checked 2026-11-03)
 
 Type *Services*, qualifier none, unit none, final URL `https://davidsbarbershop84.com/services`. Prices are exactly the ones in Admin → Services; re-copy them if those change.
 
-| Header | Chars | Price | Description | Chars | Booksy today |
+| Header | Chars | Price | Description | Chars | Booksy |
 | --- | ---: | ---: | --- | ---: | --- |
-| Haircut | 7 | $30 | A classic cut | 13 | Booksy: $35 |
-| Shampoo & Cut | 13 | $30 | Shampoo, cut and finish | 23 | Not on Booksy |
-| Crew Cut | 8 | $22 | Short, clean and even | 21 | Not on Booksy |
-| Long Hair Cut | 13 | $28 | Shaping for longer hair | 23 | Not on Booksy |
-| Royal Shave | 11 | $25 | Hot towel, straight razor | 25 | Not on Booksy |
-| Beard Trim | 10 | $15 | Shaped, lined and tidied | 24 | Booksy: $20 |
+| Haircut | 7 | $35 | A classic cut | 13 | $35 |
+| Haircut & Beard | 15 | $55 | Haircut and beard | 17 | $55 |
+| Line Up | 7 | $20 | A 20-minute line up | 19 | $20 |
+| Beard | 5 | $20 | Beard work, 15 minutes | 22 | $20 |
+| Beard Trim | 10 | $20 | A 15-minute beard trim | 22 | $20 |
 
 ### Call asset
 
@@ -314,34 +281,34 @@ Business name asset: **David's Barber Shop**.
 
 Objective Traffic (or Leads with a website destination); ~1–2 miles around the shop; Advantage+ placements off so Feed and Stories each get their own crop. Images are in `docs/ads/images/meta/` (pole rule and gold mark; no words on the photo).
 
-### Ad set `meta-ues-30-cut` — Neighbourhood · $30 cut
+### Ad set `meta-ues-35-cut` — Neighbourhood · $35 cut
 
-**Status:** Blocked until Booksy shows $30 (Booksy lists Haircut at $35).  
-**Landing page:** `/l/30-dollar-cut` · **CTA button:** Book Now
+**Status:** Price matches Booksy (Haircut $35). Photo consent still on hold.  
+**Landing page:** `/l/35-dollar-cut` · **CTA button:** Book Now
 
 | Field | Copy | Chars |
 | --- | --- | ---: |
-| Primary text | A classic cut is $30 at David's Barber Shop, a father-and-son shop on East 84th Street since 1972. | 98 |
-| Primary text | Father and son, cutting hair on East 84th Street since 1972. Haircuts $30. Book online or call the shop. | 104 |
-| Headline | Manhattan quality. $30 a cut. | 29 |
-| Headline | $30 haircuts on East 84th St | 28 |
+| Primary text | A classic cut is $35 at David's Barber Shop, a father-and-son shop on East 84th Street since 1972. | 98 |
+| Primary text | Father and son, cutting hair on East 84th Street since 1972. Haircuts $35. Book online or call the shop. | 104 |
+| Headline | Manhattan quality. $35 a cut. | 29 |
+| Headline | $35 haircuts on East 84th St | 28 |
 | Description | 233 E 84th St · Closed Sat | 26 |
 
 | Ad (utm_content) | Placement | Image | Final URL |
 | --- | --- | --- | --- |
-| `feed-1x1-shopfloor` | Feed 1:1 | `meta/feed-1x1-shopfloor-1080x1080.jpg` | `https://davidsbarbershop84.com/l/30-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-30-cut&utm_content=feed-1x1-shopfloor` |
-| `feed-4x5-chair` | Feed 4:5 | `meta/feed-4x5-chair-1080x1350.jpg` | `https://davidsbarbershop84.com/l/30-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-30-cut&utm_content=feed-4x5-chair` |
-| `stories-shopfloor` | Stories / Reels 9:16 | `meta/stories-9x16-shopfloor-1080x1920.jpg` | `https://davidsbarbershop84.com/l/30-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-30-cut&utm_content=stories-shopfloor` |
+| `feed-1x1-shopfloor` | Feed 1:1 | `meta/feed-1x1-shopfloor-1080x1080.jpg` | `https://davidsbarbershop84.com/l/35-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-35-cut&utm_content=feed-1x1-shopfloor` |
+| `feed-4x5-chair` | Feed 4:5 | `meta/feed-4x5-chair-1080x1350.jpg` | `https://davidsbarbershop84.com/l/35-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-35-cut&utm_content=feed-4x5-chair` |
+| `stories-shopfloor` | Stories / Reels 9:16 | `meta/stories-9x16-shopfloor-1080x1920.jpg` | `https://davidsbarbershop84.com/l/35-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-35-cut&utm_content=stories-shopfloor` |
 
 ### Ad set `meta-ues-heritage` — Neighbourhood · heritage (no price in the ad)
 
-**Status:** Blocked until Booksy shows $30 (the landing page shows the $30 offer price).  
+**Status:** Price matches Booksy (the landing page shows $35). "Open Sundays" waits for the hours check; photo consent still on hold.  
 **Landing page:** `/l/upper-east-side-barber` · **CTA button:** Book Now
 
 | Field | Copy | Chars |
 | --- | --- | ---: |
 | Primary text | Your Upper East Side barber since 1972. A father-and-son shop between Second and Third Avenue. | 94 |
-| Primary text | Classic cuts, fades and royal shaves on East 84th Street. Book online or call the shop. Open Sundays. | 101 |
+| Primary text | Classic cuts, fades and line ups on East 84th Street. Book online or call the shop. Open Sundays. | 97 |
 | Headline | Your Upper East Side barber | 27 |
 | Headline | The barber on East 84th Street | 30 |
 | Description | Since 1972 · Book online | 24 |
@@ -354,16 +321,15 @@ Objective Traffic (or Leads with a website destination); ~1–2 miles around the
 
 ## Final URLs checked in a browser
 
-Checked 2026-11-04 on the development site, each URL in a fresh browser with its UTMs (an example keyword filled in for Google). Every page showed the matching headline (A or B, depending on the visitor's split) and the Book button's Booksy link carried the same utm_source / utm_medium / utm_campaign / utm_content / utm_term. The landing_view events were stored with those UTMs. On `/l/hot-towel-shave` the Book button opened the in-page Booksy panel titled "Royal Shave" with the UTMs on the widget URL; Booksy itself listed only a $35 Haircut there, which is why that ad group is blocked.
+Checked 2026-11-04 on the development site, each URL in a fresh browser with its UTMs (an example keyword filled in for Google). Every page showed the matching headline (A or B, depending on the visitor's split) and the Book button's Booksy link carried the same utm_source / utm_medium / utm_campaign / utm_content / utm_term. The landing_view events were stored with those UTMs. The hot towel shave URL was in this check too; that page is now switched off. On 2026-11-03 the offer page moved to `/l/35-dollar-cut` and was re-checked with the Meta URL below.
 
 | Ad | URL tested (path + query) |
 | --- | --- |
-| Google · Shop-wide $30 cut | `/l/30-dollar-cut?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-30-cut&utm_term=mens+haircut+upper+east+side` |
+| Google · Shop-wide $35 cut | `/l/35-dollar-cut?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-35-cut&utm_term=mens+haircut+upper+east+side` |
 | Google · Barber / Upper East Side searches | `/l/upper-east-side-barber?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-ues-barber&utm_term=barber+upper+east+side` |
-| Google · Hot towel shave | `/l/hot-towel-shave?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-hot-towel-shave&utm_term=hot+towel+shave+nyc` |
 | Google · Barber: Sean | `/l/book-sean?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-sean&utm_term=sean+barber+upper+east+side` |
 | Google · Barber: David | `/l/book-david?utm_source=google&utm_medium=cpc&utm_campaign=search-ues&utm_content=rsa-barber-david&utm_term=david+barber+upper+east+side` |
-| Meta · Neighbourhood · $30 cut | `/l/30-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-30-cut&utm_content=feed-1x1-shopfloor` |
+| Meta · Neighbourhood · $35 cut | `/l/35-dollar-cut?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-35-cut&utm_content=feed-1x1-shopfloor` |
 | Meta · Neighbourhood · heritage (no price in the ad) | `/l/upper-east-side-barber?utm_source=meta&utm_medium=paid_social&utm_campaign=meta-ues-heritage&utm_content=feed-1x1-chair` |
 
 ## Images

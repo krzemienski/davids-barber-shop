@@ -48,7 +48,7 @@ Website for David's Barber Shop (233 E 84th St, Upper East Side, since 1972) bui
 
 ## Gotchas
 
-- `$30` offer conflicts with Booksy ($35) and the old site ($25) — owner must align Booksy before ads.
+- Menu and prices follow the shop's Booksy listing (owner-confirmed 2026-11-03: haircut $35). Change Booksy first, then Admin → Services / Site settings. Roster and weekday hours still differ from Booksy until the owner confirms them.
 - Old site `#anchors` are redirected client-side (fragments never reach the server).
 - No third-party pixels are loaded yet; add a consent banner together with any tag/pixel.
 

@@ -27,14 +27,14 @@ Why: a visitor should see the same headline every visit, and it needs no server 
 
 ## Content and claims
 
-**Haircut and headline price are $30.**
-Why: the brief sets $30 as the ad offer. Conflict flagged: the old site says $25, Booksy says $35. The owner must make $30 bookable on Booksy before ads run.
+**Haircut and headline price are $35; the menu is Booksy's.**
+Why: the brief set $30 as the ad offer, but Booksy listed $35. On 2026-11-03 the owner confirmed Booksy is correct, so the site's menu (Haircut $35, Beard $20, Haircut & beard $55, Line up $20, Beard trim $20, with Booksy's durations and service IDs) and the offer price follow Booksy. The old website's Shampoo & Cut, Crew Cut, Long Hair Cut and Royal Shave were dropped, the shave landing page was switched off, and `/l/30-dollar-cut` became `/l/35-dollar-cut`. Change prices on Booksy first, then in the admin.
 
 **Comparison price stays off until approved.**
 Why: research supports "$45 median of eight nearby UES shops" (`docs/research/competitors.md`), but a price comparison in ads must be approved by the owner and shown with its dated source. When set, the site shows the source note as a footnote.
 
 **Only verbatim customer reviews; one excluded.**
-Why: invented or edited reviews are deceptive. The "andy l." review was left out because it mentions a $35 price that contradicts the $30 offer.
+Why: invented or edited reviews are deceptive. The "andy l." review was left out because it mentions a $35 price that contradicted the $30 offer at the time. Now that the haircut is $35 it could be added, word for word, if the owner wants it.
 
 **No invented facts.** Copy says only what reviews or the owner support (1972, father-and-son, Second–Third Ave, clients from Queens/Long Island/East Harlem, 7+ years). Removed during review: "thirty years" regulars, "kids' first cuts", "same corner, same chairs", "Haircuts start at $30" (Crew Cut is $22).
 

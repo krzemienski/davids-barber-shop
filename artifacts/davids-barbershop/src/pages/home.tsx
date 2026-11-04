@@ -21,7 +21,7 @@ export default function Home() {
   const testimonials = useListTestimonials();
   usePageMeta(
     s ? `${s.shopName} | ${money(s.offerPriceCents)} haircuts on the Upper East Side since ${s.foundedYear}` : "David's Barber Shop | Upper East Side barbers since 1972",
-    s ? `Father-and-son barbershop at ${s.streetAddress}, ${s.city}. Classic cuts, fades and hot-towel shaves, ${money(s.offerPriceCents)} a cut. Book online or call.` : 'Father-and-son barbershop on the Upper East Side. Book online or call.',
+    s ? `Father-and-son barbershop at ${s.streetAddress}, ${s.city}. Classic cuts, fades, line ups and beard work, ${money(s.offerPriceCents)} a cut. Book online or call.` : 'Father-and-son barbershop on the Upper East Side. Book online or call.',
   );
   useLocalBusinessJsonLd(s);
 
@@ -74,7 +74,7 @@ export default function Home() {
           <div className="marquee flex w-max gap-10 whitespace-nowrap font-display text-xl italic text-gold/80">
             {Array.from({ length: 2 }).map((_, k) => (
               <div key={k} className="flex gap-10" aria-hidden={k === 1}>
-                {['Classic cuts', 'Fades', 'Hot-towel shaves', 'Beard work', 'Royal shaves', s ? `Since ${s.foundedYear}` : 'Since 1972'].map((t) => (
+                {['Classic cuts', 'Fades', 'Line ups', 'Beard work', s ? `Since ${s.foundedYear}` : 'Since 1972'].map((t) => (
                   <span key={t} className="flex items-center gap-10">{t}<span className="text-oxblood not-italic">&#9670;</span></span>
                 ))}
               </div>

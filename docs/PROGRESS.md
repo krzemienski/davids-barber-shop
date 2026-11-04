@@ -5,10 +5,10 @@ _Last updated 2026-11-03._
 ## Built
 
 ### Public site
-- **Home:** video hero (muted loop, pause button, still image for reduced-motion visitors), "$30 a cut", Book + Call, barbers, services preview, verbatim reviews, hours with **Closed Saturdays**.
+- **Home:** video hero (muted loop, pause button, still image for reduced-motion visitors), "$35 a cut", Book + Call, barbers, services preview, verbatim reviews, hours with **Closed Saturdays**.
 - **Barbers** index and **profiles** (`/barbers/<slug>`): bio, specialties, gallery, socials, reviews that mention them, "Book with X" with an honest note when the button opens the shop's Booksy page.
 - **Services & prices**, **Our Story**, **Gallery**, **Visit** (map, hours, phone, email, Closed Saturdays), **Privacy**.
-- **Ad landing pages** `/l/<slug>`: offer (`30-dollar-cut`, with A/B variant) and per-barber (`book-david`, `book-sean`).
+- **Ad landing pages** `/l/<slug>`: offer (`35-dollar-cut`, with A/B variant) and per-barber (`book-david`, `book-sean`).
 - **Mobile bottom bar** with Call and Book on every public page; click-to-call phone number in the desktop header.
 - Announcement banner (from settings), 404 page, error boundary.
 - SEO: page titles/descriptions, Open Graph tags, `BarberShop`/`HairSalon` JSON-LD, `robots.txt`, `sitemap.xml`, `noindex` on landing pages and sign-in, redirects from the old site's `#anchors`.
@@ -51,7 +51,7 @@ Every public page and landing page (A and B) checked at 1280 px and 402 px again
 
 ## Open items — need the owner
 
-1. **Make $30 bookable on Booksy** (Booksy shows $35; old site $25). Blocks ads.
+1. **Hours:** Booksy has Mon and Fri from 9:00, Tue–Thu from 9:30 and Fri until 4:30; the site says 8:30–7 on weekdays (Google confirms 8:30–7 on Tuesday and an 8:30 opening on Wednesday). Confirm the real hours and make Booksy and Google agree.
 2. **Roster:** site shows David and Sean; Booksy now lists Michael, Russel and Alex. Confirm who is bookable, send photos and any per-barber Booksy links.
 3. **Owner emails** (at least two) for `ADMIN_BOOTSTRAP_EMAILS`.
 4. **Approve or reject** the "$45 median at nearby UES shops" comparison.

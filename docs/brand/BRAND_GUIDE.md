@@ -4,9 +4,9 @@
 
 ## Who we are
 
-A father-and-son barbershop at **233 East 84th Street**, between Second and Third Avenue on the Upper East Side, cutting hair since **1972**. Regulars travel in from Queens, Long Island and East Harlem to keep their barber. A classic cut is **$30**.
+A father-and-son barbershop at **233 East 84th Street**, between Second and Third Avenue on the Upper East Side, cutting hair since **1972**. Regulars travel in from Queens, Long Island and East Harlem to keep their barber. A classic cut is **$35**.
 
-**Positioning line:** *Manhattan quality, $30 a cut.*
+**Positioning line:** *Manhattan quality, $35 a cut.*
 
 ## Voice
 
