@@ -1,4 +1,4 @@
-import { and, count, eq, inArray, isNull } from "drizzle-orm";
+import { and, count, eq, inArray, isNull, or } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import {
   adminUsersTable,
@@ -27,16 +27,39 @@ const HOURS = [
   { day: "Sunday", open: "09:00", close: "18:00", closed: false },
 ];
 
-// The menu exactly as on the shop's Booksy listing 1663005 (owner confirmed Booksy is correct, 2026-11-03).
-// booksyVariantId is Booksy's service ID, which opens the booking widget on that service.
-const SERVICES = [
-  { name: "Haircut", category: "Haircuts", priceCents: 3500, durationMinutes: 25, booksyVariantId: 19748050, description: "A classic cut, tailored to how you wear it." },
-  { name: "Beard", category: "Beards", priceCents: 2000, durationMinutes: 15, booksyVariantId: 19748051, description: "" },
-  { name: "Haircut & beard", category: "Haircuts", priceCents: 5500, durationMinutes: 45, booksyVariantId: 19748052, description: "" },
+// The owner's price list (2026-11-05): haircut $30 walk-in / $35 booked, haircut & beard $45, no "Beard",
+// crew cut $22 and royal shave with hot towel $35 added. booksyVariantId is Booksy's service ID, which opens the
+// booking widget on that service; crew cut and royal shave are not on Booksy, so they are walk-in only.
+type SeedService = {
+  name: string;
+  category: string;
+  priceCents: number;
+  walkInPriceCents?: number | null;
+  durationMinutes: number | null;
+  booksyVariantId: number | null;
+  description: string;
+  active?: boolean;
+};
+const SERVICES: SeedService[] = [
+  { name: "Haircut", category: "Haircuts", priceCents: 3500, walkInPriceCents: 3000, durationMinutes: 25, booksyVariantId: 19748050, description: "A classic cut, tailored to how you wear it." },
+  { name: "Crew cut", category: "Haircuts", priceCents: 2200, durationMinutes: null, booksyVariantId: null, description: "" },
+  { name: "Haircut & beard", category: "Haircuts", priceCents: 4500, durationMinutes: 45, booksyVariantId: 19748052, description: "" },
   { name: "Line up", category: "Haircuts", priceCents: 2000, durationMinutes: 20, booksyVariantId: 19748055, description: "" },
-  { name: "Beard trim", category: "Beards", priceCents: 2000, durationMinutes: 15, booksyVariantId: 19748059, description: "" },
+  { name: "Beard trim", category: "Beards & shaves", priceCents: 2000, durationMinutes: 15, booksyVariantId: 19748059, description: "" },
+  { name: "Royal shave with hot towel", category: "Beards & shaves", priceCents: 3500, durationMinutes: null, booksyVariantId: null, description: "" },
 ];
 const OFFER_PRICE_CENTS = 3500;
+const WALK_IN_PRICE_CENTS = 3000;
+
+// The Booksy menu the site showed from 2026-11-03 to 2026-11-05. A database still holding exactly this menu
+// gets the owner's price list.
+const BOOKSY_MENU: [name: string, priceCents: number][] = [
+  ["Haircut", 3500],
+  ["Beard", 2000],
+  ["Haircut & beard", 5500],
+  ["Line up", 2000],
+  ["Beard trim", 2000],
+];
 
 // The first menu, copied from the old website. A database still holding exactly this menu gets the Booksy menu.
 const OLD_SERVICES: [name: string, priceCents: number, durationMinutes: number][] = [
@@ -116,10 +139,11 @@ const DAVID_SPECIALTIES = ["Classic cuts"];
 
 // The roster as on Booksy listing 1663005; the owner confirmed on 2026-11-03 that only these three work at the shop.
 // Bio, photo and specialties stay empty until the owner supplies them. booksyStafferId opens Booksy on that barber.
+// Photos are the owner's headshots (2026-11-05), served from the site's public media folder.
 const ROSTER = [
-  { slug: "michael", name: "Michael", booksyStafferId: 1582201 },
-  { slug: "russel", name: "Russel", booksyStafferId: 1869365 },
-  { slug: "alex", name: "Alex", booksyStafferId: 1869419 },
+  { slug: "michael", name: "Michael", booksyStafferId: 1582201, photoUrl: "/media/barbers/michael.jpg" },
+  { slug: "russel", name: "Russel", booksyStafferId: 1869365, photoUrl: "/media/barbers/russel.jpg" },
+  { slug: "alex", name: "Alex", booksyStafferId: 1869419, photoUrl: "/media/barbers/alex.jpg" },
 ];
 // The first roster, copied from the old website.
 const OLD_ROSTER_SLUGS = ["david", "sean"];
@@ -167,6 +191,7 @@ export async function seedDatabase(): Promise<void> {
       postalCode: "10028",
       hours: HOURS,
       offerPriceCents: OFFER_PRICE_CENTS,
+      walkInPriceCents: WALK_IN_PRICE_CENTS,
       comparisonPriceCents: null,
       comparisonSourceNote: null,
       announcementBanner: null,
@@ -213,6 +238,7 @@ export async function seedDatabase(): Promise<void> {
     logger.info("Seeded services");
   } else {
     await alignMenuWithBooksy();
+    await applyOwnerPriceList();
   }
 
   if (await isEmpty(testimonialsTable)) {
@@ -245,6 +271,7 @@ export async function seedDatabase(): Promise<void> {
 
   await seedAdKitLandingPages();
   await alignRosterWithBooksy();
+  await addRosterPhotos();
 
   const bootstrap = (process.env.ADMIN_BOOTSTRAP_EMAILS ?? "")
     .split(",")
@@ -296,6 +323,42 @@ async function alignMenuWithBooksy(): Promise<void> {
   if (price.length + offer.length + specialties > 0) logger.info("Moved the haircut offer to the Booksy price ($35)");
 }
 
+// Moves a database still holding the Booksy-only menu to the owner's price list (2026-11-05). "Beard" is switched
+// off rather than deleted so past landing pages keep their service. Runs only while every Booksy-menu row is
+// untouched, so admin edits are never overwritten.
+async function applyOwnerPriceList(): Promise<void> {
+  const rows = await db
+    .select({ id: servicesTable.id, name: servicesTable.name, priceCents: servicesTable.priceCents, active: servicesTable.active, walkIn: servicesTable.walkInPriceCents })
+    .from(servicesTable);
+  const untouched =
+    rows.length === BOOKSY_MENU.length &&
+    BOOKSY_MENU.every(([name, price]) => rows.some((r) => r.name === name && r.priceCents === price && r.active && r.walkIn === null));
+  if (untouched) {
+    await db.transaction(async (tx) => {
+      for (const [i, svc] of SERVICES.entries()) {
+        const existing = rows.find((r) => r.name === svc.name);
+        if (existing) {
+          await tx
+            .update(servicesTable)
+            .set({ priceCents: svc.priceCents, walkInPriceCents: svc.walkInPriceCents ?? null, category: svc.category, displayOrder: i, updatedAt: new Date() })
+            .where(eq(servicesTable.id, existing.id));
+        } else {
+          await tx.insert(servicesTable).values({ ...svc, displayOrder: i });
+        }
+      }
+      await tx.update(servicesTable).set({ active: false, category: "Beards & shaves", updatedAt: new Date() }).where(eq(servicesTable.name, "Beard"));
+    });
+    logger.info("Applied the owner's price list (walk-in $30, crew cut, royal shave; Beard switched off)");
+  }
+
+  const walkIn = await db
+    .update(siteSettingsTable)
+    .set({ walkInPriceCents: WALK_IN_PRICE_CENTS, updatedAt: new Date() })
+    .where(and(eq(siteSettingsTable.id, 1), eq(siteSettingsTable.offerPriceCents, OFFER_PRICE_CENTS), isNull(siteSettingsTable.walkInPriceCents)))
+    .returning({ id: siteSettingsTable.id });
+  if (walkIn.length > 0) logger.info("Set the walk-in haircut price ($30)");
+}
+
 // Moves a database still showing the old website's roster (David and Sean, both active) to the Booksy roster.
 // The old barbers and their landing pages are switched off, not deleted, so past bookings and events keep their
 // barber. Runs only while exactly the old roster is active, so admin edits are never overwritten.
@@ -321,6 +384,20 @@ async function alignRosterWithBooksy(): Promise<void> {
     if (inserted.length > 0) await tx.insert(landingPagesTable).values(inserted.map(barberLandingPage)).onConflictDoNothing();
   });
   logger.info("Switched the roster to the Booksy barbers (Michael, Russel, Alex)");
+}
+
+// Gives each roster barber the owner's headshot while they still have no photo; photos set in the admin win.
+async function addRosterPhotos(): Promise<void> {
+  let added = 0;
+  for (const b of ROSTER) {
+    const rows = await db
+      .update(barbersTable)
+      .set({ photoUrl: b.photoUrl, updatedAt: new Date() })
+      .where(and(eq(barbersTable.slug, b.slug), or(isNull(barbersTable.photoUrl), eq(barbersTable.photoUrl, ""))))
+      .returning({ id: barbersTable.id });
+    added += rows.length;
+  }
+  if (added > 0) logger.info({ count: added }, "Added barber headshots");
 }
 
 async function seedAdKitLandingPages(): Promise<void> {

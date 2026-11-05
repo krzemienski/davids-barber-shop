@@ -13,7 +13,7 @@ import {
 import { usePageMeta, useLocalBusinessJsonLd } from '@/lib/meta';
 import { WallTimeline } from '@/components/wall';
 import { GoogleListingStrip } from '@/components/google-photos';
-import { assetUrl, errorStatus, formatPhone, fullAddress, mapsEmbedUrl, mapsListingUrl, mediaUrl, money, yearsSince } from '@/lib/format';
+import { assetUrl, errorStatus, formatPhone, fullAddress, hasWalkInPrice, headlinePrice, mapsEmbedUrl, mapsListingUrl, mediaUrl, money, walkInLine, yearsSince } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { trackEvent } from '@/lib/analytics';
 
@@ -163,7 +163,9 @@ export function ServicesPage() {
   return (
     <PublicLayout>
       <PageHero eyebrow="The menu" title={<>Services <span className="italic text-gold">&amp; prices.</span></>}
-        intro={s ? <>A classic haircut is <span className="text-gold font-semibold">{money(s.offerPriceCents)}</span>.{s.comparisonPriceCents != null && <> vs. {money(s.comparisonPriceCents)} median at nearby UES shops.</>}</> : undefined}
+        intro={s ? <>{hasWalkInPrice(s)
+          ? <>A classic haircut is <span className="text-gold font-semibold">{money(s.walkInPriceCents)}</span> when you walk in, or <span className="text-gold font-semibold">{money(s.offerPriceCents)}</span> when you book an appointment.</>
+          : <>A classic haircut is <span className="text-gold font-semibold">{money(s.offerPriceCents)}</span>.</>}{s.comparisonPriceCents != null && <> vs. {money(s.comparisonPriceCents)} median at nearby UES shops.</>}</> : undefined}
         image={mediaUrl('clippers.jpg')} />
       <section className="mx-auto max-w-4xl px-5 lg:px-8 py-20">
         {services.isLoading ? <SkeletonLines n={12} /> : services.isError ? <ErrorState onRetry={() => services.refetch()} /> : !groups.length ? (
@@ -199,7 +201,7 @@ export function OurStoryPage() {
     { k: String(year), t: 'The chair goes in.', b: `The shop opens on East 84th Street, between Second and Third Avenue.` },
     { k: 'Decades', t: 'Regulars become family.', b: 'The same faces come back every few weeks. Clients write about coming back for seven years and more, and about travelling in from Queens and Long Island to keep their barber.' },
     { k: 'Father & son', t: 'Two generations, one standard.', b: 'Father and son work the floor side by side, with the same standard for every client in the chair.' },
-    { k: 'Today', t: 'Manhattan quality, neighborhood price.', b: s ? `A real Upper East Side cut for ${money(s.offerPriceCents)}. Book online or call the shop.` : 'A real Upper East Side cut at a neighborhood price.' },
+    { k: 'Today', t: 'Manhattan quality, neighborhood price.', b: s ? `A real Upper East Side cut for ${money(headlinePrice(s))}. ${walkInLine(s) || 'Book online or call the shop.'}` : 'A real Upper East Side cut at a neighborhood price.' },
   ];
   return (
     <PublicLayout>

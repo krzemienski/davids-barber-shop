@@ -7,7 +7,7 @@ import { BookButton, BooksyBarberNote, CallLink, Eyebrow, AnnouncementBanner, Ba
 import { HeroVideo } from '@/components/hero-video';
 import { LandingContext, getVariant, useTracker } from '@/lib/tracking';
 import { usePageMeta } from '@/lib/meta';
-import { formatPhone, fullAddress, money } from '@/lib/format';
+import { formatPhone, fullAddress, hasWalkInPrice, headlinePrice, money } from '@/lib/format';
 import { cn } from '@/lib/utils';
 
 export default function LandingPage() {
@@ -92,8 +92,9 @@ function LandingBody({ page, variant }: { page: LandingPageDetail; variant: 'A' 
               </div>
             ) : s && (
               <div className="rise mt-8 flex items-baseline gap-4" style={{ animationDelay: '300ms' }}>
-                <span className="font-display text-6xl text-gold" data-testid="text-landing-price">{money(s.offerPriceCents)}</span>
-                <span className="text-sm uppercase tracking-[0.25em] text-bone/70">a cut</span>
+                <span className="font-display text-6xl text-gold" data-testid="text-landing-price">{money(headlinePrice(s))}</span>
+                <span className="text-sm uppercase tracking-[0.25em] text-bone/70">{hasWalkInPrice(s) ? 'walk-in cut' : 'a cut'}</span>
+                {hasWalkInPrice(s) && <span className="font-mono text-xs text-bone/70" data-testid="text-landing-booked-price">{money(s.offerPriceCents)} with an appointment</span>}
                 {s.comparisonPriceCents != null && <span className="font-mono text-xs text-bone/50">vs. {money(s.comparisonPriceCents)} median at nearby UES shops</span>}
               </div>
             )}

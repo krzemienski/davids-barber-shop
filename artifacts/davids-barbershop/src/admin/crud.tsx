@@ -57,7 +57,7 @@ export function AdminServicesPage() {
               <tbody>{items.map((s) => (
                 <tr key={s.id} className={cn(!s.active && 'opacity-55')} data-testid={`row-service-${s.id}`}>
                   <td className={td}><div className="text-bone">{s.name}</div>{s.description && <div className="text-xs text-muted-foreground line-clamp-1">{s.description}</div>}</td>
-                  <td className={cn(td, 'text-right font-mono text-gold')}>{money(s.priceCents, { cents: true })}</td>
+                  <td className={cn(td, 'text-right font-mono text-gold')}>{money(s.priceCents, { cents: true })}{s.walkInPriceCents != null && <div className="text-[11px] text-muted-foreground">walk-in {money(s.walkInPriceCents, { cents: true })}</div>}</td>
                   <td className={cn(td, 'text-right font-mono')}>{s.durationMinutes ?? '—'}</td>
                   <td className={cn(td, 'text-right font-mono')}>{s.displayOrder}</td>
                   <td className={td}><Toggle checked={s.active} label="" testId={`switch-service-${s.id}`} onChange={(v) => update.mutate({ id: s.id, data: { active: v } }, { onSuccess: invalidate, onError: errT('Update failed') })} /></td>
@@ -80,13 +80,13 @@ function ServiceForm({ service, categories, onClose, onSaved }: { service: Servi
   const create = useAdminCreateService();
   const update = useAdminUpdateService();
   const [f, setF] = useState({
-    name: service?.name ?? '', description: service?.description ?? '', price: centsToDollarsInput(service?.priceCents ?? null), duration: service?.durationMinutes != null ? String(service.durationMinutes) : '',
+    name: service?.name ?? '', description: service?.description ?? '', price: centsToDollarsInput(service?.priceCents ?? null), walkIn: centsToDollarsInput(service?.walkInPriceCents ?? null), duration: service?.durationMinutes != null ? String(service.durationMinutes) : '',
     category: service?.category ?? categories[0] ?? 'Haircuts', order: String(service?.displayOrder ?? 0), active: service?.active ?? true,
     booksyVariantId: service?.booksyVariantId != null ? String(service.booksyVariantId) : '',
   });
   const submit = (e: FormEvent) => {
     e.preventDefault();
-    const data = { name: f.name.trim(), description: f.description, priceCents: dollarsToCents(f.price) ?? 0, durationMinutes: f.duration ? Number(f.duration) : null, category: f.category.trim(), booksyVariantId: f.booksyVariantId ? Number(f.booksyVariantId) : null, displayOrder: Number(f.order) || 0, active: f.active };
+    const data = { name: f.name.trim(), description: f.description, priceCents: dollarsToCents(f.price) ?? 0, walkInPriceCents: dollarsToCents(f.walkIn), durationMinutes: f.duration ? Number(f.duration) : null, category: f.category.trim(), booksyVariantId: f.booksyVariantId ? Number(f.booksyVariantId) : null, displayOrder: Number(f.order) || 0, active: f.active };
     const opts = { onSuccess: () => { onSaved(); onClose(); }, onError: errT('Save failed') };
     if (service) update.mutate({ id: service.id, data }, opts); else create.mutate({ data }, opts);
   };
@@ -95,7 +95,8 @@ function ServiceForm({ service, categories, onClose, onSaved }: { service: Servi
       <form onSubmit={submit} className="grid gap-4 sm:grid-cols-2">
         <Field label="Name" className="sm:col-span-2"><input required className="field" value={f.name} onChange={(e) => setF({ ...f, name: e.target.value })} data-testid="input-service-name" /></Field>
         <Field label="Description" className="sm:col-span-2"><textarea rows={2} className="field" value={f.description} onChange={(e) => setF({ ...f, description: e.target.value })} data-testid="input-service-description" /></Field>
-        <Field label="Price"><DollarInput required value={f.price} onChange={(v) => setF({ ...f, price: v })} testId="input-service-price" /></Field>
+        <Field label="Price" hint="The booked (Booksy) price"><DollarInput required value={f.price} onChange={(v) => setF({ ...f, price: v })} testId="input-service-price" /></Field>
+        <Field label="Walk-in price" hint="Blank when walk-ins pay the same"><DollarInput value={f.walkIn} onChange={(v) => setF({ ...f, walkIn: v })} testId="input-service-walk-in-price" /></Field>
         <Field label="Duration (minutes)"><input type="number" min={0} className="field" value={f.duration} onChange={(e) => setF({ ...f, duration: e.target.value })} data-testid="input-service-duration" /></Field>
         <Field label="Category"><input required list="cats" className="field" value={f.category} onChange={(e) => setF({ ...f, category: e.target.value })} data-testid="input-service-category" /><datalist id="cats">{categories.map((c) => <option key={c} value={c} />)}</datalist></Field>
         <Field label="Display order"><input type="number" className="field" value={f.order} onChange={(e) => setF({ ...f, order: e.target.value })} data-testid="input-service-order" /></Field>
@@ -440,7 +441,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
   const save = useUpdateSiteSettings();
   const [f, setF] = useState({
     shopName: s.shopName, foundedYear: String(s.foundedYear), phone: s.phone, email: s.email, streetAddress: s.streetAddress, city: s.city, region: s.region, postalCode: s.postalCode,
-    offer: centsToDollarsInput(s.offerPriceCents), comparison: centsToDollarsInput(s.comparisonPriceCents), comparisonSourceNote: s.comparisonSourceNote ?? '',
+    offer: centsToDollarsInput(s.offerPriceCents), walkIn: centsToDollarsInput(s.walkInPriceCents), comparison: centsToDollarsInput(s.comparisonPriceCents), comparisonSourceNote: s.comparisonSourceNote ?? '',
     announcementBanner: s.announcementBanner ?? '', pressMention: s.pressMention ?? '', booksyBusinessUrl: s.booksyBusinessUrl ?? '', booksyBusinessId: s.booksyBusinessId != null ? String(s.booksyBusinessId) : '', instagramUrl: s.instagramUrl ?? '', googleMapsUrl: s.googleMapsUrl ?? '', googlePlaceId: s.googlePlaceId ?? '',
   });
   const [hours, setHours] = useState<HoursEntry[]>(() => DAYS.map((d) => s.hours.find((h) => h.day === d) ?? { day: d, open: '09:00', close: '19:00', closed: false }));
@@ -454,7 +455,7 @@ function SettingsForm({ s }: { s: SiteSettings }) {
     save.mutate({ data: {
       shopName: f.shopName.trim(), foundedYear: Number(f.foundedYear), phone: f.phone.trim(), email: f.email.trim(), streetAddress: f.streetAddress.trim(), city: f.city.trim(), region: f.region.trim(), postalCode: f.postalCode.trim(),
       hours: hours.map((h) => (h.closed ? { ...h, open: null, close: null } : h)),
-      offerPriceCents: dollarsToCents(f.offer) ?? 0, comparisonPriceCents: dollarsToCents(f.comparison), comparisonSourceNote: nz(f.comparisonSourceNote),
+      offerPriceCents: dollarsToCents(f.offer) ?? 0, walkInPriceCents: dollarsToCents(f.walkIn), comparisonPriceCents: dollarsToCents(f.comparison), comparisonSourceNote: nz(f.comparisonSourceNote),
       announcementBanner: nz(f.announcementBanner), pressMention: nz(f.pressMention), booksyBusinessUrl: nz(f.booksyBusinessUrl), booksyBusinessId: f.booksyBusinessId ? Number(f.booksyBusinessId) : null, instagramUrl: nz(f.instagramUrl), googleMapsUrl: nz(f.googleMapsUrl), googlePlaceId: nz(f.googlePlaceId),
     } }, {
       onSuccess: (data) => { qc.setQueryData(getGetSiteSettingsQueryKey(), data); toast({ title: 'Settings saved', description: 'The public site is updated.' }); },
@@ -465,13 +466,14 @@ function SettingsForm({ s }: { s: SiteSettings }) {
   return (
     <form onSubmit={submit} className="space-y-6">
       <Panel title="Offer & pricing">
-        <div className="grid gap-4 p-5 sm:grid-cols-3">
-          <Field label="Offer price (headline)" hint="Used in the hero and ads"><DollarInput required value={f.offer} onChange={(v) => setF({ ...f, offer: v })} testId="input-offer-price" /></Field>
+        <div className="grid gap-4 p-5 sm:grid-cols-2">
+          <Field label="Haircut price, booked" hint="Must match Booksy"><DollarInput required value={f.offer} onChange={(v) => setF({ ...f, offer: v })} testId="input-offer-price" /></Field>
+          <Field label="Haircut price, walk-in" hint="Blank when walk-ins pay the same. Shown as the headline price"><DollarInput value={f.walkIn} onChange={(v) => setF({ ...f, walkIn: v })} testId="input-walk-in-price" /></Field>
           <Field label="Comparison price" hint="Blank hides the comparison line"><DollarInput value={f.comparison} onChange={(v) => setF({ ...f, comparison: v })} testId="input-comparison-price" /></Field>
           <Field label="Comparison source" hint="Where the number comes from"><input className="field" value={f.comparisonSourceNote} onChange={up('comparisonSourceNote')} data-testid="input-comparison-source" /></Field>
-          {comparisonWithoutSource && <p className="sm:col-span-3 flex items-center gap-2 text-xs text-gold"><AlertTriangle className="h-3.5 w-3.5" /> Add a source for the comparison price so the claim is substantiated.</p>}
-          <Field label="Announcement banner" hint="Blank hides the banner" className="sm:col-span-3"><input className="field" value={f.announcementBanner} onChange={up('announcementBanner')} data-testid="input-banner" /></Field>
-          <Field label="TV or press credit" hint={'Shown as text, "As seen on …", on the home and ad landing pages. Fill in only once the owner confirms it is accurate to say. Blank hides it.'} className="sm:col-span-3"><input className="field" maxLength={120} value={f.pressMention} onChange={up('pressMention')} placeholder="FOX 5 Good Day New York" data-testid="input-press-mention" /></Field>
+          {comparisonWithoutSource && <p className="sm:col-span-2 flex items-center gap-2 text-xs text-gold"><AlertTriangle className="h-3.5 w-3.5" /> Add a source for the comparison price so the claim is substantiated.</p>}
+          <Field label="Announcement banner" hint="Blank hides the banner" className="sm:col-span-2"><input className="field" value={f.announcementBanner} onChange={up('announcementBanner')} data-testid="input-banner" /></Field>
+          <Field label="TV or press credit" hint={'Shown as text, "As seen on …", on the home and ad landing pages. Fill in only once the owner confirms it is accurate to say. Blank hides it.'} className="sm:col-span-2"><input className="field" maxLength={120} value={f.pressMention} onChange={up('pressMention')} placeholder="FOX 5 Good Day New York" data-testid="input-press-mention" /></Field>
         </div>
       </Panel>
       <Panel title="Hours">

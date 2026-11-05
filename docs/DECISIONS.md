@@ -27,7 +27,12 @@ Why: a visitor should see the same headline every visit, and it needs no server 
 
 ## Content and claims
 
-**Haircut and headline price are $35; the menu is Booksy's.**
+**Haircut is $30 walk-in, $35 booked; the menu is the owner's price list** (dated 2026-11-05).
+Why: the owner's note: "Haircut $30 for Walk-in and $35 for appointment. Haircut and beard $45. Take out beard leave beard trim. Add crew cut $22. Add Royal Shave with hot towel $35", and "make it known that walk-ins are available at 30 or if you would like to book an appointment you could do it for 35". The owner's word now overrides Booksy. The headline price is the walk-in $30, always shown together with "Book an appointment $35" so nobody clicks Book expecting $30. A service's price is its booked price; an optional walk-in price is shown next to it. "Beard" is switched off, not deleted. Crew cut and Royal shave are not on Booksy, so they show "Walk-in" instead of a Book link, and their durations are blank. Booksy still lists Haircut & beard at $55 and still has "Beard"; the owner has to change those in Booksy. Prod gets the change through a guarded seed step that runs only while the menu still matches Booksy's.
+
+**Barber photos are the owner's headshots** (dated 2026-11-05): Michael (beard, chain), Russel (wavy hair), Alex (glasses), mapping confirmed by the user. Served from `public/media/barbers/`; the seed fills a barber's photo only while it is empty, so a photo set in the admin wins. The site's other photos stay until the owner's replacements arrive.
+
+**Earlier (2026-11-03 to 2026-11-05): haircut $35, menu copied from Booksy.**
 Why: the brief set $30 as the ad offer, but Booksy listed $35. On 2026-11-03 the owner confirmed Booksy is correct, so the site's menu (Haircut $35, Beard $20, Haircut & beard $55, Line up $20, Beard trim $20, with Booksy's durations and service IDs) and the offer price follow Booksy. The old website's Shampoo & Cut, Crew Cut, Long Hair Cut and Royal Shave were dropped, the shave landing page was switched off, and `/l/30-dollar-cut` became `/l/35-dollar-cut`. Change prices on Booksy first, then in the admin.
 
 **Comparison price stays off until approved.**
@@ -38,7 +43,7 @@ Why: invented or edited reviews are deceptive. The "andy l." review was left out
 
 **No invented facts.** Copy says only what reviews or the owner support (1972, father-and-son, Second–Third Ave, clients from Queens/Long Island/East Harlem, 7+ years). Removed during review: "thirty years" regulars, "kids' first cuts", "same corner, same chairs", "Haircuts start at $30" (Crew Cut is $22).
 
-**No barber photos until real ones exist; monogram cards instead.**
+**Barber photos only from the owner; monogram cards otherwise.**
 Why: stock faces presented as staff would mislead customers.
 
 **Celebrity clients are stored with a consent flag; unconsented names never leave the server.**

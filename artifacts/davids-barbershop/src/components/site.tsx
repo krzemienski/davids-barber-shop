@@ -434,11 +434,19 @@ export function ServiceRow({ s, barber }: { s: Service; barber?: Barber | null }
       <div className="flex items-baseline gap-3">
         <h4 className="font-display text-xl md:text-2xl text-bone group-hover:text-gold transition-colors">{s.name}</h4>
         <span className="flex-1 border-b border-dotted border-gold/30 translate-y-[-4px]" />
-        <span className="font-display text-2xl text-gold" data-testid={`text-price-${s.id}`}>{money(s.priceCents)}</span>
+        {s.walkInPriceCents != null && s.walkInPriceCents !== s.priceCents ? (
+          <span className="flex items-baseline gap-3 text-right" data-testid={`text-price-${s.id}`}>
+            <span><span className="font-display text-2xl text-gold">{money(s.walkInPriceCents)}</span> <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">walk-in</span></span>
+            <span><span className="font-display text-2xl text-gold">{money(s.priceCents)}</span> <span className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">booked</span></span>
+          </span>
+        ) : (
+          <span className="font-display text-2xl text-gold" data-testid={`text-price-${s.id}`}>{money(s.priceCents)}</span>
+        )}
       </div>
       <div className="mt-1 flex gap-4 text-sm text-muted-foreground">
         <p className="flex-1">{s.description}</p>
         {s.durationMinutes != null && <span className="font-mono text-xs shrink-0 pt-0.5">{s.durationMinutes} min</span>}
+        {s.booksyVariantId == null && <span className="shrink-0 pt-0.5 text-[11px] uppercase tracking-[0.22em] text-muted-foreground" data-testid={`text-walk-in-only-${s.id}`}>Walk-in</span>}
         {bookable && booking && (
           <button
             type="button"

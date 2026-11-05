@@ -9,7 +9,7 @@ import {
 } from '@/components/site';
 import { HeroVideo } from '@/components/hero-video';
 import { usePageMeta, useLocalBusinessJsonLd } from '@/lib/meta';
-import { fullAddress, mapsListingUrl, mediaUrl, money, yearsSince } from '@/lib/format';
+import { fullAddress, hasWalkInPrice, headlinePrice, mapsListingUrl, mediaUrl, money, walkInLine, yearsSince } from '@/lib/format';
 import { trackEvent } from '@/lib/analytics';
 import { WallTeaser } from '@/components/wall';
 import { cn } from '@/lib/utils';
@@ -20,8 +20,8 @@ export default function Home() {
   const services = useListServices();
   const testimonials = useListTestimonials();
   usePageMeta(
-    s ? `${s.shopName} | ${money(s.offerPriceCents)} haircuts on the Upper East Side since ${s.foundedYear}` : "David's Barber Shop | Upper East Side barbers since 1972",
-    s ? `Father-and-son barbershop at ${s.streetAddress}, ${s.city}. Classic cuts, fades, line ups and beard work, ${money(s.offerPriceCents)} a cut. Book online or call.` : 'Father-and-son barbershop on the Upper East Side. Book online or call.',
+    s ? `${s.shopName} | ${money(headlinePrice(s))} haircuts on the Upper East Side since ${s.foundedYear}` : "David's Barber Shop | Upper East Side barbers since 1972",
+    s ? `Father-and-son barbershop at ${s.streetAddress}, ${s.city}. Classic cuts, fades, line ups and beard work. ${walkInLine(s) || `${money(s.offerPriceCents)} a cut.`} Book online or call.` : 'Father-and-son barbershop on the Upper East Side. Book online or call.',
   );
   useLocalBusinessJsonLd(s);
 
@@ -43,9 +43,16 @@ export default function Home() {
               <span className="rise block" style={{ animationDelay: '200ms' }}>Manhattan</span>
               <span className="rise block italic font-normal text-bone/90" style={{ animationDelay: '300ms' }}>quality,</span>
               <span className="rise block" style={{ animationDelay: '420ms' }}>
-                {s ? <span className="text-gold" data-testid="text-offer-price">{money(s.offerPriceCents)}</span> : <SkeletonBlock className="inline-block h-[0.8em] w-[2.2em] align-middle" />} a cut.
+                {s ? <span className="text-gold" data-testid="text-offer-price">{money(headlinePrice(s))}</span> : <SkeletonBlock className="inline-block h-[0.8em] w-[2.2em] align-middle" />} a cut.
               </span>
             </h1>
+            {s && hasWalkInPrice(s) && (
+              <p className="rise mt-5 text-base md:text-lg text-bone" style={{ animationDelay: '500ms' }} data-testid="text-walk-in-note">
+                Walk-ins <span className="font-semibold text-gold">{money(s.walkInPriceCents)}</span>
+                <span className="mx-2 text-gold/50" aria-hidden>·</span>
+                Book an appointment <span className="font-semibold text-gold">{money(s.offerPriceCents)}</span>
+              </p>
+            )}
             {s?.comparisonPriceCents != null && (
               <p className="rise mt-5 font-mono text-sm text-bone/70" style={{ animationDelay: '520ms' }} data-testid="text-comparison">
                 vs. {money(s.comparisonPriceCents)} median at nearby UES shops
@@ -108,7 +115,7 @@ export default function Home() {
             <Reveal delay={240} className="mt-10 grid grid-cols-3 gap-6 border-t border-gold/20 pt-8">
               {[
                 [s ? String(s.foundedYear) : '—', 'Opened'],
-                [s ? money(s.offerPriceCents) : '—', 'A haircut'],
+                [s ? money(headlinePrice(s)) : '—', s && hasWalkInPrice(s) ? 'Walk-in haircut' : 'A haircut'],
                 ['2', 'Generations'],
               ].map(([n, l]) => (
                 <div key={l}>
@@ -240,7 +247,7 @@ export default function Home() {
           <div className="relative mx-auto max-w-4xl px-5 py-28 text-center">
             <Reveal>
               <h2 className="font-display text-5xl md:text-7xl text-bone leading-[0.95]">Your chair is <span className="italic text-gold">open.</span></h2>
-              <p className="mt-6 text-bone/75">{s ? `${money(s.offerPriceCents)} a cut. Book online or just call the shop.` : 'Book online or just call the shop.'}</p>
+              <p className="mt-6 text-bone/75">{s ? `${walkInLine(s) || `${money(s.offerPriceCents)} a cut.`} Book online or just call the shop.` : 'Book online or just call the shop.'}</p>
               <div className="mt-10 flex flex-col sm:flex-row justify-center gap-3">
                 <BookButton settings={s} size="lg" testId="button-final-book" />
                 <CallLink settings={s} size="lg" testId="link-final-call" />

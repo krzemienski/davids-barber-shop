@@ -34,7 +34,8 @@ export const GetSiteSettingsResponse = zod.object({
   "close": zod.string().nullable().describe('24h HH:MM'),
   "closed": zod.boolean()
 })),
-  "offerPriceCents": zod.number().int().describe('The headline haircut price used in hero and ads'),
+  "offerPriceCents": zod.number().int().describe('The headline haircut price when booked online (matches Booksy); used in hero and ads'),
+  "walkInPriceCents": zod.number().int().nullable().describe('Headline haircut price for walk-ins; null when walk-ins pay the booked price'),
   "comparisonPriceCents": zod.number().int().nullable().describe('Typical Manhattan price used in comparison copy; null hides the comparison'),
   "comparisonSourceNote": zod.string().nullable().describe('Where the comparison number comes from (substantiation)'),
   "announcementBanner": zod.string().nullable(),
@@ -117,7 +118,8 @@ export const ListServicesResponseItem = zod.object({
   "id": zod.number().int(),
   "name": zod.string(),
   "description": zod.string(),
-  "priceCents": zod.number().int(),
+  "priceCents": zod.number().int().describe('Booked (Booksy) price'),
+  "walkInPriceCents": zod.number().int().nullable().describe('Walk-in price when it differs from the booked price'),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
   "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
@@ -188,7 +190,8 @@ export const GetLandingPageResponse = zod.object({
   "id": zod.number().int(),
   "name": zod.string(),
   "description": zod.string(),
-  "priceCents": zod.number().int(),
+  "priceCents": zod.number().int().describe('Booked (Booksy) price'),
+  "walkInPriceCents": zod.number().int().nullable().describe('Walk-in price when it differs from the booked price'),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
   "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
@@ -295,6 +298,8 @@ export const updateSiteSettingsBodyPhoneMin = 7;
 
 export const updateSiteSettingsBodyOfferPriceCentsMin = 0;
 
+export const updateSiteSettingsBodyWalkInPriceCentsMin = 0;
+
 export const updateSiteSettingsBodyComparisonPriceCentsMin = 0;
 
 export const updateSiteSettingsBodyPressMentionMax = 120;
@@ -318,6 +323,7 @@ export const UpdateSiteSettingsBody = zod.object({
   "closed": zod.boolean()
 })).optional(),
   "offerPriceCents": zod.number().int().min(updateSiteSettingsBodyOfferPriceCentsMin).optional(),
+  "walkInPriceCents": zod.number().int().min(updateSiteSettingsBodyWalkInPriceCentsMin).nullish(),
   "comparisonPriceCents": zod.number().int().min(updateSiteSettingsBodyComparisonPriceCentsMin).nullish(),
   "comparisonSourceNote": zod.string().nullish(),
   "announcementBanner": zod.string().nullish(),
@@ -344,7 +350,8 @@ export const UpdateSiteSettingsResponse = zod.object({
   "close": zod.string().nullable().describe('24h HH:MM'),
   "closed": zod.boolean()
 })),
-  "offerPriceCents": zod.number().int().describe('The headline haircut price used in hero and ads'),
+  "offerPriceCents": zod.number().int().describe('The headline haircut price when booked online (matches Booksy); used in hero and ads'),
+  "walkInPriceCents": zod.number().int().nullable().describe('Headline haircut price for walk-ins; null when walk-ins pay the booked price'),
   "comparisonPriceCents": zod.number().int().nullable().describe('Typical Manhattan price used in comparison copy; null hides the comparison'),
   "comparisonSourceNote": zod.string().nullable().describe('Where the comparison number comes from (substantiation)'),
   "announcementBanner": zod.string().nullable(),
@@ -616,7 +623,8 @@ export const AdminListServicesResponseItem = zod.object({
   "id": zod.number().int(),
   "name": zod.string(),
   "description": zod.string(),
-  "priceCents": zod.number().int(),
+  "priceCents": zod.number().int().describe('Booked (Booksy) price'),
+  "walkInPriceCents": zod.number().int().nullable().describe('Walk-in price when it differs from the booked price'),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
   "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
@@ -630,6 +638,8 @@ export const AdminListServicesResponse = zod.array(AdminListServicesResponseItem
 
 export const adminCreateServiceBodyPriceCentsMin = 0;
 
+export const adminCreateServiceBodyWalkInPriceCentsMin = 0;
+
 
 
 
@@ -638,6 +648,7 @@ export const AdminCreateServiceBody = zod.object({
   "name": zod.string().min(1),
   "description": zod.string().optional(),
   "priceCents": zod.number().int().min(adminCreateServiceBodyPriceCentsMin),
+  "walkInPriceCents": zod.number().int().min(adminCreateServiceBodyWalkInPriceCentsMin).nullish(),
   "durationMinutes": zod.number().int().nullish(),
   "category": zod.string().min(1),
   "booksyVariantId": zod.number().int().min(1).nullish(),
@@ -649,7 +660,8 @@ export const AdminCreateServiceResponse = zod.object({
   "id": zod.number().int(),
   "name": zod.string(),
   "description": zod.string(),
-  "priceCents": zod.number().int(),
+  "priceCents": zod.number().int().describe('Booked (Booksy) price'),
+  "walkInPriceCents": zod.number().int().nullable().describe('Walk-in price when it differs from the booked price'),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
   "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),
@@ -666,6 +678,8 @@ export const AdminUpdateServiceParams = zod.object({
 
 export const adminUpdateServiceBodyPriceCentsMin = 0;
 
+export const adminUpdateServiceBodyWalkInPriceCentsMin = 0;
+
 
 
 
@@ -674,6 +688,7 @@ export const AdminUpdateServiceBody = zod.object({
   "name": zod.string().min(1).optional(),
   "description": zod.string().optional(),
   "priceCents": zod.number().int().min(adminUpdateServiceBodyPriceCentsMin).optional(),
+  "walkInPriceCents": zod.number().int().min(adminUpdateServiceBodyWalkInPriceCentsMin).nullish(),
   "durationMinutes": zod.number().int().nullish(),
   "category": zod.string().min(1).optional(),
   "booksyVariantId": zod.number().int().min(1).nullish(),
@@ -685,7 +700,8 @@ export const AdminUpdateServiceResponse = zod.object({
   "id": zod.number().int(),
   "name": zod.string(),
   "description": zod.string(),
-  "priceCents": zod.number().int(),
+  "priceCents": zod.number().int().describe('Booked (Booksy) price'),
+  "walkInPriceCents": zod.number().int().nullable().describe('Walk-in price when it differs from the booked price'),
   "durationMinutes": zod.number().int().nullable(),
   "category": zod.string().describe('e.g. Haircuts, Shaves & Beards'),
   "booksyVariantId": zod.number().int().nullable().describe('Booksy service variant ID; adds a Book link that opens the widget on this service'),

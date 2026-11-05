@@ -18,8 +18,13 @@ export interface SiteSettings {
   region: string;
   postalCode: string;
   hours: HoursEntry[];
-  /** The headline haircut price used in hero and ads */
+  /** The headline haircut price when booked online (matches Booksy); used in hero and ads */
   offerPriceCents: number;
+  /**
+     * Headline haircut price for walk-ins; null when walk-ins pay the booked price
+     * @nullable
+     */
+  walkInPriceCents: number | null;
   /**
      * Typical Manhattan price used in comparison copy; null hides the comparison
      * @nullable

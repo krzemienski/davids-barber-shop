@@ -44,8 +44,13 @@ export interface SiteSettings {
   region: string;
   postalCode: string;
   hours: HoursEntry[];
-  /** The headline haircut price used in hero and ads */
+  /** The headline haircut price when booked online (matches Booksy); used in hero and ads */
   offerPriceCents: number;
+  /**
+     * Headline haircut price for walk-ins; null when walk-ins pay the booked price
+     * @nullable
+     */
+  walkInPriceCents: number | null;
   /**
      * Typical Manhattan price used in comparison copy; null hides the comparison
      * @nullable
@@ -102,6 +107,11 @@ export interface SiteSettingsInput {
   hours?: HoursEntry[];
   /** @minimum 0 */
   offerPriceCents?: number;
+  /**
+     * @minimum 0
+     * @nullable
+     */
+  walkInPriceCents?: number | null;
   /**
      * @minimum 0
      * @nullable
@@ -244,7 +254,13 @@ export interface Service {
   id: number;
   name: string;
   description: string;
+  /** Booked (Booksy) price */
   priceCents: number;
+  /**
+     * Walk-in price when it differs from the booked price
+     * @nullable
+     */
+  walkInPriceCents: number | null;
   /** @nullable */
   durationMinutes: number | null;
   /** e.g. Haircuts, Shaves & Beards */
@@ -265,6 +281,11 @@ export interface ServiceInput {
   description?: string;
   /** @minimum 0 */
   priceCents: number;
+  /**
+     * @minimum 0
+     * @nullable
+     */
+  walkInPriceCents?: number | null;
   /** @nullable */
   durationMinutes?: number | null;
   /** @minLength 1 */
@@ -284,6 +305,11 @@ export interface ServiceUpdate {
   description?: string;
   /** @minimum 0 */
   priceCents?: number;
+  /**
+     * @minimum 0
+     * @nullable
+     */
+  walkInPriceCents?: number | null;
   /** @nullable */
   durationMinutes?: number | null;
   /** @minLength 1 */

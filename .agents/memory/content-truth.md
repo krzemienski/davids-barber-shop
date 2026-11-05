@@ -4,7 +4,8 @@ description: What may and may not be claimed in site/ad copy for David's Barber 
 ---
 
 - Copy may only state facts the owner or verbatim reviews support. Reviews are quoted word for word; one review mentioning $35 is deliberately excluded.
-- Resolved 2026-11-03: owner said prices/menu = Booksy (Haircut $35, Haircut & beard $55, Line up $20, Beard $20, Beard trim $20; no shave, no descriptions beyond Haircut). Booksy is the source of truth for price changes.
+- 2026-11-05 owner price list overrides Booksy: Haircut $30 walk-in / $35 booked, Crew cut $22, Haircut & beard $45, Line up $20, Beard trim $20, Royal shave with hot towel $35; "Beard" removed. Always pair the $30 headline with the $35 appointment price. Booksy still shows Haircut & beard $55 (owner to fix). Crew cut/Royal shave aren't on Booksy: walk-in only, durations unknown.
+- Barber headshots (owner, 2026-11-05): beard+chain = Michael, wavy hair = Russel, glasses = Alex. Other site photos stay until the owner sends replacements.
 - Resolved 2026-11-03: hours = the Google listing (Mon–Fri 8:30–7, Sat closed, Sun 9–6); Booksy's shorter hours are the owner's to fix in Booksy. Roster = Michael, Russel, Alex only; David and Sean no longer work there (switched off, not deleted, to keep booking history). Russel and Alex had no services on Booksy, so they couldn't be booked online yet.
 - Still open: 1972 vs the "84" in the old domain; reviews that name Sean.
 - Comparison claim ($45 median of 8 UES shops, checked 2026-10-22) stays off until owner approval.

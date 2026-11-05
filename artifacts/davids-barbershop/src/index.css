@@ -216,19 +216,21 @@
   html { scroll-behavior: auto; }
 }
 
-.field {
-  width: 100%;
-  border-radius: var(--radius);
-  border: 1px solid hsl(var(--input));
-  background: hsl(var(--background));
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  color: hsl(var(--foreground));
-  outline: none;
-  transition: border-color 150ms;
+@layer components {
+  .field {
+    width: 100%;
+    border-radius: var(--radius);
+    border: 1px solid hsl(var(--input));
+    background: hsl(var(--background));
+    padding: 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    color: hsl(var(--foreground));
+    outline: none;
+    transition: border-color 150ms;
+  }
+  .field:focus { border-color: hsl(var(--gold)); box-shadow: 0 0 0 3px hsl(var(--gold) / 0.15); }
+  .field::placeholder { color: hsl(var(--muted-foreground) / 0.7); }
 }
-.field:focus { border-color: hsl(var(--gold)); box-shadow: 0 0 0 3px hsl(var(--gold) / 0.15); }
-.field::placeholder { color: hsl(var(--muted-foreground) / 0.7); }
 
 /* Clerk pseudo states */
 .cl-formFieldInput::placeholder { color: hsl(38 12% 50%); opacity: 1; }

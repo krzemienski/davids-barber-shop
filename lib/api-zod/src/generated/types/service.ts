@@ -10,7 +10,13 @@ export interface Service {
   id: number;
   name: string;
   description: string;
+  /** Booked (Booksy) price */
   priceCents: number;
+  /**
+     * Walk-in price when it differs from the booked price
+     * @nullable
+     */
+  walkInPriceCents: number | null;
   /** @nullable */
   durationMinutes: number | null;
   /** e.g. Haircuts, Shaves & Beards */

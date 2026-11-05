@@ -72,6 +72,23 @@ export function mapsEmbedUrl(s: SiteSettings): string {
   return `https://maps.google.com/maps?q=${encodeURIComponent(`${s.shopName}, ${fullAddress(s)}`)}&z=16&output=embed`;
 }
 
+type PriceSettings = { offerPriceCents: number; walkInPriceCents: number | null };
+
+/** True when walk-ins pay a different haircut price from online bookings. */
+export function hasWalkInPrice(s: PriceSettings): s is PriceSettings & { walkInPriceCents: number } {
+  return s.walkInPriceCents != null && s.walkInPriceCents !== s.offerPriceCents;
+}
+
+/** The headline haircut price: the walk-in price when there is one, otherwise the booked price. */
+export function headlinePrice(s: PriceSettings): number {
+  return hasWalkInPrice(s) ? s.walkInPriceCents : s.offerPriceCents;
+}
+
+/** "Walk in for $30, or book an appointment for $35." — empty when both prices are the same. */
+export function walkInLine(s: PriceSettings): string {
+  return hasWalkInPrice(s) ? `Walk in for ${money(s.walkInPriceCents)}, or book an appointment for ${money(s.offerPriceCents)}.` : '';
+}
+
 export function assetUrl(u: string | null | undefined): string | undefined {
   if (!u) return undefined;
   if (/^https?:\/\//.test(u) || u.startsWith('data:')) return u;

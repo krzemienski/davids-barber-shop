@@ -12,6 +12,11 @@ export interface ServiceUpdate {
   description?: string;
   /** @minimum 0 */
   priceCents?: number;
+  /**
+     * @minimum 0
+     * @nullable
+     */
+  walkInPriceCents?: number | null;
   /** @nullable */
   durationMinutes?: number | null;
   /** @minLength 1 */

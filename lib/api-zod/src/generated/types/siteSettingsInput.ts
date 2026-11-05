@@ -25,6 +25,11 @@ export interface SiteSettingsInput {
      * @minimum 0
      * @nullable
      */
+  walkInPriceCents?: number | null;
+  /**
+     * @minimum 0
+     * @nullable
+     */
   comparisonPriceCents?: number | null;
   /** @nullable */
   comparisonSourceNote?: string | null;

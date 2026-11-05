@@ -52,7 +52,7 @@ Every public page and landing page (A and B) checked at 1280 px and 402 px again
 ## Open items — need the owner
 
 1. **Hours — settled 2026-11-03:** the approved hours are the Google listing's: Mon–Fri 8:30am–7pm, Sat closed, Sun 9am–6pm. The site and ad kit use them. Remaining owner step: change Booksy (Mon and Fri from 9:00, Tue–Thu from 9:30, Fri until 4:30) to the same hours.
-2. **Roster — settled 2026-11-03:** the barbers are Michael, Russel and Alex; the site shows them with their Booksy staff IDs, and David and Sean are switched off. Still needed from the owner: assign services to Russel and Alex in Booksy (they cannot be booked online yet), and photos and short bios for all three.
+2. **Roster — settled 2026-11-03:** the barbers are Michael, Russel and Alex; the site shows them with their Booksy staff IDs, and David and Sean are switched off. Still needed from the owner: assign services to Russel and Alex in Booksy (they cannot be booked online yet), and short bios for all three. Headshots arrived 2026-11-05 and are live (Michael, Russel, Alex).
 3. **Owner emails** (at least two) for `ADMIN_BOOTSTRAP_EMAILS`.
 4. **Approve or reject** the "$45 median at nearby UES shops" comparison.
 5. **Brand sign-off**, branding photo, vinyl measurements; 1972 vs the "84" in the domain.
@@ -60,6 +60,7 @@ Every public page and landing page (A and B) checked at 1280 px and 402 px again
 7. **Booksy Biz and ad account access, pixel IDs** → then add consent banner + tags.
 8. **Explicit go-ahead needed for:** DNS cutover, publishing celebrity names, a live test booking, any ad budget change.
 9. Send the Booksy partner-API request drafted in `docs/research/booksy-and-tracking.md`.
-10. **Menu and hours differ from Booksy** — settled: menu = Booksy (2026-11-03); hours = Google listing (2026-11-03), so Booksy's hours need updating by the owner.
+10. **Menu and hours differ from Booksy** — menu settled 2026-11-05 by the owner's price list (haircut $30 walk-in / $35 booked, Haircut & beard $45, Crew cut $22, Royal shave with hot towel $35, Beard removed). Owner steps in Booksy: Haircut & beard $55 → $45, remove "Beard", and optionally add Crew cut and Royal shave so they can be booked online. Hours = Google listing (2026-11-03), so Booksy's hours need updating by the owner.
+13. **Ad kit and `/l/35-dollar-cut`** still lead with "$35 a cut" (the landing page itself now shows "$30 walk-in cut · $35 with an appointment"). Decide whether ads should mention the $30 walk-in price; the retired hot-towel-shave ad could come back now that Royal shave is on the menu.
 11. **Real shop photos:** only three small ones exist; the styled images are no longer presented as the shop.
 12. **Email** info@davidsbarbershop.com: confirm it receives mail (different domain from davidsbarbershop84.com).

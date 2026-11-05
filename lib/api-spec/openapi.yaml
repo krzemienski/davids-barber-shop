@@ -764,7 +764,7 @@ components:
       type: object
       required:
         [shopName, foundedYear, phone, email, streetAddress, city, region, postalCode, hours,
-         offerPriceCents, comparisonPriceCents, comparisonSourceNote, announcementBanner, pressMention,
+         offerPriceCents, walkInPriceCents, comparisonPriceCents, comparisonSourceNote, announcementBanner, pressMention,
          booksyBusinessUrl, booksyBusinessId, instagramUrl, googleMapsUrl, googlePlaceId, updatedAt]
       properties:
         shopName: { type: string }
@@ -778,7 +778,8 @@ components:
         hours:
           type: array
           items: { $ref: "#/components/schemas/HoursEntry" }
-        offerPriceCents: { type: integer, description: "The headline haircut price used in hero and ads" }
+        offerPriceCents: { type: integer, description: "The headline haircut price when booked online (matches Booksy); used in hero and ads" }
+        walkInPriceCents: { type: ["integer", "null"], description: "Headline haircut price for walk-ins; null when walk-ins pay the booked price" }
         comparisonPriceCents: { type: ["integer", "null"], description: "Typical Manhattan price used in comparison copy; null hides the comparison" }
         comparisonSourceNote: { type: ["string", "null"], description: "Where the comparison number comes from (substantiation)" }
         announcementBanner: { type: ["string", "null"] }
@@ -804,6 +805,7 @@ components:
           type: array
           items: { $ref: "#/components/schemas/HoursEntry" }
         offerPriceCents: { type: integer, minimum: 0 }
+        walkInPriceCents: { type: ["integer", "null"], minimum: 0 }
         comparisonPriceCents: { type: ["integer", "null"], minimum: 0 }
         comparisonSourceNote: { type: ["string", "null"] }
         announcementBanner: { type: ["string", "null"] }
@@ -889,12 +891,13 @@ components:
 
     Service:
       type: object
-      required: [id, name, description, priceCents, durationMinutes, category, booksyVariantId, displayOrder, active, updatedAt]
+      required: [id, name, description, priceCents, walkInPriceCents, durationMinutes, category, booksyVariantId, displayOrder, active, updatedAt]
       properties:
         id: { type: integer }
         name: { type: string }
         description: { type: string }
-        priceCents: { type: integer }
+        priceCents: { type: integer, description: "Booked (Booksy) price" }
+        walkInPriceCents: { type: ["integer", "null"], description: "Walk-in price when it differs from the booked price" }
         durationMinutes: { type: ["integer", "null"] }
         category: { type: string, description: "e.g. Haircuts, Shaves & Beards" }
         booksyVariantId: { type: ["integer", "null"], description: "Booksy service variant ID; adds a Book link that opens the widget on this service" }
@@ -908,6 +911,7 @@ components:
         name: { type: string, minLength: 1 }
         description: { type: string }
         priceCents: { type: integer, minimum: 0 }
+        walkInPriceCents: { type: ["integer", "null"], minimum: 0 }
         durationMinutes: { type: ["integer", "null"] }
         category: { type: string, minLength: 1 }
         booksyVariantId: { type: ["integer", "null"], minimum: 1 }
@@ -919,6 +923,7 @@ components:
         name: { type: string, minLength: 1 }
         description: { type: string }
         priceCents: { type: integer, minimum: 0 }
+        walkInPriceCents: { type: ["integer", "null"], minimum: 0 }
         durationMinutes: { type: ["integer", "null"] }
         category: { type: string, minLength: 1 }
         booksyVariantId: { type: ["integer", "null"], minimum: 1 }

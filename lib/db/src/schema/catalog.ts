@@ -5,7 +5,10 @@ export const servicesTable = pgTable("services", {
   id: serial("id").primaryKey(),
   name: text("name").notNull(),
   description: text("description").notNull().default(""),
+  // The booked (Booksy) price.
   priceCents: integer("price_cents").notNull(),
+  // Price for walk-ins when it differs from the booked price; null = same price.
+  walkInPriceCents: integer("walk_in_price_cents"),
   durationMinutes: integer("duration_minutes"),
   category: text("category").notNull(),
   booksyVariantId: integer("booksy_variant_id"),

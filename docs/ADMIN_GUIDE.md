@@ -59,7 +59,7 @@ Add one row per ad campaign: platform, optional barber and landing page, budget,
 
 ### Services
 
-Name, description, price, duration, category (groups on the Services page), order, active. Price changes show on the site immediately. Keep these in line with Booksy — a customer who sees one price here and another on Booksy will not book. The menu was copied from Booksy on 2026-11-03, and each service carries its Booksy service ID so its Book link opens Booksy on that service. If a price changes on Booksy, change it here too (and the offer price in Site settings for the haircut).
+Name, description, price (the booked price), walk-in price (only when walk-ins pay less; shown as "$30 walk-in · $35 booked"), duration, category (groups on the Services page), order, active. A service without a Booksy service ID shows "Walk-in" instead of a Book link. Price changes show on the site immediately. Keep these in line with Booksy — a customer who sees one price here and another on Booksy will not book. The menu was copied from Booksy on 2026-11-03, and each service carries its Booksy service ID so its Book link opens Booksy on that service. If a price changes on Booksy, change it here too (and the offer price in Site settings for the haircut).
 
 ### From the wall
 
@@ -88,7 +88,8 @@ Each landing page lives at `/l/<slug>`.
 
 ### Site settings
 
-- **Offer price** drives the "$35 a cut" headline everywhere. Keep it equal to the Haircut price on Booksy.
+- **Haircut price, booked** is the appointment price. Keep it equal to the Haircut price on Booksy.
+- **Haircut price, walk-in** is the headline price ("$30 a cut"), always shown next to "Book an appointment $35". Leave it blank if walk-ins pay the booked price; the headline then uses the booked price.
 - **Comparison price + source note:** shown as "vs. $X median at nearby UES shops" with the note as a footnote. Leave it empty until the owner approves the claim. Research supporting $45 is in `docs/research/competitors.md`.
 - **Announcement banner:** a one-line strip at the top of every page (holiday hours, closures). Empty = hidden.
 - **TV or press credit:** shown as text, "As seen on …", on the home page hero and every ad landing page. Leave it empty until the owner confirms the credit is accurate to state (e.g. `FOX 5 Good Day New York`). Never a channel logo.

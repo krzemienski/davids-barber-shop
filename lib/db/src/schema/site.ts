@@ -19,7 +19,10 @@ export const siteSettingsTable = pgTable("site_settings", {
   region: text("region").notNull(),
   postalCode: text("postal_code").notNull(),
   hours: jsonb("hours").$type<HoursEntry[]>().notNull(),
+  // Headline haircut price when booked online (matches Booksy).
   offerPriceCents: integer("offer_price_cents").notNull(),
+  // Headline haircut price for walk-ins; null when walk-ins pay the booked price.
+  walkInPriceCents: integer("walk_in_price_cents"),
   comparisonPriceCents: integer("comparison_price_cents"),
   comparisonSourceNote: text("comparison_source_note"),
   announcementBanner: text("announcement_banner"),
