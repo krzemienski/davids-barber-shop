@@ -52,7 +52,7 @@ Every public page and landing page (A and B) checked at 1280 px and 402 px again
 ## Open items — need the owner
 
 1. **Hours — settled 2026-11-03:** the approved hours are the Google listing's: Mon–Fri 8:30am–7pm, Sat closed, Sun 9am–6pm. The site and ad kit use them. Remaining owner step: change Booksy (Mon and Fri from 9:00, Tue–Thu from 9:30, Fri until 4:30) to the same hours.
-2. **Roster — settled 2026-11-03:** the barbers are Michael, Russel and Alex; the site shows them with their Booksy staff IDs, and David and Sean are switched off. Still needed from the owner: assign services to Russel and Alex in Booksy (they cannot be booked online yet), and short bios for all three. Headshots arrived 2026-11-05 and are live (Michael, Russel, Alex).
+2. **Roster — settled 2026-11-03:** the barbers are Michael, Russel and Alex; the site shows them with their Booksy staff IDs, and David and Sean are switched off. Headshots arrived 2026-11-05 and bios 2026-11-06; both are live. On 2026-11-06 the owner assigned services to Russel and Alex in Booksy, so all three can be booked online, and their ad groups are in the ad kit.
 3. **Owner emails** (at least two) for `ADMIN_BOOTSTRAP_EMAILS`.
 4. **Approve or reject** the "$45 median at nearby UES shops" comparison.
 5. **Brand sign-off**, branding photo, vinyl measurements; 1972 vs the "84" in the domain.

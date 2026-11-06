@@ -1,6 +1,6 @@
 - [Browser verification](browser-verification.md) — agent-browser quirks here: chain in one shell call, --exact names, scroll dialogs, Clerk test sign-in code.
 - [Hero loop export](hero-loop-export.md) — site hero.mp4 is an agent-browser capture of the hero-loop film; cut at matching towel frames for a seamless loop.
 - [Booksy widget facts](booksy-widget.md) — no owner API key; embed needs public IDs only; stafferId/variantId work but undocumented.
-- [Content truth rules](content-truth.md) — no invented facts; prices/menu = Booksy ($35); hours = Google listing; roster = Michael, Russel, Alex.
+- [Content truth rules](content-truth.md) — no invented facts; prices = owner list (2026-11-05), not Booksy; hours = Google listing; roster = Michael, Russel, Alex.
 - [Google Places photos](google-places.md) — real listing CID + keyless embed; server uses GOOGLE_API_KEY; bare 403 = key/project settings.
 - [Stale lib type declarations](typecheck-stale-dist.md) — artifact typecheck reads libs' gitignored dist/.d.ts; rebuild with tsc --build before trusting errors.

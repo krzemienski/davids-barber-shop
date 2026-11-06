@@ -1,4 +1,4 @@
-import { and, count, eq, inArray, isNull, or } from "drizzle-orm";
+import { and, count, eq, inArray, isNull, or, sql } from "drizzle-orm";
 import type { PgTable } from "drizzle-orm/pg-core";
 import {
   adminUsersTable,
@@ -138,13 +138,32 @@ const OLD_DAVID_SPECIALTIES = ["Classic cuts", "Royal shave"];
 const DAVID_SPECIALTIES = ["Classic cuts"];
 
 // The roster as on Booksy listing 1663005; the owner confirmed on 2026-11-03 that only these three work at the shop.
-// Bio, photo and specialties stay empty until the owner supplies them. booksyStafferId opens Booksy on that barber.
-// Photos are the owner's headshots (2026-11-05), served from the site's public media folder.
+// booksyStafferId opens Booksy on that barber. Photos are the owner's headshots (2026-11-05), served from the site's
+// public media folder.
 const ROSTER = [
   { slug: "michael", name: "Michael", booksyStafferId: 1582201, photoUrl: "/media/barbers/michael.jpg" },
   { slug: "russel", name: "Russel", booksyStafferId: 1869365, photoUrl: "/media/barbers/russel.jpg" },
   { slug: "alex", name: "Alex", booksyStafferId: 1869419, photoUrl: "/media/barbers/alex.jpg" },
 ];
+// Bios as the owner wrote them for Booksy (2026-11-06), with Russel spelled as on Booksy per the owner. Specialties
+// and years are taken from the same text.
+const ROSTER_PROFILES: Record<string, { bio: string; yearsCutting: number; specialties: string[] }> = {
+  michael: {
+    bio: "Hi, I’m Michael! I’ve been barbering for five years, working alongside my father, Alex, as part of our father-and-son team. I take pride in delivering clean, sharp haircuts while making sure every client feels comfortable and welcome. For me, barbering is about building relationships and making sure you leave looking and feeling your best.",
+    yearsCutting: 5,
+    specialties: ["Clean, sharp haircuts"],
+  },
+  russel: {
+    bio: "Hi, I’m Russel! With five years of barbering experience, I specialize in all types of haircuts, from classic styles to modern fades. I’m known for my attention to detail, clean finishes, and ability to work with different hair types and styles. My goal is to give every client a great haircut, exceptional service, and a comfortable experience every time.",
+    yearsCutting: 5,
+    specialties: ["Classic styles", "Modern fades"],
+  },
+  alex: {
+    bio: "Hi, I’m Alex! Originally from Russia, I bring 15 years of barbering experience and a passion for traditional craftsmanship. Working alongside my son, Michael, makes our barbershop feel like a true family business. I specialize in precise, classic cuts and personalized service, always making sure every client leaves looking sharp and satisfied.",
+    yearsCutting: 15,
+    specialties: ["Precise, classic cuts", "Personalized service"],
+  },
+};
 // The first roster, copied from the old website.
 const OLD_ROSTER_SLUGS = ["david", "sean"];
 const BARBER_SUBHEADLINE = "Pick a time on Booksy, or call the shop and we will fit you in.";
@@ -272,6 +291,7 @@ export async function seedDatabase(): Promise<void> {
   await seedAdKitLandingPages();
   await alignRosterWithBooksy();
   await addRosterPhotos();
+  await fillRosterProfiles();
 
   const bootstrap = (process.env.ADMIN_BOOTSTRAP_EMAILS ?? "")
     .split(",")
@@ -398,6 +418,28 @@ async function addRosterPhotos(): Promise<void> {
     added += rows.length;
   }
   if (added > 0) logger.info({ count: added }, "Added barber headshots");
+}
+
+// Fills in the owner's bios only for barbers whose bio, years and specialties are all still empty, so anything
+// entered in admin is never overwritten. Photos are handled by addRosterPhotos.
+async function fillRosterProfiles(): Promise<void> {
+  let filled = 0;
+  for (const [slug, profile] of Object.entries(ROSTER_PROFILES)) {
+    const rows = await db
+      .update(barbersTable)
+      .set({ ...profile, updatedAt: new Date() })
+      .where(
+        and(
+          eq(barbersTable.slug, slug),
+          eq(barbersTable.bio, ""),
+          isNull(barbersTable.yearsCutting),
+          sql`${barbersTable.specialties} = '[]'::jsonb`,
+        ),
+      )
+      .returning({ id: barbersTable.id });
+    filled += rows.length;
+  }
+  if (filled > 0) logger.info({ count: filled }, "Added the owner's barber profiles");
 }
 
 async function seedAdKitLandingPages(): Promise<void> {

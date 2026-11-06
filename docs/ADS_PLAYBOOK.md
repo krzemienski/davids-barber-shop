@@ -42,7 +42,7 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
   | Barber / UES searches | `/l/upper-east-side-barber` | price and hours match |
   | Hot towel shave | — | retired: Booksy has no shave, page switched off |
   | Barber: Michael | `/l/book-michael` | ready |
-  | Barber: Russel, Barber: Alex | `/l/book-russel`, `/l/book-alex` | wait until Booksy lists services for them |
+  | Barber: Russel, Barber: Alex | `/l/book-russel`, `/l/book-alex` | ready: Booksy lists their services (checked 2026-11-06) |
   | Barber: Sean, Barber: David | — | retired: no longer at the shop, pages switched off |
 
   New barbers get an ad group only after they have a site profile and can be chosen on Booksy.
