@@ -111,18 +111,6 @@ export function getVariant(slug: string, hasB: boolean): 'A' | 'B' {
   }
 }
 
-type DL = { push: (o: Record<string, unknown>) => void };
-
-function pushDataLayer(event: string, barber: string | null) {
-  try {
-    const w = window as unknown as { dataLayer?: DL | Record<string, unknown>[] };
-    if (!w.dataLayer) w.dataLayer = [];
-    (w.dataLayer as DL).push({ event, barber: barber ?? undefined });
-  } catch {
-    /* ignore */
-  }
-}
-
 export type TrackOpts = {
   barberId?: number | null;
   barberName?: string | null;
@@ -132,7 +120,7 @@ export type TrackOpts = {
   service?: string;
 };
 
-/** Returns a fire-and-forget tracker: first-party event log, dataLayer and Replit Analytics. Never blocks navigation, never throws. */
+/** Returns a fire-and-forget tracker: first-party event log, Replit Analytics and Google Analytics. Never blocks navigation, never throws. */
 export function useTracker() {
   const landing = useContext(LandingContext);
   const { mutate } = useTrackEvent();
@@ -149,7 +137,6 @@ export function useTracker() {
           variant: landing?.variant ?? null,
           ...a,
         };
-        if (type !== 'landing_view') pushDataLayer(type, opts.barberName ?? null);
         trackEvent(type, {
           barber: opts.barberName ?? '',
           placement: opts.placement ?? '',

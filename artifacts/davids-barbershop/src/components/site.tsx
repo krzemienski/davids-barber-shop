@@ -319,7 +319,8 @@ export function Footer({ settings }: { settings: SiteSettings | undefined }) {
           <span>&copy; {new Date().getFullYear()} {settings?.shopName ?? "David's Barber Shop"}</span>
           <div className="flex gap-6">
             <Link href="/privacy" className="hover:text-gold" data-testid="link-privacy">Privacy</Link>
-            <Link href="/admin" className="opacity-50 hover:opacity-100 hover:text-gold" data-testid="link-staff">Staff</Link>
+            {/* Full page load so staff pages start without the Google tag. */}
+            <a href={`${basePath}/admin`} className="opacity-50 hover:opacity-100 hover:text-gold" data-testid="link-staff">Staff</a>
           </div>
         </div>
       </div>

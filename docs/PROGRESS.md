@@ -14,7 +14,7 @@ _Last updated 2026-11-03._
 - SEO: page titles/descriptions, Open Graph tags, `BarberShop`/`HairSalon` JSON-LD, `robots.txt`, `sitemap.xml`, `noindex` on landing pages and sign-in, redirects from the old site's `#anchors`.
 
 ### Tracking
-- First-touch UTM/gclid/fbclid capture; `landing_view`, `book_click`, `call_click` events with barber, landing page and A/B variant; UTMs appended to the Booksy link; events mirrored to `window.dataLayer`.
+- First-touch UTM/gclid/fbclid capture; `landing_view`, `book_click`, `call_click` events with barber, landing page and A/B variant; UTMs appended to the Booksy link; events also sent to GA4 on the live site (2026-11-06).
 
 ### Admin (`/admin`)
 - Clerk sign-in + owner/editor allowlist; first owners from `ADMIN_BOOTSTRAP_EMAILS`.
@@ -57,7 +57,7 @@ Every public page and landing page (A and B) checked at 1280 px and 402 px again
 4. **Approve or reject** the "$45 median at nearby UES shops" comparison.
 5. **Brand sign-off**, branding photo, vinyl measurements; 1972 vs the "84" in the domain.
 6. **Celebrity consents** — none published until written consent is recorded.
-7. **Booksy Biz and ad account access, pixel IDs** → then add consent banner + tags.
+7. **Google Analytics is live in code (2026-11-06)**; in GA4, mark key events and link Google Ads (steps in ADS_PLAYBOOK "Platform tags"). Ad account access still needed for ads.
 8. **Explicit go-ahead needed for:** DNS cutover, publishing celebrity names, a live test booking, any ad budget change.
 9. Send the Booksy partner-API request drafted in `docs/research/booksy-and-tracking.md`.
 10. **Menu and hours differ from Booksy** — menu settled 2026-11-05 by the owner's price list (haircut $30 walk-in / $35 booked, Haircut & beard $45, Crew cut $22, Royal shave with hot towel $35, Beard removed). Owner steps in Booksy: Haircut & beard $55 → $45, remove "Beard", and optionally add Crew cut and Royal shave so they can be booked online. Hours = Google listing (2026-11-03), so Booksy's hours need updating by the owner.

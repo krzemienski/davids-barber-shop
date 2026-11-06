@@ -18,6 +18,35 @@
     <meta name="twitter:image" content="https://davidsbarbershop84.com/media/hero-poster.jpg" />
     <meta name="theme-color" content="#0D0B0A" />
     <meta name="twitter:description" content="David&#39;s Barber Shop, 233 East 84th Street on the Upper East Side. A father-and-son shop cutting hair since 1972. $30 walk-in haircuts, $35 by appointment. Book online or call (212) 861-9179." />
+    <!-- Google tag (GTM-PGFZHWGJ → GA4 G-K1CZTWPT3V). Live site only; never on staff pages; off when the visitor opted out on the Privacy page. On the dev preview it stays off unless the URL has ?analytics=on (?analytics=off undoes it), which is for checking the tag by hand. The GA4 property and its page_view come from the container itself, so there is no gtag('config') here; adding one double-counts. -->
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      (function () {
+        try {
+          var q = location.search, ss = window.sessionStorage;
+          if (/[?&]analytics=on\b/.test(q)) ss.setItem('dbs_analytics_dev', '1');
+          if (/[?&]analytics=off\b/.test(q)) ss.removeItem('dbs_analytics_dev');
+          var dev = ss.getItem('dbs_analytics_dev') === '1';
+          var host = location.hostname;
+          var live = /(^|\.)davidsbarbershop84\.com$/.test(host) || /\.replit\.app$/.test(host);
+          if (!(live || dev) || /^\/(admin|sign-in|sign-up)(\/|$)/.test(location.pathname)) return;
+          if (localStorage.getItem('dbs_analytics_off') === '1') return;
+        } catch (e) { return; }
+        gtag('consent', 'default', {
+          ad_storage: 'denied', ad_user_data: 'denied', ad_personalization: 'denied', analytics_storage: 'denied',
+          region: ['AT','BE','BG','HR','CY','CZ','DK','EE','FI','FR','DE','GR','HU','IS','IE','IT','LV','LI','LT','LU','MT','NL','NO','PL','PT','RO','SK','SI','ES','SE','GB','CH']
+        });
+        gtag('consent', 'default', { ad_storage: 'granted', ad_user_data: 'granted', ad_personalization: 'granted', analytics_storage: 'granted' });
+        gtag('js', new Date());
+        window.__dbsGa = true;
+        dataLayer.push({ 'gtm.start': new Date().getTime(), event: 'gtm.js' });
+        var s = document.createElement('script');
+        s.async = true;
+        s.src = 'https://www.googletagmanager.com/gtm.js?id=GTM-PGFZHWGJ';
+        document.head.appendChild(s);
+      })();
+    </script>
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

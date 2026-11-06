@@ -4,3 +4,4 @@
 - [Content truth rules](content-truth.md) — no invented facts; prices = owner list (2026-11-05), not Booksy; hours = Google listing; roster = Michael, Russel, Alex.
 - [Google Places photos](google-places.md) — real listing CID + keyless embed; server uses GOOGLE_API_KEY; bare 403 = key/project settings.
 - [Stale lib type declarations](typecheck-stale-dist.md) — artifact typecheck reads libs' gitignored dist/.d.ts; rebuild with tsc --build before trusting errors.
+- [Google tag / GA4](google-tag.md) — container already sends GA4 page views (no gtag config); filter collect hits by tid; Booksy iframe is noisy.

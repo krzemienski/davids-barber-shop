@@ -10,7 +10,7 @@ Goal: paid traffic → landing page → Booksy booking at **≤ $60 cost per con
 2. **Roster must match Booksy.** Cleared 2026-11-03: the owner confirmed the barbers are **Michael, Russel and Alex**, the same as Booksy. The site shows them; David and Sean and their landing pages are switched off. Barber ads only run for barbers a client can actually select on Booksy: Michael can be (Book opens on him); Russel and Alex have no services assigned on Booksy yet, so their ad groups wait until the owner adds them.
 3. **Comparison claim:** only turn on "vs. $45 median at nearby UES shops" after the owner approves it; keep the source note filled in (it shows as a footnote). Re-check prices every 6 months.
 4. **Owners added** under Staff access (at least two).
-5. **Pixel/tag IDs and a consent banner** — see "Platform tags" below; not needed to launch with Google's offline import, needed before adding Meta Pixel or a Google tag.
+5. **Google tag** — live since 2026-11-06 (see "Platform tags" below). Still to do in Google's own screens: mark key events in GA4 and link GA4 to Google Ads. A Meta Pixel would still need its ID and a consent decision.
 6. **Opening hours.** Cleared 2026-11-03: the approved hours are the Google listing's — Mon–Fri 8:30am–7pm, Sat closed, Sun 9am–6pm — and Site settings match. Ad lines that state hours, the ad schedule and the call schedule use them. Booksy still shows shorter hours (Mon and Fri from 9:00, Tue–Thu from 9:30, Fri until 4:30); the owner should update Booksy so online booking offers the same times.
 7. **Price asset:** every price item must match Booksy. It does as of 2026-11-03 (Haircut $35, Haircut & beard $55, Line up $20, Beard $20, Beard trim $20).
 8. **Photo consent:** the owner confirms that the barber and clients in the ad photos agreed to appear, and supplies full-size originals.
@@ -25,7 +25,7 @@ Goal: paid traffic → landing page → Booksy booking at **≤ $60 cost per con
 | `call_click` | Any Call / phone link | barber (when on a barber page/landing), variant |
 | `booking_confirmed` | Logged by staff in Admin → Bookings | barber, value, source, gclid/fbclid if known |
 
-Every event also carries the visitor's **first-touch** `utm_source / utm_medium / utm_campaign / utm_content / utm_term / gclid / fbclid`, saved in the browser on the first visit and kept even if they come back later without tags. The same UTMs are appended to the outgoing Booksy link. Events also go to `window.dataLayer` (`book_click`, `call_click` with `barber`) so a Google Tag Manager container can pick them up later without code changes.
+Every event also carries the visitor's **first-touch** `utm_source / utm_medium / utm_campaign / utm_content / utm_term / gclid / fbclid`, saved in the browser on the first visit and kept even if they come back later without tags. The same UTMs are appended to the outgoing Booksy link. On the live site the same clicks also go to Google Analytics 4 (see "Platform tags").
 
 **Limits (verified in research):** Booksy does not let advertisers install their own Google tag, has no documented way to pass a click ID into a booking, and no verified way to preselect a barber by URL. A `book_click` is intent, not a booking.
 
@@ -83,13 +83,34 @@ Every event also carries the visitor's **first-touch** `utm_source / utm_medium 
 - The ad's pinned headline 1 options match A and B, so whichever variant a visitor gets, the words they clicked are on the page.
 - Landing pages and the home page carry the ads' proof points: father-and-son, since 1972, East 84th St, posted prices, Closed Saturdays, verbatim reviews, and the TV credit once confirmed.
 
-## Platform tags and consent (deferred)
+## Platform tags and consent
 
-The site currently loads **no third-party ad pixels or analytics** — only its own first-party events. That is why there is no cookie banner yet. Before adding a Google tag, GTM container or Meta Pixel:
+**Google tag `GTM-PGFZHWGJ` → GA4 property `G-K1CZTWPT3V`**, loaded in `index.html` on every public page of the live site (davidsbarbershop84.com and the .replit.app address). Not loaded on staff pages, on the dev preview (add `?analytics=on` to a dev URL to check it by hand; `?analytics=off` undoes it), or for visitors who switched it off on the Privacy page. Consent Mode v2: denied by default for the EU/EEA, UK and Switzerland, granted elsewhere.
 
-1. Get the IDs from the owner's ad accounts.
-2. Add a consent banner that blocks those tags until the visitor accepts, and wire Google Consent Mode.
-3. Update the Privacy page to name the tags.
+What GA4 receives:
+
+| Event | Source | Parameters |
+| --- | --- | --- |
+| `page_view` | Google tag, incl. route changes inside the site | page URL with UTMs / gclid |
+| `scroll`, `click` (outbound), `file_download`, `form_*`, `video_*` | Google tag enhanced measurement | Google's own |
+| `book_click` | Any Book button | `barber`, `placement`, `service`, `landing_page`, `variant` |
+| `call_click` | Any Call / phone link | `barber`, `placement`, `landing_page`, `variant` |
+| `booking_completed` | Booksy form reports a booking was made (on close) | `barber`, `placement`, `service` |
+| `directions_click` | Google Maps links (footer, home, Visit, gallery) | `placement` |
+| `social_click` | Instagram / TikTok links | `network`, `profile` |
+| `booking_fallback_click`, `booking_widget_slow` | "Open in Booksy" links; Booksy slow to load | `placement`, `barber`, `service` |
+
+`landing_view` is not sent to GA4 (its `page_view` covers it). GA4 reads UTMs and gclid from the URL itself.
+
+**Owner / ads manager steps in Google's screens (no code needed):**
+
+1. GA4 → Admin → Events: mark `book_click`, `call_click` and `booking_completed` as **key events**.
+2. GA4 → Admin → Custom definitions: add event-scoped dimensions `barber`, `placement`, `service`, `landing_page`, `variant` so they show in reports.
+3. GA4 → Admin → Product links → **Google Ads**: link the ad account (turn on auto-tagging in Google Ads).
+4. Google Ads → Goals → Conversions → Import → GA4: import `booking_completed` (primary) and `book_click` / `call_click` (secondary at first). Keep the weekly offline import of confirmed bookings as the source of truth.
+5. GA4 → Admin → Data settings → Data filters: optionally exclude the dev hostname.
+
+A Meta Pixel is not added. Adding one needs its ID and a fresh look at consent.
 
 ## Things never to do
 

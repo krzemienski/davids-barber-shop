@@ -16,6 +16,7 @@ import { GoogleListingStrip } from '@/components/google-photos';
 import { assetUrl, errorStatus, formatPhone, fullAddress, hasWalkInPrice, headlinePrice, mapsEmbedUrl, mapsListingUrl, mediaUrl, money, walkInLine, yearsSince } from '@/lib/format';
 import { cn } from '@/lib/utils';
 import { trackEvent } from '@/lib/analytics';
+import { AnalyticsChoice } from '@/components/analytics-choice';
 
 /* ================= /barbers ================= */
 export function BarbersPage() {
@@ -337,7 +338,7 @@ export function VisitPage() {
 /* ================= /privacy ================= */
 export function PrivacyPage() {
   const { data: s } = useSettings();
-  usePageMeta("Privacy Policy | David's Barber Shop", 'How David\u2019s Barber Shop handles first-party click tracking, ad click IDs and online booking.');
+  usePageMeta("Privacy Policy | David's Barber Shop", 'How David\u2019s Barber Shop handles Google Analytics, first-party click tracking, ad click IDs and online booking.');
   const email = s?.email;
   return (
     <PublicLayout>
@@ -350,10 +351,12 @@ export function PrivacyPage() {
         <h2>Booking through Booksy</h2>
         <p>Appointments are booked through <strong>Booksy</strong>, which processes your booking under its own privacy policy. When you tap Book, Booksy&rsquo;s booking form opens on this site. That form is run by Booksy: what you enter in it goes to Booksy, not to us. If it can&rsquo;t load, Book takes you to Booksy&rsquo;s own site. When the form tells us a booking was made, we record that it happened, with the barber, the page and any ad click ID, but none of your details. We may also record that a booking was confirmed, along with its value, so we can measure our advertising.</p>
         <h2>Analytics tags</h2>
-        <p>Call and Book clicks are also pushed to a browser <code>dataLayer</code> so a tag manager can count them. We also use our host&rsquo;s built-in analytics to count page visits and the same clicks, with the button used, the barber or service, and the ad campaign tags. No personal information is included.</p>
+        <p>We use <strong>Google Analytics</strong>, loaded through Google&rsquo;s tag, to count page visits, scrolling, links to other sites, and Call, Book and Directions clicks, with the button used and the barber or service. Google sets its own cookies (<code>_ga</code>) to tell visits apart and processes this data under <a href="https://policies.google.com/privacy" target="_blank" rel="noopener noreferrer">Google&rsquo;s privacy policy</a>. We may link it to Google Ads to see which ads lead to calls and bookings. We also use our host&rsquo;s built-in analytics to count the same visits and clicks. None of this includes your name, email or phone number. Staff pages are not tracked. For visitors in the EU, EEA, UK and Switzerland, Google Analytics runs without cookies and without ad features.</p>
+        <AnalyticsChoice />
         <h2>Your choices</h2>
         <ul>
-          <li>Clear your browser&rsquo;s site data to remove the visitor ID and stored campaign tags.</li>
+          <li>Turn Google Analytics off for this browser with the switch above.</li>
+          <li>Clear your browser&rsquo;s site data to remove the visitor ID, stored campaign tags and Google&rsquo;s cookies.</li>
           <li>Use your browser&rsquo;s private mode to prevent them from being stored at all.</li>
           <li>Ask us to delete booking records associated with you.</li>
         </ul>

@@ -19,8 +19,8 @@ Why: there is no Booksy webhook available to us. A click is intent, not a bookin
 **Google Ads offline import uses the legacy CSV format with `Parameters:TimeZone=America/New_York`.**
 Why: it is the simplest format for a weekly manual upload and is still accepted. For Data Manager, remove that first line (it needs headers first). Meta's legacy Offline Conversions API ended May 2025; Meta bookings go through dataset CSV upload.
 
-**No cookie banner yet.**
-Why: the site loads no third-party pixels or analytics; first-party events use an anonymous random ID and no cookies. The banner is required, and will be added, at the same time as any Google tag, GTM container or Meta Pixel (needs IDs from the owner).
+**Google tag (GTM-PGFZHWGJ → GA4 G-K1CZTWPT3V) loads on the live site with Consent Mode v2 region defaults and a Privacy-page opt-out, not a cookie banner** (2026-11-06; replaces "no cookie banner yet").
+Why: the shop's visitors are local US customers, where analytics needs no opt-in, and an opt-in banner would drop a large share of the data the ads depend on. Visitors in the EU/EEA, UK and Switzerland get every consent type "denied" by default (cookieless pings only). Anyone can turn GA off on the Privacy page; that choice is kept in the browser and checked before the tag loads. The tag never loads on staff pages (`/admin`, `/sign-in`, `/sign-up`) or on the dev preview (unless `?analytics=on`), so staff and test traffic stay out of reports. The container ID serves a Google tag that already configures G-K1CZTWPT3V and sends page views (including SPA route changes), so the site sends no `gtag('config')`; adding one double-counts. Site events go to GA4 with `gtag('event')` from one place, `trackEvent`. Revisit with a real banner if a Meta Pixel is added or the audience changes.
 
 **A/B variant is assigned 50/50 per visitor per landing page and stored in the browser.**
 Why: a visitor should see the same headline every visit, and it needs no server state.
